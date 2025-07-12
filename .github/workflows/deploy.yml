@@ -109,9 +109,14 @@ jobs:
     - name: Setup SSH key
       run: |
         mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
         echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
         chmod 600 ~/.ssh/deploy_key
         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        echo "SSH key setup completed"
+        ls -la ~/.ssh/
+        echo "Key file first few lines:"
+        head -3 ~/.ssh/deploy_key
     
     - name: Deploy to EC2
       run: |
