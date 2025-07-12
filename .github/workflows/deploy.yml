@@ -112,7 +112,7 @@ jobs:
           package-lock.json \
           mikro-orm.config.ts \
           tsconfig.json \
-          .env.example
+          .env
         
         # Copy files to EC2
         scp -o StrictHostKeyChecking=no \
