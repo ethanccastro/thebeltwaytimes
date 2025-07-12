@@ -27,7 +27,6 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: ${{ !github.event.inputs.skip_tests || github.event_name != 'workflow_dispatch' }}
     
     services:
       mysql:
@@ -56,6 +55,7 @@ jobs:
       run: npm ci
     
     - name: Run tests
+      if: ${{ github.event.inputs.skip_tests != 'true' }}
       run: npm test
       env:
         DB_HOST: localhost
@@ -63,6 +63,10 @@ jobs:
         DB_USER: root
         DB_PASSWORD: root
         DB_NAME: test_db
+    
+    - name: Skip tests
+      if: ${{ github.event.inputs.skip_tests == 'true' }}
+      run: echo "Tests skipped by user request"
 
   deploy:
     needs: test
