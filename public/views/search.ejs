@@ -1,0 +1,142 @@
+<%- include('partials/header') %>
+
+<!-- Search Header -->
+<header class="search-header">
+    <div class="container">
+        <h1 class="search-title">Search Results</h1>
+        <p class="search-query">Results for "<%= query %>"</p>
+        
+        <!-- Search Form (floating label style) -->
+        <form id="searchForm" method="GET" action="/search" class="search-page search-bar-wrapper">
+            <div class="search-bar-floating">
+                <input type="text" id="searchInput" class="search-bar-input" name="q" value="<%= query %>" required>
+                <label for="searchInput" class="search-bar-label">Ask a question or search</label>
+                <button type="button" class="search-bar-clear" id="searchBarClear" aria-label="Clear" style="display:none;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <span class="search-bar-divider"></span>
+                <span class="search-bar-icon">
+                    <!-- Thin SVG magnifying glass -->
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="9" cy="9" r="7" stroke="#888" stroke-width="1.3"/>
+                        <line x1="14.2" y1="14.2" x2="18" y2="18" stroke="#888" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                </span>
+            </div>
+        </form>
+    </div>
+</header>
+
+<!-- Search Results -->
+<div class="container search-results">
+    <% if (results.length > 0) { %>
+        <div style="margin-bottom: 30px;">
+            <p style="color: #666; font-size: 16px;">
+                Found <strong><%= results.length %></strong> result<%= results.length === 1 ? '' : 's' %> for "<%= query %>"
+            </p>
+        </div>
+        
+        <!-- Main Results -->
+        <div class="main-articles">
+                <% results.forEach(article => { %>
+                    <article class="article-card">
+                        <div class="article-container-text">
+                            <div class="article-category">
+                                <% if (article.article_subcategoryrowguid) { %>
+                                    <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= article.article_subcategoryrowguid.subcategory_slug %>" style="color: #dc2626; text-decoration: none;">
+                                        <%= article.article_subcategoryrowguid.subcategory_name.charAt(0).toUpperCase() + article.article_subcategoryrowguid.subcategory_name.slice(1) %>
+                                    </a>
+                                <% } else { %>
+                                    <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>" style="color: #dc2626; text-decoration: none;">
+                                        <%= article.article_categoryrowguid ? article.article_categoryrowguid.category_name.charAt(0).toUpperCase() + article.article_categoryrowguid.category_name.slice(1) : 'News' %>
+                                    </a>
+                                <% } %>
+                                <% if (article.article_isopinion) { %>
+                                    <span class="article-type">• OPINION</span>
+                                <% } %>
+                            </div>
+                            
+                            <h2 class="article-headline">
+                                <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+                                    <%= article.article_headline %>
+                                </a>
+                            </h2>
+                            
+                            <p class="article-excerpt"><%- article.article_excerpt %></p>
+                            
+                            <div class="article-meta">
+                                <span class="article-author">By <%= article.article_author %></span>
+                                <span><%= new Date(article.article_publishedat).toLocaleDateString() %></span>
+                                <span><%= article.article_readtime %> min read</span>
+                            </div>
+                            
+                            <!-- Highlight search terms -->
+                            <% if (article.tags && article.tags.length > 0) { %>
+                                <div style="margin-top: 15px;">
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                        <% article.tags.forEach(tag => { %>
+                                            <span style="background: #f0f0f0; color: #666; padding: 4px 8px; border-radius: 12px; font-size: 12px;">
+                                                <%= tag %>
+                                            </span>
+                                        <% }); %>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                        
+                        <div class="article-container-image">
+                            <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" class="article-image" onerror="this.src='/img/600x300.png'">
+                        </div>
+                    </article>
+                <% }); %>
+            </div>          
+    <% } else { %>
+        <!-- No Results Found -->
+        <div style="text-align: center; padding: 60px 0;">
+            <div style="font-size: 64px; color: #ddd; margin-bottom: 20px;">
+                <i class="fas fa-search"></i>
+            </div>
+            <h2 style="font-size: 24px; margin-bottom: 15px; color: #333;">No results found</h2>
+            <p style="color: #666; margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                We couldn't find any articles matching "<%= query %>". Try different keywords or browse our categories.
+            </p>            
+        </div>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+(function() {
+  const form = document.getElementById('searchForm');
+  const input = form.querySelector('.search-bar-input');
+  const label = form.querySelector('.search-bar-label');
+  const clearBtn = form.querySelector('.search-bar-clear');
+
+  function updateState() {
+    if (input.value) {
+      label.classList.add('float');
+      clearBtn.style.display = 'block';
+    } else {
+      label.classList.remove('float');
+      clearBtn.style.display = 'none';
+    }
+  }
+
+  input.addEventListener('focus', function() {
+    label.classList.add('float');
+  });
+  input.addEventListener('blur', function() {
+    if (!input.value) label.classList.remove('float');
+  });
+  input.addEventListener('input', updateState);
+  clearBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    input.value = '';
+    input.focus();
+    updateState();
+  });
+  // Initial state
+  updateState();
+})();
+</script> 

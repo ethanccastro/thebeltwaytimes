@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- TinyMCE Rich Text Editor -->
+    <script src="https://cdn.tiny.cloud/1/skaxpieb2vgt8otgsen5gl03akxtafk7nvbdhcnce3ewn9du/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>    <style>
+        /* Custom styles to complement Tailwind */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* A light gray background */
+        }
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Hide sections by default */
+        .admin-section {
+            display: none;
+        }
+        /* Show the active section */
+        .admin-section.active {
+            display: block;
+        }
+        /* Animation for modal */
+        .modal-enter {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .modal-leave {
+            animation: fadeOut 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <div class="hidden md:flex flex-col w-64 bg-gray-800">
+            <div class="flex items-center justify-center h-16 bg-gray-900">
+                <span class="text-white font-bold uppercase text-lg"><i class="fas fa-cog mr-2"></i>Admin Panel</span>
+            </div>
+            <div class="flex flex-col flex-1 overflow-y-auto">
+                <nav class="flex-1 px-2 py-4 bg-gray-800">
+                    <a href="#dashboard" class="nav-item flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt fa-fw mr-3"></i>
+                        Dashboard
+                    </a>
+                    <a href="#articles" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="articles">
+                        <i class="fas fa-newspaper fa-fw mr-3"></i>
+                        Articles
+                    </a>
+                    <a href="#categories" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="categories">
+                        <i class="fas fa-folder fa-fw mr-3"></i>
+                        Categories
+                    </a>
+                    <a href="#subcategories" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="subcategories">
+                        <i class="fas fa-folder-open fa-fw mr-3"></i>
+                        Subcategories
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="flex flex-col flex-1 overflow-y-auto">
+            <div class="flex items-center justify-between h-16 bg-white border-b border-gray-200 px-4 md:px-8">
+                 <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden text-gray-500 focus:outline-none focus:text-gray-700">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <div class="relative w-full max-w-xs">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                    <input type="text" class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm" placeholder="Search...">
+                </div>
+            </div>
+            
+            <!-- Mobile Sidebar -->
+            <div id="mobile-sidebar" class="hidden md:hidden fixed inset-0 flex z-40">
+                <div class="fixed inset-0 bg-black opacity-50"></div>
+                <div class="relative flex-1 flex flex-col max-w-xs w-full bg-gray-800">
+                    <div class="absolute top-0 right-0 -mr-12 pt-2">
+                        <button id="close-mobile-sidebar" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none">
+                            <i class="fas fa-times text-white"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-center h-16 bg-gray-900">
+                         <span class="text-white font-bold uppercase text-lg"><i class="fas fa-cog mr-2"></i>Admin Panel</span>
+                    </div>
+                    <nav class="mt-5 flex-1 px-2 bg-gray-800 space-y-1">
+                        <a href="#dashboard" class="nav-item flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg" data-section="dashboard">Dashboard</a>
+                        <a href="#articles" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="articles">Articles</a>
+                        <a href="#categories" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="categories">Categories</a>
+                        <a href="#subcategories" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="subcategories">Subcategories</a>
+                    </nav>
+                </div>
+            </div>
+
+            <main class="p-4 md:p-8">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="admin-section active">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4 transform hover:scale-105 transition-transform duration-300">
+                            <div class="bg-blue-500 p-4 rounded-full text-white"><i class="fas fa-newspaper text-2xl"></i></div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Articles</p>
+                                <p class="text-2xl font-bold text-gray-800"><%= stats.totalArticles %></p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4 transform hover:scale-105 transition-transform duration-300">
+                            <div class="bg-green-500 p-4 rounded-full text-white"><i class="fas fa-folder text-2xl"></i></div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Categories</p>
+                                <p class="text-2xl font-bold text-gray-800"><%= stats.totalCategories %></p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4 transform hover:scale-105 transition-transform duration-300">
+                            <div class="bg-purple-500 p-4 rounded-full text-white"><i class="fas fa-folder-open text-2xl"></i></div>
+                            <div>
+                                <p class="text-gray-500 text-sm">Subcategories</p>
+                                <p class="text-2xl font-bold text-gray-800"><%= stats.totalSubcategories %></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-white p-6 rounded-xl shadow-md">
+                        <h2 class="text-xl font-semibold text-gray-700 mb-4">Quick Actions</h2>
+                        <div class="flex flex-wrap gap-4">
+                            <button class="btn-primary" onclick="showCreateModal('article')"><i class="fas fa-plus mr-2"></i>New Article</button>
+                            <button class="btn-secondary" onclick="showCreateModal('category')"><i class="fas fa-plus mr-2"></i>New Category</button>
+                            <button class="btn-secondary" onclick="showCreateModal('subcategory')"><i class="fas fa-plus mr-2"></i>New Subcategory</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Articles Section -->
+                <section id="articles" class="admin-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800">Articles Management</h1>
+                        <button class="btn-primary" onclick="showCreateModal('article')"><i class="fas fa-plus mr-2"></i>New Article</button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Headline</th>
+                                    <th scope="col" class="px-6 py-3">Author</th>
+                                    <th scope="col" class="px-6 py-3">Category</th>
+                                    <th scope="col" class="px-6 py-3">Published</th>
+                                    <th scope="col" class="px-6 py-3">Type</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="articles-table-body">
+                                <!-- Articles will be loaded here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Categories Section -->
+                <section id="categories" class="admin-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800">Categories Management</h1>
+                        <button class="btn-primary" onclick="showCreateModal('category')"><i class="fas fa-plus mr-2"></i>New Category</button>
+                    </div>
+                     <div class="bg-white rounded-xl shadow-md overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Name</th>
+                                    <th scope="col" class="px-6 py-3">Slug</th>
+                                    <th scope="col" class="px-6 py-3">Description</th>
+                                    <th scope="col" class="px-6 py-3">Subcategories</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-table-body">
+                                <!-- Categories will be loaded here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Subcategories Section -->
+                <section id="subcategories" class="admin-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800">Subcategories Management</h1>
+                        <button class="btn-primary" onclick="showCreateModal('subcategory')"><i class="fas fa-plus mr-2"></i>New Subcategory</button>
+                    </div>
+                     <div class="bg-white rounded-xl shadow-md overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Name</th>
+                                    <th scope="col" class="px-6 py-3">Slug</th>
+                                    <th scope="col" class="px-6 py-3">Parent Category</th>
+                                    <th scope="col" class="px-6 py-3">Description</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subcategories-table-body">
+                                <!-- Subcategories will be loaded here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div id="modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <div id="modal-content" class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6 modal-enter max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modal-title" class="text-xl font-semibold text-gray-800">Create New Item</h3>
+                <button class="text-gray-400 hover:text-gray-600" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="mt-4 overflow-y-auto flex-1" style="max-height:60vh;">
+                <form id="modal-form" class="space-y-4">
+                    <!-- Form fields will be dynamically generated here -->
+                </form>
+            </div>
+            <div class="mt-6 flex justify-end space-x-4">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveItem()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 px-4">
+        <div id="delete-modal-content" class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 modal-enter">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Confirm Deletion</h3>
+                <div class="mt-2">
+                    <p class="text-sm text-gray-500">Are you sure you want to delete this item? This action cannot be undone.</p>
+                </div>
+            </div>
+            <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                <button class="btn-danger w-full" onclick="confirmDelete()">Delete</button>
+                <button class="btn-secondary w-full mt-3 sm:mt-0" onclick="closeDeleteModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- UTILITY CLASSES FOR BUTTONS ---
+        const btnPrimaryClasses = 'bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center shadow-md';
+        const btnSecondaryClasses = 'bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300 flex items-center justify-center';
+        const btnDangerClasses = 'bg-red-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors duration-300 flex items-center justify-center shadow-md';
+
+        // Global variables
+        let currentSection = 'dashboard';
+        let currentItem = null;
+        let currentItemType = null;
+        let categories = [];
+        let subcategories = [];
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply button classes
+            document.querySelectorAll('.btn-primary').forEach(btn => btn.className = btnPrimaryClasses);
+            document.querySelectorAll('.btn-secondary').forEach(btn => btn.className = btnSecondaryClasses);
+            document.querySelectorAll('.btn-danger').forEach(btn => btn.className = btnDangerClasses);
+            
+            // Initialize navigation
+            initializeNavigation();
+            
+            // Load data
+            loadCategories();
+            loadSubcategories();
+            loadArticles();
+        });
+
+        // --- NAVIGATION LOGIC ---
+        const navLinks = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.admin-section');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileSidebarButton = document.getElementById('close-mobile-sidebar');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+
+        function initializeNavigation() {
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = e.currentTarget.dataset.section;
+                    setActiveSection(sectionId);
+                });
+            });
+            
+            // Mobile sidebar toggle
+            mobileMenuButton.addEventListener('click', () => {
+                mobileSidebar.classList.remove('hidden');
+            });
+            
+            closeMobileSidebarButton.addEventListener('click', () => {
+                mobileSidebar.classList.add('hidden');
+            });
+
+            // Set initial section
+            const initialSection = window.location.hash.substring(1) || 'dashboard';
+            setActiveSection(initialSection);
+        }
+
+        function setActiveSection(sectionId) {
+            // Update active link
+            navLinks.forEach(link => {
+                link.classList.remove('bg-gray-900', 'text-white');
+                link.classList.add('text-gray-300');
+                if (link.dataset.section === sectionId) {
+                    link.classList.add('bg-gray-900', 'text-white');
+                    link.classList.remove('text-gray-300');
+                }
+            });
+
+            // Show active section
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === sectionId) {
+                    section.classList.add('active');
+                }
+            });
+            
+            // Close mobile sidebar on navigation
+            if(!mobileSidebar.classList.contains('hidden')) {
+                mobileSidebar.classList.add('hidden');
+            }
+            
+            currentSection = sectionId;
+        }
+
+        // --- API FUNCTIONS ---
+        async function apiCall(endpoint, options = {}) {
+            const url = `/admin/api/${endpoint}`;
+            console.log('🌐 API Call:', options.method || 'GET', url);
+            console.log('🌐 Options:', options);
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                console.log('🌐 Response status:', response.status);
+                console.log('🌐 Response headers:', response.headers);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.log('🌐 Error response text:', errorText);
+                    
+                    try {
+                        const error = JSON.parse(errorText);
+                        throw new Error(error.error || 'API request failed');
+                    } catch (parseError) {
+                        throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+                    }
+                }
+                
+                const data = await response.json();
+                console.log('🌐 Response data:', data);
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                showNotification(error.message, 'error');
+                throw error;
+            }
+        }
+
+        // --- DATA LOADING FUNCTIONS ---
+        async function loadCategories() {
+            try {
+                categories = await apiCall('categories');
+                renderCategoriesTable();
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        }
+
+        async function loadSubcategories() {
+            try {
+                subcategories = await apiCall('subcategories');
+                renderSubcategoriesTable();
+            } catch (error) {
+                console.error('Failed to load subcategories:', error);
+            }
+        }
+
+        async function loadArticles() {
+            try {
+                const articles = await apiCall('articles');
+                renderArticlesTable(articles);
+            } catch (error) {
+                console.error('Failed to load articles:', error);
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderCategoriesTable() {
+            const tbody = document.querySelector('#categories-table-body');
+            if (!tbody) return;
+            
+            if (categories.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                            <div class="flex flex-col items-center py-8">
+                                <i class="fas fa-folder text-4xl mb-4 text-gray-300"></i>
+                                <h3 class="text-lg font-medium mb-2">No Categories Found</h3>
+                                <p class="mb-4">Create your first category to get started.</p>
+                                <button class="btn-primary" onclick="showCreateModal('category')">
+                                    <i class="fas fa-plus mr-2"></i>Create Category
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = categories.map(category => `
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">${category.category_name}</td>
+                    <td class="px-6 py-4 text-gray-600"><code class="bg-gray-100 px-2 py-1 rounded">${category.category_slug}</code></td>
+                    <td class="px-6 py-4 text-gray-600">${category.category_description || '-'}</td>
+                    <td class="px-6 py-4">
+                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                            ${category.subcategories ? category.subcategories.length : 0}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <button class="text-blue-600 hover:text-blue-900" onclick="editItem('category', '${category.category_rowguid}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900" onclick="deleteItem('category', '${category.category_rowguid}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderSubcategoriesTable() {
+            const tbody = document.querySelector('#subcategories-table-body');
+            if (!tbody) return;
+            
+            if (subcategories.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                            <div class="flex flex-col items-center py-8">
+                                <i class="fas fa-folder-open text-4xl mb-4 text-gray-300"></i>
+                                <h3 class="text-lg font-medium mb-2">No Subcategories Found</h3>
+                                <p class="mb-4">Create your first subcategory to get started.</p>
+                                <button class="btn-primary" onclick="showCreateModal('subcategory')">
+                                    <i class="fas fa-plus mr-2"></i>Create Subcategory
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = subcategories.map(subcategory => `
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">${subcategory.subcategory_name}</td>
+                    <td class="px-6 py-4 text-gray-600"><code class="bg-gray-100 px-2 py-1 rounded">${subcategory.subcategory_slug}</code></td>
+                    <td class="px-6 py-4 text-gray-600">${subcategory.category ? subcategory.category.category_name : '-'}</td>
+                    <td class="px-6 py-4 text-gray-600">${subcategory.subcategory_description || '-'}</td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <button class="text-blue-600 hover:text-blue-900" onclick="editItem('subcategory', '${subcategory.subcategory_rowguid}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900" onclick="deleteItem('subcategory', '${subcategory.subcategory_rowguid}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderArticlesTable(articles) {
+            const tbody = document.querySelector('#articles-table-body');
+            if (!tbody) return;
+            
+            if (articles.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                            <div class="flex flex-col items-center py-8">
+                                <i class="fas fa-newspaper text-4xl mb-4 text-gray-300"></i>
+                                <h3 class="text-lg font-medium mb-2">No Articles Found</h3>
+                                <p class="mb-4">Create your first article to get started.</p>
+                                <button class="btn-primary" onclick="showCreateModal('article')">
+                                    <i class="fas fa-plus mr-2"></i>Create Article
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = articles.map(article => {
+                // Determine article type badges
+                const typeBadges = [];
+                if (article.article_featured) {
+                    typeBadges.push('<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Featured</span>');
+                }
+                if (article.article_isopinion) {
+                    typeBadges.push('<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Opinion</span>');
+                }
+                if (!article.article_featured && !article.article_isopinion) {
+                    typeBadges.push('<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Regular</span>');
+                }
+                
+                return `
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4">
+                        <div>
+                            <div class="font-medium text-gray-900">${article.article_headline}</div>
+                            <div class="text-sm text-gray-500">${article.article_slug}</div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600">${article.article_author}</td>
+                    <td class="px-6 py-4 text-gray-600">${article.article_categoryrowguid ? article.article_categoryrowguid.category_name : '-'}</td>
+                    <td class="px-6 py-4">
+                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                            ${new Date(article.article_publishedat).toLocaleDateString()}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex flex-wrap gap-1">
+                            ${typeBadges.join('')}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <button class="text-blue-600 hover:text-blue-900" onclick="editItem('article', '${article.article_rowguid}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900" onclick="deleteItem('article', '${article.article_rowguid}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+        }
+
+        // --- MODAL LOGIC ---
+        const modal = document.getElementById('modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalTitle = document.getElementById('modal-title');
+        const modalForm = document.getElementById('modal-form');
+        const deleteModal = document.getElementById('delete-modal');
+        const deleteModalContent = document.getElementById('delete-modal-content');
+
+        // Form field templates
+        const formTemplates = {
+            article: () => `
+                <div class="form-group">
+                    <label for="article_headline" class="block text-sm font-medium text-gray-700">Headline *</label>
+                    <input type="text" id="article_headline" name="article_headline" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div class="form-group">
+                    <label for="article_slug" class="block text-sm font-medium text-gray-700">Slug *</label>
+                    <input type="text" id="article_slug" name="article_slug" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div class="form-group">
+                    <label for="article_excerpt" class="block text-sm font-medium text-gray-700">Excerpt</label>
+                    <textarea id="article_excerpt" name="article_excerpt" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="article_content" class="block text-sm font-medium text-gray-700">Content *</label>
+                    <textarea id="article_content" name="article_content" rows="6" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="article_author" class="block text-sm font-medium text-gray-700">Author *</label>
+                    <input type="text" id="article_author" name="article_author" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div class="form-group">
+                    <label for="article_categoryrowguid" class="block text-sm font-medium text-gray-700">Category *</label>
+                    <select id="article_categoryrowguid" name="article_categoryrowguid" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                        <option value="">Select a category</option>
+                        ${categories.map(cat => `<option value="${cat.category_rowguid}">${cat.category_name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="article_subcategoryrowguid" class="block text-sm font-medium text-gray-700">Subcategory</label>
+                    <select id="article_subcategoryrowguid" name="article_subcategoryrowguid" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Select a subcategory (optional)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="article_publishedat" class="block text-sm font-medium text-gray-700">Published Date</label>
+                    <input type="datetime-local" id="article_publishedat" name="article_publishedat" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="form-group">
+                    <label for="article_imageurl" class="block text-sm font-medium text-gray-700">Image URL</label>
+                    <input type="url" id="article_imageurl" name="article_imageurl" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="form-group">
+                    <label for="article_readtime" class="block text-sm font-medium text-gray-700">Read Time (minutes)</label>
+                    <input type="number" id="article_readtime" name="article_readtime" value="5" min="1" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="form-group">
+                    <label for="article_tags" class="block text-sm font-medium text-gray-700">Tags (comma-separated)</label>
+                    <input type="text" id="article_tags" name="article_tags" placeholder="tag1, tag2, tag3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="form-group flex items-center">
+                    <input type="checkbox" id="article_featured" name="article_featured" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="article_featured" class="ml-2 block text-sm text-gray-700">Featured Article</label>
+                </div>
+                <div class="form-group flex items-center">
+                    <input type="checkbox" id="article_isopinion" name="article_isopinion" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="article_isopinion" class="ml-2 block text-sm text-gray-700">Opinion Article</label>
+                </div>
+            `,
+            category: () => `
+                <div class="form-group">
+                    <label for="category_name" class="block text-sm font-medium text-gray-700">Category Name *</label>
+                    <input type="text" id="category_name" name="category_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div class="form-group">
+                    <label for="category_slug" class="block text-sm font-medium text-gray-700">Slug *</label>
+                    <input type="text" id="category_slug" name="category_slug" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div class="form-group">
+                    <label for="category_description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea id="category_description" name="category_description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category_color" class="block text-sm font-medium text-gray-700">Color</label>
+                    <input type="color" id="category_color" name="category_color" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            `,
+                        subcategory: () => `
+                <div class="form-group">
+                    <label for="subcategory_name" class="block text-sm font-medium text-gray-700">Subcategory Name *</label>
+                    <input type="text" id="subcategory_name" name="subcategory_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div class="form-group">
+                    <label for="subcategory_slug" class="block text-sm font-medium text-gray-700">Slug *</label>
+                    <input type="text" id="subcategory_slug" name="subcategory_slug" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                 <div class="form-group">
+                    <label for="category_rowguid" class="block text-sm font-medium text-gray-700">Parent Category *</label>
+                    <select id="category_rowguid" name="category_rowguid" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                        <option value="">Select a category</option>
+                        ${categories.map(cat => `<option value="${cat.category_rowguid}">${cat.category_name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="subcategory_description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea id="subcategory_description" name="subcategory_description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+            `
+        };
+
+        function showCreateModal(type) {
+            currentItem = null;
+            currentItemType = type;
+            modalTitle.textContent = `Create New ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            modalForm.innerHTML = formTemplates[type] ? formTemplates[type]() : '';
+            modal.classList.remove('hidden');
+            modalContent.classList.remove('modal-leave');
+            modalContent.classList.add('modal-enter');
+            
+            // Initialize TinyMCE if it's an article form
+            if (type === 'article') {
+                setTimeout(() => initTinyMCE(), 300);
+            }
+        }
+
+        async function editItem(type, id) {
+            try {
+                currentItemType = type; // Set the type first so getItemTypePlural() works
+                currentItem = await apiCall(`${getItemTypePlural()}/${id}`);
+                modalTitle.textContent = `Edit ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+                modalForm.innerHTML = formTemplates[type] ? formTemplates[type]() : '';
+                populateForm(type, currentItem);
+                modal.classList.remove('hidden');
+                modalContent.classList.remove('modal-leave');
+                modalContent.classList.add('modal-enter');
+                
+                // Initialize TinyMCE if it's an article form
+                if (type === 'article') {
+                    setTimeout(() => initTinyMCE(), 300);
+                }
+            } catch (error) {
+                console.error('Failed to load item for editing:', error);
+            }
+        }
+
+        function populateForm(type, item) {
+            const form = document.getElementById('modal-form');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            
+            inputs.forEach(input => {
+                const fieldName = input.name;
+                if (item[fieldName] !== undefined) {
+                    if (input.type === 'checkbox') {
+                        input.checked = item[fieldName];
+                    } else if (input.type === 'datetime-local') {
+                        const date = new Date(item[fieldName]);
+                        input.value = date.toISOString().slice(0, 16);
+                    } else if (fieldName === 'article_tags') {
+                        // Convert array to comma-separated string for display
+                        const tags = Array.isArray(item[fieldName]) ? item[fieldName] : [];
+                        input.value = tags.join(', ');
+                    } else if (fieldName === 'article_categoryrowguid' && typeof item[fieldName] === 'object') {
+                        // Handle category object - extract the GUID
+                        input.value = item[fieldName].category_rowguid || '';
+                    } else if (fieldName === 'article_subcategoryrowguid') {
+                        // Handle subcategory object, string, or null
+                        if (item[fieldName] && typeof item[fieldName] === 'object') {
+                            input.value = item[fieldName].subcategory_rowguid || '';
+                        } else if (typeof item[fieldName] === 'string') {
+                            input.value = item[fieldName];
+                        } else {
+                            input.value = '';
+                        }
+                    } else {
+                        input.value = item[fieldName];
+                    }
+                }
+            });
+            
+            // Trigger category change event to populate subcategories
+            const categorySelect = form.querySelector('[name="article_categoryrowguid"]');
+            if (categorySelect && categorySelect.value) {
+                const event = new Event('change', { bubbles: true });
+                categorySelect.dispatchEvent(event);
+            }
+            
+            // Set TinyMCE content if it exists
+            if (typeof tinymce !== 'undefined' && tinymce.get('article_content') && item.article_content) {
+                tinymce.get('article_content').setContent(item.article_content);
+            } else if (item.article_content) {
+                // Set textarea value as fallback
+                const textarea = form.querySelector('#article_content');
+                if (textarea) {
+                    textarea.value = item.article_content;
+                }
+            }
+        }
+
+        function closeModal() {
+            // Remove TinyMCE instance when closing modal
+            if (typeof tinymce !== 'undefined') {
+                try {
+                    const editor = tinymce.get('article_content');
+                    if (editor) {
+                        editor.remove();
+                        console.log('TinyMCE removed on modal close');
+                    }
+                } catch (e) {
+                    console.log('TinyMCE cleanup error:', e);
+                }
+            }
+            
+            modalContent.classList.remove('modal-enter');
+            modalContent.classList.add('modal-leave');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function deleteItem(type, id) {
+            currentItemType = type; // Set the item type first
+            currentItem = { [getItemIdField()]: id }; // Now getItemIdField() will work correctly
+            deleteModal.classList.remove('hidden');
+            deleteModalContent.classList.remove('modal-leave');
+            deleteModalContent.classList.add('modal-enter');
+        }
+
+        function closeDeleteModal() {
+            deleteModalContent.classList.remove('modal-enter');
+            deleteModalContent.classList.add('modal-leave');
+            setTimeout(() => {
+                deleteModal.classList.add('hidden');
+            }, 300);
+        }
+
+        async function saveItem() {
+            const form = document.getElementById('modal-form');
+            const formData = new FormData(form);
+            const data = {};
+            
+            formData.forEach((value, key) => {
+                if (key === 'article_tags') {
+                    // Convert comma-separated string to array
+                    if (value && value.trim()) {
+                        data[key] = value.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+                    } else {
+                        data[key] = [];
+                    }
+                } else if (key === 'article_featured' || key === 'article_isopinion') {
+                    data[key] = form.querySelector(`[name="${key}"]`).checked;
+                } else if (key === 'article_subcategoryrowguid' && value === '') {
+                    // Convert empty string to null for subcategory
+                    data[key] = null;
+                } else if (key === 'article_categoryrowguid' && typeof value === 'object' && value.category_rowguid) {
+                    // Extract GUID from category object
+                    data[key] = value.category_rowguid;
+                } else if (key === 'article_subcategoryrowguid' && typeof value === 'object' && value.subcategory_rowguid) {
+                    // Extract GUID from subcategory object
+                    data[key] = value.subcategory_rowguid;
+                } else if (key === 'article_content') {
+                    // Skip the textarea value for article_content, we'll get it from TinyMCE
+                    return;
+                } else {
+                    data[key] = value;
+                }
+            });
+            
+            // Get TinyMCE content if it exists
+            if (typeof tinymce !== 'undefined' && tinymce.get('article_content')) {
+                data.article_content = tinymce.get('article_content').getContent();
+            } else {
+                // Fallback to textarea value if TinyMCE is not available
+                const textarea = form.querySelector('#article_content');
+                if (textarea) {
+                    data.article_content = textarea.value;
+                }
+            }
+            
+            console.log('💾 Saving item with data:', data);
+            console.log('💾 Current item:', currentItem);
+            console.log('💾 Item type:', getItemType());
+            console.log('💾 Item ID field:', getItemIdField());
+            
+            try {
+                if (currentItem) {
+                    // Update existing item
+                    const endpoint = `${getItemTypePlural()}/${currentItem[getItemIdField()]}`;
+                    console.log('💾 Update endpoint:', endpoint);
+                    await apiCall(endpoint, {
+                        method: 'PUT',
+                        body: JSON.stringify(data)
+                    });
+                    showNotification('Item updated successfully!', 'success');
+                } else {
+                    // Create new item
+                    const endpoint = `${getItemTypePlural()}`;
+                    console.log('💾 Create endpoint:', endpoint);
+                    await apiCall(endpoint, {
+                        method: 'POST',
+                        body: JSON.stringify(data)
+                    });
+                    showNotification('Item created successfully!', 'success');
+                }
+                
+                closeModal();
+                refreshData();
+            } catch (error) {
+                console.error('Failed to save item:', error);
+            }
+        }
+
+        function getItemType() {
+            console.log('🔍 Current item type:', currentItemType);
+            return currentItemType || 'unknown';
+        }
+
+        function getItemIdField() {
+            const type = getItemType();
+            switch (type) {
+                case 'category': return 'category_rowguid';
+                case 'subcategory': return 'subcategory_rowguid';
+                case 'article': return 'article_rowguid';
+                default: return 'id';
+            }
+        }
+
+        function getItemTypePlural() {
+            const type = getItemType();
+            switch (type) {
+                case 'category': return 'categories';
+                case 'subcategory': return 'subcategories';
+                case 'article': return 'articles';
+                default: return 'unknown';
+            }
+        }
+
+        async function confirmDelete() {
+            if (!currentItem) return;
+            
+            try {
+                const itemId = currentItem[getItemIdField()];
+                console.log('🗑️ Deleting item:', currentItem, 'ID:', itemId, 'Type:', getItemType());
+                
+                if (!itemId) {
+                    throw new Error('Item ID is undefined');
+                }
+                
+                const response = await apiCall(`${getItemTypePlural()}/${itemId}`, {
+                    method: 'DELETE'
+                });
+                
+                showNotification('Item deleted successfully!', 'success');
+                closeDeleteModal();
+                refreshData();
+            } catch (error) {
+                console.error('Failed to delete item:', error);
+                
+                // Handle validation errors
+                if (error.message && error.message.includes('Cannot delete')) {
+                    try {
+                        const errorData = JSON.parse(error.message.split('HTTP 400: ')[1]);
+                        showNotification(errorData.message || 'Cannot delete this item', 'error');
+                    } catch (parseError) {
+                        showNotification('Cannot delete this item - it may be in use', 'error');
+                    }
+                } else {
+                    showNotification('Failed to delete item', 'error');
+                }
+            }
+        }
+
+        function refreshData() {
+            switch (currentSection) {
+                case 'articles':
+                    loadArticles();
+                    break;
+                case 'categories':
+                    loadCategories();
+                    break;
+                case 'subcategories':
+                    loadSubcategories();
+                    break;
+                default:
+                    loadCategories();
+                    loadSubcategories();
+                    loadArticles();
+            }
+        }
+
+        // --- UTILITY FUNCTIONS ---
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
+            
+            if (type === 'success') {
+                notification.className += ' bg-green-500 text-white';
+            } else if (type === 'error') {
+                notification.className += ' bg-red-500 text-white';
+            } else {
+                notification.className += ' bg-blue-500 text-white';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize TinyMCE for article content
+        function initTinyMCE() {
+            if (typeof tinymce !== 'undefined') {
+                // Force remove any existing TinyMCE instance
+                try {
+                    const existingEditor = tinymce.get('article_content');
+                    if (existingEditor) {
+                        existingEditor.remove();
+                        console.log('Removed existing TinyMCE instance');
+                    }
+                } catch (e) {
+                    console.log('TinyMCE removal error:', e);
+                }
+                
+                // Wait a bit for the DOM to be ready and ensure cleanup is complete
+                setTimeout(() => {
+                    const textarea = document.getElementById('article_content');
+                    if (textarea) {
+                        // Double-check that no instance exists
+                        if (!tinymce.get('article_content')) {
+                            console.log('Initializing TinyMCE...');
+                            tinymce.init({
+                                selector: '#article_content',
+                                plugins: [
+                                // Core editing features
+                                'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                                // Your account includes a free trial of TinyMCE premium features
+                                // Try the most popular premium features until Jul 19, 2025:
+                                'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+                                ],
+                                toolbar: 'undo redo | blocks | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                tinycomments_mode: 'embedded',
+                                tinycomments_author: 'Author name',
+                                mergetags_list: [
+                                { value: 'First.Name', title: 'First Name' },
+                                { value: 'Email', title: 'Email' },
+                                ],
+                                ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                                setup: function(editor) {
+                                    console.log('TinyMCE initialized successfully');
+                                }
+                            });
+                        } else {
+                            console.log('TinyMCE instance still exists, forcing removal...');
+                            // Force remove and try again
+                            try {
+                                tinymce.remove('article_content');
+                                setTimeout(() => initTinyMCE(), 100);
+                            } catch (e) {
+                                console.log('Force removal failed:', e);
+                            }
+                        }
+                    } else {
+                        console.log('Textarea not found');
+                    }
+                }, 300);
+            } else {
+                console.log('TinyMCE not loaded yet');
+            }
+        }
+
+        // Handle category selection for subcategories in article form
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'article_categoryrowguid') {
+                const subcategorySelect = document.getElementById('article_subcategoryrowguid');
+                const categoryId = e.target.value;
+                
+                console.log('🔄 Category changed to:', categoryId);
+                console.log('🔄 Available subcategories:', subcategories);
+                
+                if (categoryId) {
+                    // Try different possible data structures
+                    const categorySubcategories = subcategories.filter(sub => {
+                        console.log('🔄 Checking subcategory:', sub);
+                        // Check if subcategory has category_rowguid directly
+                        if (sub.category_rowguid === categoryId) {
+                            return true;
+                        }
+                        // Check if subcategory has a nested category object
+                        if (sub.category && sub.category.category_rowguid === categoryId) {
+                            return true;
+                        }
+                        return false;
+                    });
+                    
+                    console.log('🔄 Filtered subcategories:', categorySubcategories);
+                    
+                    subcategorySelect.innerHTML = '<option value="">Select a subcategory (optional)</option>' +
+                        categorySubcategories.map(sub => `<option value="${sub.subcategory_rowguid}">${sub.subcategory_name}</option>`).join('');
+                } else {
+                    subcategorySelect.innerHTML = '<option value="">Select a subcategory (optional)</option>';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <div class="header-main">
+      <div class="header-flex-row header-3col">
+        <div class="header-date-widget">
+          <span class="weather-icon" title="Sunny">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><g><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g></svg>
+          </span>
+          <span class="weather-temp">80°F</span>
+          <span class="date-main"><span id="header-date"></span></span>
+          <div class="date-sub">Today's e-Edition</div>
+        </div>
+        <div class="header-logo-center">
+          <a href="/" class="logo">The Beltway Times</a>
+        </div>
+        <div class="header-search-icon">
+          <button id="openHeaderSearch" aria-label="Search" style="background:none;border:none;padding:0;cursor:pointer;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="header-navigation">
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="/" class="<%= currentSection === 'home' ? 'active' : '' %>">Home</a></li>
+          <% if (locals.categories && categories.length > 0) { %>
+            <% categories.forEach(function(category) { %>
+              <li><a href="/<%= category.category_slug %>" class="<%= currentSection === category.category_slug ? 'active' : '' %>"><%= category.category_name %></a></li>
+            <% }); %>
+          <% } %>
+          <li><a href="/about" class="<%= currentSection === 'about' ? 'active' : '' %>">About</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div id="headerSearchOverlay" class="header-search-overlay" style="display:none;">
+      <div class="header-search-bar-container container search-results">
+        <div class="header-search-logo-wrapper">
+          <a href="/" class="logo">The News Post</a>
+        </div>
+        <div class="header-search-divider"></div>
+        <form id="headerSearchForm" method="GET" action="/search">
+          <div class="search-bar-floating">
+            <input type="text" id="headerSearchInput" class="search-bar-input" name="q">
+            <label for="headerSearchInput" class="search-bar-label">Ask a question or search</label>
+            <button type="button" class="search-bar-clear" id="headerSearchClear" aria-label="Clear" style="display:none;">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <span class="search-bar-divider"></span>
+            <button type="submit" class="search-bar-icon" aria-label="Submit Search">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="9" cy="9" r="7" stroke="#888" stroke-width="1.3"/>
+                <line x1="14.2" y1="14.2" x2="18" y2="18" stroke="#888" stroke-width="1.3" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="header-search-overlay-bg"></div>
+    </div>
+  </header>
+  <main class="main-content"> 
+<script>
+// Set date in header widget
+(function() {
+var dateEl = document.getElementById('header-date');
+if (dateEl) {
+  var opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  var now = new Date();
+  dateEl.textContent = now.toLocaleDateString(undefined, opts);
+}
+})();
+
+// Make header-main sticky when scrolling
+(function() {
+var headerMain = document.querySelector('.header-main');
+var windowHeight = window.innerHeight;
+var scrollThreshold = windowHeight * 0.1;
+
+function handleScroll() {
+  var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  if (scrollTop > scrollThreshold) {
+    headerMain.classList.add('sticky', 'show');
+  } else {
+    headerMain.classList.remove('sticky', 'show');
+  }
+}
+
+// Throttle scroll events for better performance
+var ticking = false;
+function requestTick() {
+  if (!ticking) {
+    requestAnimationFrame(function() {
+      handleScroll();
+      ticking = false;
+    });
+    ticking = true;
+  }
+}
+
+window.addEventListener('scroll', requestTick);
+window.addEventListener('resize', function() {
+  windowHeight = window.innerHeight;
+  scrollThreshold = windowHeight * 0.1;
+});
+})();
+
+// Header search overlay logic
+(function() {
+var overlay = document.getElementById('headerSearchOverlay');
+var openBtn = document.getElementById('openHeaderSearch');
+var input = document.getElementById('headerSearchInput');
+var label = document.querySelector('#headerSearchOverlay .search-bar-label');
+var clearBtn = document.getElementById('headerSearchClear');
+var bg = document.querySelector('.header-search-overlay-bg');
+var searchContainer = document.querySelector('.header-search-bar-container');
+
+function showOverlay() {
+  overlay.style.display = 'block';
+  document.body.classList.add('noscroll'); // Disable scrolling
+  setTimeout(function() { input.focus(); }, 100);
+}
+function hideOverlay() {
+  overlay.style.display = 'none';
+  document.body.classList.remove('noscroll'); // Enable scrolling
+  input.value = '';
+  updateState();
+}
+function updateState() {
+  if (input.value) {
+    label.classList.add('float');
+    clearBtn.style.display = 'block';
+  } else {
+    label.classList.remove('float');
+    clearBtn.style.display = 'none';
+  }
+}
+openBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  showOverlay();
+});
+
+// Close when clicking the background, but not the search container itself
+overlay.addEventListener('click', function(e) {
+    if (e.target === bg) {
+        hideOverlay();
+    }
+});
+
+input.addEventListener('focus', function() { label.classList.add('float'); });
+input.addEventListener('blur', function() { if (!input.value) label.classList.remove('float'); });
+input.addEventListener('input', updateState);
+clearBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  input.value = '';
+  input.focus();
+  updateState();
+});
+document.addEventListener('keydown', function(e) {
+  if (overlay.style.display === 'block' && e.key === 'Escape') hideOverlay();
+});
+})();
+</script>

@@ -1,0 +1,133 @@
+<%- include('partials/header') %>
+
+<!-- Articles Grid -->
+<div class="container">
+    <!-- Category Header -->
+    <header class="category-header">
+        <div class="container">
+            <h1 class="category-title"><%= categoryInfo.category_name %></h1>
+            <p class="category-description"><%= categoryInfo.category_description %></p>
+            
+            <!-- Subcategory Navigation -->
+            <% if (categoryInfo.subcategories && categoryInfo.subcategories.length > 0) { %>
+                <nav class="category-nav">
+                    <a href="/<%= categoryInfo.category_slug %>" class="active">All</a>
+                    <% categoryInfo.subcategories.getItems().forEach(subcategory => { %>
+                        <a href="/<%= categoryInfo.category_slug %>/<%= subcategory.subcategory_slug %>"><%= subcategory.subcategory_name %></a>
+                    <% }); %>
+                </nav>
+            <% } %>
+        </div>
+    </header>
+
+    <% if (articles.length > 0) { %>
+        <div class="article-grid">
+            <!-- Main Articles -->
+            <div class="main-articles">
+                <% articles.forEach(article => { %>
+                    <article class="article-card">
+                        <div class="article-container-text">
+                            <div class="article-category">
+                                <% if (article.article_subcategoryrowguid) { %>
+                                    <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= article.article_subcategoryrowguid.subcategory_slug %>" class="subcategory-link">
+                                        <%= article.article_subcategoryrowguid.subcategory_name.charAt(0).toUpperCase() + article.article_subcategoryrowguid.subcategory_name.slice(1) %>
+                                    </a>
+                                <% } else { %>
+                                    <%= article.article_categoryrowguid ? article.article_categoryrowguid.category_name.charAt(0).toUpperCase() + article.article_categoryrowguid.category_name.slice(1) : 'News' %>
+                                <% } %>
+                                <% if (article.article_isopinion) { %>
+                                    <span class="article-type">• OPINION</span>
+                                <% } %>
+                            </div>
+                            
+                            <h2 class="article-headline">
+                                <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+                                    <%= article.article_headline %>
+                                </a>
+                            </h2>
+                            
+                            <p class="article-excerpt"><%- article.article_excerpt %></p>
+                            
+                            <div class="article-meta">
+                                <span class="article-author">By <%= article.article_author %></span>
+                                <span><%= new Date(article.article_publishedat).toLocaleDateString() %></span>
+                                <span><%= article.article_readtime %> min read</span>
+                                <% if (article.article_breaking) { %>
+                                    <span class="breaking-label">BREAKING</span>
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                        <div class="article-container-image">
+                            <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" class="article-image" onerror="this.src='/img/600x300.png'">
+                        </div>
+                    </article>
+                <% }); %>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Category Info -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">About <%= categoryInfo.category_name %></h3>
+                    <p class="sidebar-description"><%= categoryInfo.category_description %></p>
+                </div>
+
+                <!-- Subcategories -->
+                <% if (categoryInfo.subcategories && categoryInfo.subcategories.length > 0) { %>
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Subcategories</h3>
+                        <% categoryInfo.subcategories.getItems().forEach(subcategory => { %>
+                            <div class="sidebar-article">
+                                <h4 class="sidebar-headline">
+                                    <a href="/<%= categoryInfo.category_slug %>/<%= subcategory.subcategory_slug %>">
+                                        <%= subcategory.subcategory_name %>
+                                    </a>
+                                </h4>
+                                <p class="sidebar-subcategory-description"><%= subcategory.subcategory_description %></p>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+
+                <!-- Newsletter Signup
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Stay Updated</h3>
+                    <p class="mb-2 text-gray">Get the latest <%= categoryInfo.category_name.toLowerCase() %> news delivered to your inbox.</p>
+                    <form class="sidebar-subscribe-form">
+                        <input type="email" placeholder="Enter your email" class="sidebar-subscribe-input">
+                        <button type="submit" class="sidebar-subscribe-button">Subscribe</button>
+                    </form>
+                </div> -->
+
+                <!-- Trending in Category
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Trending in <%= categoryInfo.category_name %></h3>
+                    <% articles.slice(0, 3).forEach((article, index) => { %>
+                        <div class="sidebar-article">
+                            <h4 class="sidebar-headline">
+                                <span class="trending-rank"><%= index + 1 %></span>
+                                <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+                                    <%= article.article_headline %>
+                                </a>
+                            </h4>
+                            <div class="sidebar-meta">
+                                <span>By <%= article.article_author %></span>
+                                <span><%= new Date(article.article_publishedat).toLocaleDateString() %></span>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div> -->
+            </aside>
+        </div>
+    <% } else { %>
+        <!-- No Articles Found -->
+        <div class="no-articles-found">
+            <h2 class="no-articles-title">No articles found</h2>
+            <p class="no-articles-message">There are currently no articles in this category.</p>
+            <a href="/" class="no-articles-back">Back to Home</a>
+        </div>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %> 

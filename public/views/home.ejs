@@ -1,0 +1,232 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <!-- Top Story Card -->
+    <% if (featuredArticles && featuredArticles.length > 0) { %>
+      <section class="top-story-card">
+        <div class="top-story-image">
+          <img src="<%= featuredArticles[0].article_imageurl %>" alt="<%= featuredArticles[0].article_headline %>" onerror="this.src='/img/600x300.png'">
+        </div>
+        <div class="top-story-content">
+          <div class="article-category">
+            <%= featuredArticles[0].article_categoryrowguid && featuredArticles[0].article_categoryrowguid.category_name ? featuredArticles[0].article_categoryrowguid.category_name.charAt(0).toUpperCase() + featuredArticles[0].article_categoryrowguid.category_name.slice(1) : '' %>
+            <% if (featuredArticles[0].article_isopinion) { %>
+              <span class="article-type">• OPINION</span>
+            <% } %>
+          </div>
+          <h1 class="top-story-headline">
+            <a href="/<%= featuredArticles[0].article_categoryrowguid ? featuredArticles[0].article_categoryrowguid.category_slug : '' %>/<%= new Date(featuredArticles[0].article_publishedat).getFullYear() %>/<%= (new Date(featuredArticles[0].article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(featuredArticles[0].article_publishedat).getDate().toString().padStart(2, '0') %>/<%= featuredArticles[0].article_slug %>">
+              <%= featuredArticles[0].article_headline %>
+            </a>
+          </h1>
+          <p class="top-story-excerpt"><%- featuredArticles[0].article_excerpt %></p>
+          <div class="article-meta">
+            <span class="article-author">By <%= featuredArticles[0].article_author %></span>
+            <span><%= new Date(featuredArticles[0].article_publishedat).toLocaleDateString() %></span>
+            <span><%= featuredArticles[0].article_readtime %> min read</span>
+          </div>
+        </div>
+      </section>
+    <% } %>
+
+    <!-- Trending Section -->
+    <% if (featuredArticles && featuredArticles.length > 1) { %>
+      <section class="trending-section">
+        <h2 class="trending-title">Trending Now</h2>
+        <div class="trending-cards">
+          <% featuredArticles.slice(1, 4).forEach(function(article) { %>
+            <div class="trending-card">
+              <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" onerror="this.src='/img/600x300.png'">
+              <div class="trending-card-content">
+                <div class="article-category">
+                  <%= article.article_categoryrowguid && article.article_categoryrowguid.category_name ? article.article_categoryrowguid.category_name.charAt(0).toUpperCase() + article.article_categoryrowguid.category_name.slice(1) : '' %>
+                </div>
+                <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>" class="trending-headline">
+                  <%= article.article_headline %>
+                </a>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+
+    <div class="article-grid">
+        <div class="main-articles">
+            <% featuredArticles.forEach(article => { %>
+                <article class="article-card">
+                    <div class="article-container-text">
+                        <div class="article-category">
+                            <%= article.article_categoryrowguid && article.article_categoryrowguid.category_name ? article.article_categoryrowguid.category_name.charAt(0).toUpperCase() + article.article_categoryrowguid.category_name.slice(1) : '' %>
+                            <% if (article.article_isopinion) { %>
+                                <span class="article-type">• OPINION</span>
+                            <% } %>
+                        </div>
+                        <h2 class="article-headline">
+                            <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+                                <%= article.article_headline %>
+                            </a>
+                        </h2>
+                        <p class="article-excerpt"><%- article.article_excerpt %></p>
+                        <div class="article-meta">
+                            <span class="article-author">By <%= article.article_author %></span>
+                            <span><%= new Date(article.article_publishedat).toLocaleDateString() %></span>
+                            <span><%= article.article_readtime %> min read</span>
+                        </div>
+                    </div>                   
+                    <div class="article-container-image">
+                        <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" class="article-image" onerror="this.src='/img/600x300.png'">
+                    </div>             
+                </article>
+            <% }); %>
+        </div>
+
+        <aside class="sidebar">
+            <% if (opinionArticles.length > 0) { %>
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Editorials</h3>
+                    <% opinionArticles.forEach(article => { %>
+                        <div class="sidebar-article">
+                            <div class="sidebar-category">
+                                <%= article.article_categoryrowguid && article.article_categoryrowguid.category_name ? article.article_categoryrowguid.category_name.charAt(0).toUpperCase() + article.article_categoryrowguid.category_name.slice(1) : '' %>
+                                <% if (article.article_isopinion) { %>
+                                    <span class="article-type">• OPINION</span>
+                                <% } %>
+                            </div>
+                            <h4 class="sidebar-headline">
+                                <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+                                    <%= article.article_headline %>
+                                </a>
+                            </h4>
+                            <div class="sidebar-meta">
+                                <span>By <%= article.article_author %></span>
+                                <span><%= new Date(article.article_publishedat).toLocaleDateString() %></span>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+        </aside>
+    </div>
+
+<!-- Category Article Grid Section (LA Times style, compact, CSS only) -->
+<section class="category-article-section">
+    <% Object.keys(recentCategoryArticles).forEach(function(categorySlug) { 
+         var articles = recentCategoryArticles[categorySlug];
+         if (!articles || articles.length === 0) return;
+         var category = categories.find(c => c.category_slug === categorySlug);
+    %>
+      <div class="category-block">
+        <h2 class="category-block-header">
+          <%= category ? category.category_name : categorySlug %>
+        </h2>
+        <div class="category-article-row">
+          <% articles.forEach(function(article) { %>
+            <article class="category-article-card">
+              <div class="category-article-image">
+                <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" class="article-image">
+              </div>
+              <div class="category-article-text">
+                <div class="article-category">
+                  <%= category ? category.category_name : categorySlug %>
+                  <% if (article.article_isopinion) { %>
+                    <span class="article-type">• OPINION</span>
+                  <% } %>
+                </div>
+                <h3 class="article-headline">
+                  <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+                    <%= article.article_headline %>
+                  </a>
+                </h3>
+                <p class="article-excerpt">
+                  <%- article.article_excerpt %>
+                </p>
+                <div class="category-article-meta">
+                  <span class="article-author">By <%= article.article_author %></span>
+                  <span> | <%= new Date(article.article_publishedat).toLocaleDateString() %></span>
+                </div>
+              </div>
+            </article>
+          <% }); %>
+        </div>
+      </div>
+    <% }); %>
+</section>
+</div>
+
+<script>
+// NOTE: The script section is assumed to be unrelated to the featured articles view
+// and has been left unchanged as it references different HTML elements ('num1', 'contactForm', etc.).
+
+// Contact form submission
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message')
+    };
+    
+    const resultDiv = document.getElementById('contactResult');
+    resultDiv.innerHTML = '<div class="spinner"></div>';
+    
+    try {
+        const response = await fetch('/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            resultDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    ${result.message}
+                </div>
+            `;
+            this.reset();
+        } else {
+            resultDiv.innerHTML = `
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    ${result.message}
+                </div>
+            `;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                An error occurred while sending your message.
+            </div>
+        `;
+    }
+});
+</script>
+
+<style>
+  @media (max-width: 900px) {
+    .category-article-row {
+      flex-direction: column !important;
+      gap: 16px !important;
+    }
+    .category-article-row .article-card {
+      max-width: 100% !important;
+      min-width: 0 !important;
+      width: 100% !important;
+      box-sizing: border-box;
+      display: flex;
+    }
+    .category-article-row .article-container-image {
+      height: 140px !important;
+    }
+  }
+</style>
+
+<%- include('partials/footer') %>

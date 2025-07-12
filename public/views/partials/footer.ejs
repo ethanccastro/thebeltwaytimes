@@ -1,0 +1,64 @@
+    </main>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>News</h3>
+                <ul>
+                    <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                        <% categories.forEach(category => { %>
+                            <li><a href="/<%= category.category_slug %>"><%= category.category_name %></a></li>
+                            <% if (category.subcategories && category.subcategories.toArray().length > 0) { %>
+                                <% category.subcategories.toArray().forEach(subcategory => { %>
+                                    <li style="margin-left: 15px;"><a href="/<%= category.category_slug %>/<%= subcategory.subcategory_slug %>"><%= subcategory.subcategory_name %></a></li>
+                                <% }); %>
+                            <% } %>
+                        <% }); %>
+                    <% } %>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 The News Post. All rights reserved. | Privacy Policy | Terms of Service</p>
+        </div>
+    </footer>
+    <!-- Search functionality -->
+    <script>
+        // Search functionality
+        function performSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = `/search?q=${encodeURIComponent(query)}`;
+            }
+        }
+        // Handle search form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    performSearch();
+                });
+            }
+            // Handle search button clicks
+            const searchButton = document.getElementById('searchButton');
+            if (searchButton) {
+                searchButton.addEventListener('click', performSearch);
+            }
+        });
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const navMenu = document.querySelector('.nav-menu');
+            navMenu.classList.toggle('mobile-open');
+        }
+    </script>
+</body>
+</html> 
