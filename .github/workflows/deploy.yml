@@ -108,15 +108,25 @@ jobs:
     
     - name: Setup SSH key
       run: |
+        echo "Starting SSH key setup..."
         mkdir -p ~/.ssh
+        echo "Created .ssh directory"
         chmod 700 ~/.ssh
-        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
+        echo "Set .ssh permissions"
+        echo "Writing SSH key to file..."
+        printf '%s\n' "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
+        echo "SSH key written to file"
         chmod 600 ~/.ssh/deploy_key
+        echo "Set key file permissions"
+        echo "Adding host to known_hosts..."
         ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
         echo "SSH key setup completed"
+        echo "SSH directory contents:"
         ls -la ~/.ssh/
         echo "Key file first few lines:"
         head -3 ~/.ssh/deploy_key
+        echo "Key file size:"
+        wc -l ~/.ssh/deploy_key
     
     - name: Deploy to EC2
       run: |
