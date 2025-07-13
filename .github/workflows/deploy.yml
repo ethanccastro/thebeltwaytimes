@@ -119,7 +119,8 @@ jobs:
         chmod 600 ~/.ssh/deploy_key
         echo "Set key file permissions"
         echo "Adding host to known_hosts..."
-        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        echo "Host: ${{ secrets.EC2_HOST }}"
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || echo "ssh-keyscan failed, but continuing..."
         echo "SSH key setup completed"
         echo "SSH directory contents:"
         ls -la ~/.ssh/
