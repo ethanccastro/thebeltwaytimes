@@ -55,6 +55,12 @@ if [ -d "$APP_DIR" ] && [ "$(ls -A $APP_DIR)" ]; then
     log "Backup created: $BACKUP_FILE"
 fi
 
+# Backup .env file if it exists
+if [ -f "$APP_DIR/.env" ]; then
+    log "Backing up existing .env file"
+    sudo cp "$APP_DIR/.env" /tmp/.env.backup
+fi
+
 # Clean the app directory
 log "Cleaning application directory"
 sudo rm -rf "$APP_DIR"/*
@@ -67,6 +73,17 @@ sudo tar -xzf "$DEPLOYMENT_FILE" -C "$APP_DIR"
 log "Setting permissions"
 sudo chown -R $USER:$USER "$APP_DIR"
 sudo chmod -R 755 "$APP_DIR"
+
+# Restore .env file if it was backed up
+if [ -f "/tmp/.env.backup" ]; then
+    log "Restoring .env file"
+    sudo cp /tmp/.env.backup "$APP_DIR/.env"
+    sudo chown $USER:$USER "$APP_DIR/.env"
+    sudo chmod 600 "$APP_DIR/.env"
+    sudo rm /tmp/.env.backup
+else
+    log "No .env file found to restore"
+fi
 
 # Install dependencies
 log "Installing dependencies"
@@ -124,7 +141,23 @@ if systemctl is-active --quiet "$SERVICE_NAME"; then
     sudo journalctl -u "$SERVICE_NAME" --no-pager -n 20
 else
     error "❌ Deployment failed! $SERVICE_NAME is not running"
+    log "Service status:"
     sudo systemctl status "$SERVICE_NAME" --no-pager -l
+    log "Recent service logs:"
+    sudo journalctl -u "$SERVICE_NAME" --no-pager -n 30
+    log "Application directory contents:"
+    ls -la "$APP_DIR"
+    log "Checking if .env file exists:"
+    if [ -f "$APP_DIR/.env" ]; then
+        log "✅ .env file exists"
+        log "Database configuration:"
+        grep -E "DB_HOST|DB_USER|DB_NAME" "$APP_DIR/.env" || log "No database config found in .env"
+    else
+        log "❌ .env file missing"
+    fi
+    log "Trying to start application manually for debugging:"
+    cd "$APP_DIR"
+    timeout 10s node dist/index.js || log "Manual start failed (expected if no .env)"
     exit 1
 fi
 
