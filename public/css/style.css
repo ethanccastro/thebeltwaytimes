@@ -190,8 +190,6 @@ body.noscroll {
 }
 
 .header-main {
-    max-width: 1200px;
-    margin: 0 auto;
     padding: 15px 50px;
     min-height: var(--header-height);
 }
@@ -1415,7 +1413,8 @@ body.noscroll {
 .search-bar-floating {
   position: relative;
   min-width: 99vw;
-  padding: 0 .25rem;  
+  padding: 0 .25rem;
+  margin-top: .75rem;  
 }
 
 .search-bar-input {
@@ -1610,8 +1609,6 @@ body.noscroll {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
   box-sizing: border-box;
   position: relative;
 }
@@ -1805,11 +1802,6 @@ body.noscroll {
   transition: box-shadow 0.3s;
 }
 
-.header-wrapper .header-top,
-.header-wrapper .header-main {
-  max-width: 1200px;
-  margin: 0 auto;
-}
 
 /* --- Top Story Card --- */
 .top-story-card {
