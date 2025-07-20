@@ -158,7 +158,7 @@ If forms aren't working:
 ### Adding New IP Addresses
 To allow access from additional IP addresses, edit `src/controllers/adminController.ts`:
 ```typescript
-this.allowedIPs = ['127.0.0.1', '::1', 'localhost', '192.168.1.139', 'YOUR_NEW_IP'];
+this.allowedIPs = ['127.0.0.1', '::1', 'localhost', '192.168.1.139', 'sdsd'];
 ```
 
 ### Modifying Form Fields

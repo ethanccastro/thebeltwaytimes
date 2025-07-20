@@ -26,7 +26,7 @@ export class NewsController {
       opinionArticles = opinionArticles.filter(a => !featuredIdsSet.has(a.article_rowguid));
       const recentCategoryArticles = await this.dbService.getRecentArticlesByCategory(excludeIds, 3);
       res.render('home', {
-        title: 'The News Post - Breaking News, Latest Headlines',
+        title: 'The Beltway Times - Breaking News, Latest Headlines',
         featuredArticles,
         opinionArticles,
         categories,
@@ -71,7 +71,7 @@ export class NewsController {
       }
 
       res.render('category', {
-        title: `${categoryInfo.category_name} - The News Post`,
+        title: `${categoryInfo.category_name} - The Beltway Times`,
         articles,
         categoryInfo,
         currentSection: categorySlug
@@ -117,7 +117,7 @@ export class NewsController {
       }
 
       res.render('subcategory', {
-        title: `${subcategoryInfo.subcategory_name} - ${categoryInfo.category_name} - The News Post`,
+        title: `${subcategoryInfo.subcategory_name} - ${categoryInfo.category_name} - The Beltway Times`,
         articles,
         categoryInfo,
         subcategoryInfo,
@@ -175,7 +175,7 @@ export class NewsController {
       const categoryInfo = article.article_categoryrowguid;
 
       res.render('article', {
-        title: `${article.article_headline} - ${categoryInfo?.category_name || 'News'} - The News Post`,
+        title: `${article.article_headline} - ${categoryInfo?.category_name || 'News'} - The Beltway Times`,
         article,
         relatedArticles,
         categoryInfo,
@@ -201,7 +201,7 @@ export class NewsController {
       const results = await this.dbService.searchArticles(query);
       
       res.render('search', {
-        title: query ? `Search Results for "${query}" - The News Post` : 'Search Results - The News Post',
+        title: query ? `Search Results for "${query}" - The Beltway Times` : 'Search Results - The Beltway Times',
         results,
         query,
         currentSection: 'search'
@@ -222,7 +222,7 @@ export class NewsController {
   public getAbout = async (_req: Request, res: Response): Promise<void> => {
     try {
       res.render('about', {
-        title: 'About Us - The News Post',
+        title: 'About Us - The Beltway Times',
         currentSection: 'about'
       });
     } catch (error) {
