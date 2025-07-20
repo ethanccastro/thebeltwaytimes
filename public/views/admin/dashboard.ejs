@@ -12,8 +12,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- TinyMCE Rich Text Editor -->
-    <script src="https://cdn.tiny.cloud/1/skaxpieb2vgt8otgsen5gl03akxtafk7nvbdhcnce3ewn9du/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>    <style>
+    <!-- HugeRTE Rich Text Editor (MIT fork of TinyMCE) -->
+    <script src="https://cdn.jsdelivr.net/npm/hugerte@latest/hugerte.min.js"></script>    <style>
         /* Custom styles to complement Tailwind */
         body {
             font-family: 'Inter', sans-serif;
@@ -703,9 +703,9 @@
             modalContent.classList.remove('modal-leave');
             modalContent.classList.add('modal-enter');
             
-            // Initialize TinyMCE if it's an article form
+            // Initialize HugeRTE if it's an article form
             if (type === 'article') {
-                setTimeout(() => initTinyMCE(), 300);
+                setTimeout(() => initHugeRTE(), 300);
             }
         }
 
@@ -720,9 +720,9 @@
                 modalContent.classList.remove('modal-leave');
                 modalContent.classList.add('modal-enter');
                 
-                // Initialize TinyMCE if it's an article form
+                // Initialize HugeRTE if it's an article form
                 if (type === 'article') {
-                    setTimeout(() => initTinyMCE(), 300);
+                    setTimeout(() => initHugeRTE(), 300);
                 }
             } catch (error) {
                 console.error('Failed to load item for editing:', error);
@@ -770,9 +770,9 @@
                 categorySelect.dispatchEvent(event);
             }
             
-            // Set TinyMCE content if it exists
-            if (typeof tinymce !== 'undefined' && tinymce.get('article_content') && item.article_content) {
-                tinymce.get('article_content').setContent(item.article_content);
+            // Set HugeRTE content if it exists
+            if (typeof hugerte !== 'undefined' && hugerte.get('article_content') && item.article_content) {
+                hugerte.get('article_content').setContent(item.article_content);
             } else if (item.article_content) {
                 // Set textarea value as fallback
                 const textarea = form.querySelector('#article_content');
@@ -783,16 +783,16 @@
         }
 
         function closeModal() {
-            // Remove TinyMCE instance when closing modal
-            if (typeof tinymce !== 'undefined') {
+            // Remove HugeRTE instance when closing modal
+            if (typeof hugerte !== 'undefined') {
                 try {
-                    const editor = tinymce.get('article_content');
+                    const editor = hugerte.get('article_content');
                     if (editor) {
                         editor.remove();
-                        console.log('TinyMCE removed on modal close');
+                        console.log('HugeRTE removed on modal close');
                     }
                 } catch (e) {
-                    console.log('TinyMCE cleanup error:', e);
+                    console.log('HugeRTE cleanup error:', e);
                 }
             }
             
@@ -844,18 +844,18 @@
                     // Extract GUID from subcategory object
                     data[key] = value.subcategory_rowguid;
                 } else if (key === 'article_content') {
-                    // Skip the textarea value for article_content, we'll get it from TinyMCE
+                    // Skip the textarea value for article_content, we'll get it from HugeRTE
                     return;
                 } else {
                     data[key] = value;
                 }
             });
             
-            // Get TinyMCE content if it exists
-            if (typeof tinymce !== 'undefined' && tinymce.get('article_content')) {
-                data.article_content = tinymce.get('article_content').getContent();
+            // Get HugeRTE content if it exists
+            if (typeof hugerte !== 'undefined' && hugerte.get('article_content')) {
+                data.article_content = hugerte.get('article_content').getContent();
             } else {
-                // Fallback to textarea value if TinyMCE is not available
+                // Fallback to textarea value if HugeRTE is not available
                 const textarea = form.querySelector('#article_content');
                 if (textarea) {
                     data.article_content = textarea.value;
@@ -1012,18 +1012,18 @@
             }, 3000);
         }
 
-        // Initialize TinyMCE for article content
-        function initTinyMCE() {
-            if (typeof tinymce !== 'undefined') {
-                // Force remove any existing TinyMCE instance
+        // Initialize HugeRTE for article content
+        function initHugeRTE() {
+            if (typeof hugerte !== 'undefined') {
+                // Force remove any existing HugeRTE instance
                 try {
-                    const existingEditor = tinymce.get('article_content');
+                    const existingEditor = hugerte.get('article_content');
                     if (existingEditor) {
                         existingEditor.remove();
-                        console.log('Removed existing TinyMCE instance');
+                        console.log('Removed existing HugeRTE instance');
                     }
                 } catch (e) {
-                    console.log('TinyMCE removal error:', e);
+                    console.log('HugeRTE removal error:', e);
                 }
                 
                 // Wait a bit for the DOM to be ready and ensure cleanup is complete
@@ -1031,16 +1031,16 @@
                     const textarea = document.getElementById('article_content');
                     if (textarea) {
                         // Double-check that no instance exists
-                        if (!tinymce.get('article_content')) {
-                            console.log('Initializing TinyMCE...');
-                            tinymce.init({
+                        if (!hugerte.get('article_content')) {
+                            console.log('Initializing HugeRTE...');
+                            hugerte.init({
                                 selector: '#article_content',
                                 plugins: [
                                 // Core editing features
                                 'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
-                                // Your account includes a free trial of TinyMCE premium features
+                                // Your account includes a free trial of HugeRTE premium features
                                 // Try the most popular premium features until Jul 19, 2025:
-                                'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+                                'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'hugertespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
                                 ],
                                 toolbar: 'undo redo | blocks | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
                                 tinycomments_mode: 'embedded',
@@ -1051,15 +1051,15 @@
                                 ],
                                 ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
                                 setup: function(editor) {
-                                    console.log('TinyMCE initialized successfully');
+                                    console.log('HugeRTE initialized successfully');
                                 }
                             });
                         } else {
-                            console.log('TinyMCE instance still exists, forcing removal...');
+                            console.log('HugeRTE instance still exists, forcing removal...');
                             // Force remove and try again
                             try {
-                                tinymce.remove('article_content');
-                                setTimeout(() => initTinyMCE(), 100);
+                                hugerte.remove('article_content');
+                                setTimeout(() => initHugeRTE(), 100);
                             } catch (e) {
                                 console.log('Force removal failed:', e);
                             }
@@ -1069,7 +1069,7 @@
                     }
                 }, 300);
             } else {
-                console.log('TinyMCE not loaded yet');
+                console.log('HugeRTE not loaded yet');
             }
         }
 
