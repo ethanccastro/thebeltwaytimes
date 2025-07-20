@@ -37,7 +37,7 @@ CREATE TABLE article (
     article_categoryrowguid CHAR(36) NOT NULL,
     article_subcategoryrowguid CHAR(36),
     article_publishedat TIMESTAMP NOT NULL,
-    article_imageurl VARCHAR(500),
+    article_imageurl VARCHAR(4000),
     article_readtime INTEGER NOT NULL,
     article_tags JSON,
     article_featured BOOLEAN DEFAULT FALSE,

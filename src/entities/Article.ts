@@ -31,7 +31,7 @@ export class Article {
   @Property({ fieldName: 'article_publishedat' })
   article_publishedat!: Date;
 
-  @Property({ nullable: true, length: 500, fieldName: 'article_imageurl' })
+  @Property({ nullable: true, length: 4000, fieldName: 'article_imageurl' })
   article_imageurl?: string;
 
   @Property({ fieldName: 'article_readtime' })
