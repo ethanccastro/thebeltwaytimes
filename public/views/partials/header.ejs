@@ -9,14 +9,11 @@
   <header class="header">
     <div class="header-main">
       <div class="header-flex-row header-3col">
-        <div class="header-date-widget">
-          <span class="weather-icon" title="Sunny">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><g><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></g></svg>
-          </span>
-          <span class="weather-temp">80°F</span>
-          <span class="date-main"><span id="header-date"></span></span>
-          <div class="date-sub">Today's e-Edition</div>
-        </div>
+        <button class="hamburger-menu" id="hamburgerMenuBtn" aria-label="All Sections">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
         <div class="header-logo-center">
           <a href="/" class="logo">The Beltway Times</a>
         </div>
@@ -25,6 +22,17 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
           </button>
         </div>
+      </div>
+      <div id="hamburgerDropdown" class="hamburger-dropdown" style="display:none;">
+        <ul class="hamburger-menu-list">
+          <li><a href="/" class="<%= currentSection === 'home' ? 'active' : '' %>">Home</a></li>
+          <% if (locals.categories && categories.length > 0) { %>
+            <% categories.forEach(function(category) { %>
+              <li><a href="/<%= category.category_slug %>" class="<%= currentSection === category.category_slug ? 'active' : '' %>"><%= category.category_name %></a></li>
+            <% }); %>
+          <% } %>
+          <li><a href="/about" class="<%= currentSection === 'about' ? 'active' : '' %>">About</a></li>
+        </ul>
       </div>
     </div>
     <div class="header-navigation">
@@ -166,5 +174,18 @@ clearBtn.addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
   if (overlay.style.display === 'block' && e.key === 'Escape') hideOverlay();
 });
+})();
+
+// Hamburger menu toggle
+(function() {
+  var btn = document.getElementById('hamburgerMenuBtn');
+  var dropdown = document.getElementById('hamburgerDropdown');
+  document.addEventListener('click', function(e) {
+    if (btn.contains(e.target)) {
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    } else if (!dropdown.contains(e.target)) {
+      dropdown.style.display = 'none';
+    }
+  });
 })();
 </script>
