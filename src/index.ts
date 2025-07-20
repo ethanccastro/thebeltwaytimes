@@ -161,6 +161,7 @@ async function startServer() {
     // Set EJS as the view engine
     app.set('view engine', 'ejs');
     app.set('views', path.join(process.cwd(), 'public/views'));
+    app.set('trust proxy', true);
 
     // Body parser - MUST be before routes
     app.use(express.json());
