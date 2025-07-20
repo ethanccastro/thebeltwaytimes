@@ -9,7 +9,7 @@ export class AdminController {
   constructor(dbService: DatabaseService) {
     this.dbService = dbService;
     // Add your local IP addresses here for security
-    this.allowedIPs = ['127.0.0.1', '::1', 'localhost', '192.168.1.139'];
+    this.allowedIPs = ['127.0.0.1', '::1', 'localhost', '192.168.1.139', '162.207.201.37'];
   }
 
   private isAuthorized(req: Request): boolean {
