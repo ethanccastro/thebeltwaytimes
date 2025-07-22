@@ -352,15 +352,18 @@ function generateFormHTML(type) {
                     <input type="text" id="article_tags" name="article_tags" class="form-control" placeholder='["tag1", "tag2"]'>
                 </div>
                 <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="article_featured" name="article_featured"> Featured Article
-                    </label>
+                    <label><input type="checkbox" id="article_featured" name="article_featured"> Featured Article</label>
                 </div>
                 <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="article_isopinion" name="article_isopinion"> Opinion Article
-                    </label>
+                    <label><input type="checkbox" id="article_main" name="article_main"> Main Article</label>
                 </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="article_trending" name="article_trending"> Trending Article</label>
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="article_categoryblock" name="article_categoryblock"> Category Block Article</label>
+                </div>
+                <div id="exclusive-warning" style="color:red;display:none;margin-top:8px;">Only one of Featured, Main, Trending, or Category Block can be selected.</div>
             `;
         
         default:
@@ -401,7 +404,13 @@ async function saveItem() {
             } catch {
                 data[key] = [];
             }
-        } else if (key === 'article_featured' || key === 'article_isopinion') {
+        } else if (
+            key === 'article_featured' ||
+            key === 'article_isopinion' ||
+            key === 'article_main' ||
+            key === 'article_trending' ||
+            key === 'article_categoryblock'
+        ) {
             data[key] = form.querySelector(`[name="${key}"]`).checked;
         } else {
             data[key] = value;
@@ -603,6 +612,26 @@ document.addEventListener('change', function(e) {
                 categorySubcategories.map(sub => `<option value="${sub.subcategory_rowguid}">${sub.subcategory_name}</option>`).join('');
         } else {
             subcategorySelect.innerHTML = '<option value="">Select a subcategory (optional)</option>';
+        }
+    }
+    // Mutual exclusivity for article checkboxes
+    if (["article_featured","article_main","article_trending","article_categoryblock"].includes(e.target.id)) {
+        const ids = ["article_featured","article_main","article_trending","article_categoryblock"];
+        let checkedCount = 0;
+        let lastChecked = null;
+        ids.forEach(id => {
+            if (document.getElementById(id).checked) {
+                checkedCount++;
+                lastChecked = id;
+            }
+        });
+        if (checkedCount > 1) {
+            // Uncheck the one just checked
+            e.target.checked = false;
+            document.getElementById('exclusive-warning').style.display = 'block';
+            setTimeout(()=>{document.getElementById('exclusive-warning').style.display = 'none';}, 2500);
+        } else {
+            document.getElementById('exclusive-warning').style.display = 'none';
         }
     }
 }); 

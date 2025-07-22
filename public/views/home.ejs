@@ -30,11 +30,11 @@
     <% } %>
 
     <!-- Trending Section -->
-    <% if (featuredArticles && featuredArticles.length > 1) { %>
+    <% if (trendingArticles && trendingArticles.length > 0) { %>
       <section class="trending-section">
         <h2 class="trending-title">Trending Now</h2>
         <div class="trending-cards">
-          <% featuredArticles.slice(1, 4).forEach(function(article) { %>
+          <% trendingArticles.forEach(function(article) { %>
             <div class="trending-card">
               <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" onerror="this.src='/img/600x300.png'">
               <div class="trending-card-content">
@@ -53,7 +53,8 @@
 
     <div class="article-grid">
         <div class="main-articles">
-            <% featuredArticles.forEach(article => { %>
+            <% if (mainArticles && mainArticles.length > 0) { %>
+              <% mainArticles.forEach(article => { %>
                 <article class="article-card">
                     <div class="article-container-text">
                         <div class="article-category">
@@ -78,7 +79,8 @@
                         <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" class="article-image" onerror="this.src='/img/600x300.png'">
                     </div>             
                 </article>
-            <% }); %>
+              <% }); %>
+            <% } %>
         </div>
 
         <aside class="sidebar">
@@ -111,8 +113,8 @@
 
 <!-- Category Article Grid Section (LA Times style, compact, CSS only) -->
 <section class="category-article-section">
-    <% Object.keys(recentCategoryArticles).forEach(function(categorySlug) { 
-         var articles = recentCategoryArticles[categorySlug];
+    <% Object.keys(categoryBlockArticles).forEach(function(categorySlug) { 
+         var articles = categoryBlockArticles[categorySlug];
          if (!articles || articles.length === 0) return;
          var category = categories.find(c => c.category_slug === categorySlug);
     %>
@@ -138,9 +140,6 @@
                     <%= article.article_headline %>
                   </a>
                 </h3>
-                <p class="article-excerpt">
-                  <%- article.article_excerpt %>
-                </p>
                 <div class="category-article-meta">
                   <span class="article-author">By <%= article.article_author %></span>
                   <span> | <%= new Date(article.article_publishedat).toLocaleDateString() %></span>

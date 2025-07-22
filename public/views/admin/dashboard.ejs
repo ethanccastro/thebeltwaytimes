@@ -178,6 +178,9 @@
                                     <th scope="col" class="px-6 py-3">Category</th>
                                     <th scope="col" class="px-6 py-3">Published</th>
                                     <th scope="col" class="px-6 py-3">Type</th>
+                                    <th scope="col" class="px-6 py-3">Main</th>
+                                    <th scope="col" class="px-6 py-3">Trending</th>
+                                    <th scope="col" class="px-6 py-3">Category Block</th>
                                     <th scope="col" class="px-6 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -517,72 +520,81 @@
         }
 
         function renderArticlesTable(articles) {
-            const tbody = document.querySelector('#articles-table-body');
-            if (!tbody) return;
-            
-            if (articles.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                            <div class="flex flex-col items-center py-8">
-                                <i class="fas fa-newspaper text-4xl mb-4 text-gray-300"></i>
-                                <h3 class="text-lg font-medium mb-2">No Articles Found</h3>
-                                <p class="mb-4">Create your first article to get started.</p>
-                                <button class="btn-primary" onclick="showCreateModal('article')">
-                                    <i class="fas fa-plus mr-2"></i>Create Article
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            tbody.innerHTML = articles.map(article => {
-                // Determine article type badges
-                const typeBadges = [];
-                if (article.article_featured) {
-                    typeBadges.push('<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Featured</span>');
-                }
-                if (article.article_isopinion) {
-                    typeBadges.push('<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Opinion</span>');
-                }
-                if (!article.article_featured && !article.article_isopinion) {
-                    typeBadges.push('<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Regular</span>');
-                }
-                
-                return `
-                <tr class="bg-white border-b hover:bg-gray-50">
-                    <td class="px-6 py-4">
-                        <div>
-                            <div class="font-medium text-gray-900">${article.article_headline}</div>
-                            <div class="text-sm text-gray-500">${article.article_slug}</div>
+        const tbody = document.querySelector('#articles-table-body');
+        if (!tbody) return;
+
+        if (articles.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="px-6 py-4 text-center text-gray-500">
+                        <div class="flex flex-col items-center py-8">
+                            <i class="fas fa-newspaper text-4xl mb-4 text-gray-300"></i>
+                            <h3 class="text-lg font-medium mb-2">No Articles Found</h3>
+                            <p class="mb-4">Create your first article to get started.</p>
+                            <button class="btn-primary" onclick="showCreateModal('article')">
+                                <i class="fas fa-plus mr-2"></i>Create Article
+                            </button>
                         </div>
-                    </td>
-                    <td class="px-6 py-4 text-gray-600">${article.article_author}</td>
-                    <td class="px-6 py-4 text-gray-600">${article.article_categoryrowguid ? article.article_categoryrowguid.category_name : '-'}</td>
-                    <td class="px-6 py-4">
-                        <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                            ${new Date(article.article_publishedat).toLocaleDateString()}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex flex-wrap gap-1">
-                            ${typeBadges.join('')}
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        <button class="text-blue-600 hover:text-blue-900" onclick="editItem('article', '${article.article_rowguid}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="text-red-600 hover:text-red-900" onclick="deleteItem('article', '${article.article_rowguid}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
                     </td>
                 </tr>
             `;
-            }).join('');
+            return;
         }
+
+        tbody.innerHTML = articles.map(article => {
+            // Determine article type badges
+            const typeBadges = [];
+            if (article.article_featured) {
+                typeBadges.push('<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Featured</span>');
+            }
+            if (article.article_isopinion) {
+                typeBadges.push('<span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Opinion</span>');
+            }
+            if (typeBadges.length === 0) {
+                typeBadges.push('<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Regular</span>');
+            }
+
+            const renderCheckmark = (value) => {
+                return value 
+                    ? '<i class="fas fa-check-circle text-green-500" title="Yes"></i>' 
+                    : '<i class="fas fa-times-circle text-gray-400" title="No"></i>';
+            };
+
+            return `
+            <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-4">
+                    <div>
+                        <div class="font-medium text-gray-900">${article.article_headline}</div>
+                        <div class="text-sm text-gray-500">${article.article_slug}</div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-gray-600">${article.article_author}</td>
+                <td class="px-6 py-4 text-gray-600">${article.article_categoryrowguid ? article.article_categoryrowguid.category_name : '-'}</td>
+                <td class="px-6 py-4">
+                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        ${new Date(article.article_publishedat).toLocaleDateString()}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex flex-wrap gap-1">
+                        ${typeBadges.join('')}
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_main)}</td>
+                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_trending)}</td>
+                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_categoryblock)}</td>
+                <td class="px-6 py-4 text-right space-x-2">
+                    <button class="text-blue-600 hover:text-blue-900" onclick="editItem('article', '${article.article_rowguid}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-red-600 hover:text-red-900" onclick="deleteItem('article', '${article.article_rowguid}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+        }).join('');
+    }
 
         // --- MODAL LOGIC ---
         const modal = document.getElementById('modal');
@@ -651,6 +663,18 @@
                 <div class="form-group flex items-center">
                     <input type="checkbox" id="article_isopinion" name="article_isopinion" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                     <label for="article_isopinion" class="ml-2 block text-sm text-gray-700">Opinion Article</label>
+                </div>
+                <div class="form-group flex items-center">
+                    <input type="checkbox" id="article_main" name="article_main" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="article_main" class="ml-2 block text-sm text-gray-700">Main Article</label>
+                </div>
+                <div class="form-group flex items-center">
+                    <input type="checkbox" id="article_trending" name="article_trending" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                    <label for="article_trending" class="ml-2 block text-sm text-gray-700">Trending Article</label>
+                </div>
+                <div class="form-group flex items-center">
+                    <input type="checkbox" id="article_categoryblock" name="article_categoryblock" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                    <label for="article_categoryblock" class="ml-2 block text-sm text-gray-700">Category Block</label>
                 </div>
             `,
             category: () => `
@@ -820,80 +844,91 @@
         }
 
         async function saveItem() {
-            const form = document.getElementById('modal-form');
-            const formData = new FormData(form);
-            const data = {};
-            
-            formData.forEach((value, key) => {
-                if (key === 'article_tags') {
-                    // Convert comma-separated string to array
-                    if (value && value.trim()) {
-                        data[key] = value.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-                    } else {
-                        data[key] = [];
+        const form = document.getElementById('modal-form');
+        if (!form) return;
+
+        const data = {};
+        
+        // Manually iterate over form elements to correctly handle all values, especially unchecked checkboxes.
+        for (const el of form.elements) {
+            if (!el.name) continue;
+
+            switch (el.type) {
+                case 'checkbox':
+                    data[el.name] = el.checked;
+                    break;
+                case 'datetime-local':
+                case 'number':
+                case 'url':
+                case 'text':
+                case 'hidden':
+                case 'color':
+                    data[el.name] = el.value;
+                    break;
+                case 'select-one':
+                    data[el.name] = el.value;
+                    break;
+                case 'textarea':
+                    if (el.name !== 'article_content') { // Defer article_content to HugeRTE
+                        data[el.name] = el.value;
                     }
-                } else if (key === 'article_featured' || key === 'article_isopinion') {
-                    data[key] = form.querySelector(`[name="${key}"]`).checked;
-                } else if (key === 'article_subcategoryrowguid' && value === '') {
-                    // Convert empty string to null for subcategory
-                    data[key] = null;
-                } else if (key === 'article_categoryrowguid' && typeof value === 'object' && value.category_rowguid) {
-                    // Extract GUID from category object
-                    data[key] = value.category_rowguid;
-                } else if (key === 'article_subcategoryrowguid' && typeof value === 'object' && value.subcategory_rowguid) {
-                    // Extract GUID from subcategory object
-                    data[key] = value.subcategory_rowguid;
-                } else if (key === 'article_content') {
-                    // Skip the textarea value for article_content, we'll get it from HugeRTE
-                    return;
-                } else {
-                    data[key] = value;
-                }
-            });
-            
-            // Get HugeRTE content if it exists
-            if (typeof hugerte !== 'undefined' && hugerte.get('article_content')) {
-                data.article_content = hugerte.get('article_content').getContent();
-            } else {
-                // Fallback to textarea value if HugeRTE is not available
-                const textarea = form.querySelector('#article_content');
-                if (textarea) {
-                    data.article_content = textarea.value;
-                }
-            }
-            
-            console.log('💾 Saving item with data:', data);
-            console.log('💾 Current item:', currentItem);
-            console.log('💾 Item type:', getItemType());
-            console.log('💾 Item ID field:', getItemIdField());
-            
-            try {
-                if (currentItem) {
-                    // Update existing item
-                    const endpoint = `${getItemTypePlural()}/${currentItem[getItemIdField()]}`;
-                    console.log('💾 Update endpoint:', endpoint);
-                    await apiCall(endpoint, {
-                        method: 'PUT',
-                        body: JSON.stringify(data)
-                    });
-                    showNotification('Item updated successfully!', 'success');
-                } else {
-                    // Create new item
-                    const endpoint = `${getItemTypePlural()}`;
-                    console.log('💾 Create endpoint:', endpoint);
-                    await apiCall(endpoint, {
-                        method: 'POST',
-                        body: JSON.stringify(data)
-                    });
-                    showNotification('Item created successfully!', 'success');
-                }
-                
-                closeModal();
-                refreshData();
-            } catch (error) {
-                console.error('Failed to save item:', error);
+                    break;
             }
         }
+        
+        // Handle specific data transformations
+        
+        // Tags: Convert comma-separated string to array
+        if (data.article_tags && typeof data.article_tags === 'string') {
+            data.article_tags = data.article_tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+        } else {
+            data.article_tags = [];
+        }
+
+        // Subcategory: Convert empty string to null
+        if (data.article_subcategoryrowguid === '') {
+            data.article_subcategoryrowguid = null;
+        }
+
+        // Get content from the rich text editor
+        if (typeof hugerte !== 'undefined' && hugerte.get('article_content')) {
+            data.article_content = hugerte.get('article_content').getContent();
+        } else {
+            // Fallback for when RTE fails to initialize or is not present
+            const contentTextarea = form.querySelector('#article_content');
+            if (contentTextarea) {
+                data.article_content = contentTextarea.value;
+            }
+        }
+        
+        console.log('💾 Saving item with data:', data);
+
+        try {
+            if (currentItem) {
+                // Update existing item
+                const endpoint = `${getItemTypePlural()}/${currentItem[getItemIdField()]}`;
+                await apiCall(endpoint, {
+                    method: 'PUT',
+                    body: JSON.stringify(data)
+                });
+                showNotification('Item updated successfully!', 'success');
+            } else {
+                // Create new item
+                const endpoint = `${getItemTypePlural()}`;
+                await apiCall(endpoint, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                showNotification('Item created successfully!', 'success');
+            }
+            
+            closeModal();
+            refreshData();
+        } catch (error) {
+            console.error('Failed to save item:', error);
+            // The apiCall function already shows a notification on error
+        }
+    }
 
         function getItemType() {
             console.log('🔍 Current item type:', currentItemType);

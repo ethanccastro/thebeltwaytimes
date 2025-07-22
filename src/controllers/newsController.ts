@@ -16,21 +16,21 @@ export class NewsController {
       const featuredArticles = await this.dbService.getFeaturedArticles();
       let opinionArticles = await this.dbService.getOpinionArticles();
       const categories = await this.dbService.getAllCategories();
-      // Exclude only the currently displayed featured and opinion articles from category sections
-      const excludeIds = [
-        ...featuredArticles.map(a => a.article_rowguid),
-        ...opinionArticles.map(a => a.article_rowguid)
-      ];
+      // New: fetch main, trending, and category block articles by config
+      const mainArticles = await this.dbService.getMainArticles();
+      const trendingArticles = await this.dbService.getTrendingArticles();
+      const categoryBlockArticles = await this.dbService.getCategoryBlockArticles();
       // Exclude featured articles from the opinion sidebar
       const featuredIdsSet = new Set(featuredArticles.map(a => a.article_rowguid));
       opinionArticles = opinionArticles.filter(a => !featuredIdsSet.has(a.article_rowguid));
-      const recentCategoryArticles = await this.dbService.getRecentArticlesByCategory(excludeIds, 3);
       res.render('home', {
         title: 'The Beltway Times - Breaking News, Latest Headlines',
         featuredArticles,
         opinionArticles,
         categories,
-        recentCategoryArticles,
+        mainArticles,
+        trendingArticles,
+        categoryBlockArticles,
         currentSection: 'home'
       });
     } catch (error) {

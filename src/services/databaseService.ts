@@ -294,4 +294,41 @@ export class DatabaseService {
     }
     return result;
   }
+
+  async getMainArticles(limit: number = 10): Promise<Article[]> {
+    return await this.em.find(Article, { article_main: true }, {
+      populate: ['article_categoryrowguid', 'article_subcategoryrowguid'],
+      orderBy: { article_publishedat: 'DESC' },
+      limit
+    });
+  }
+
+  async getTrendingArticles(limit: number = 5): Promise<Article[]> {
+    return await this.em.find(Article, { article_trending: true }, {
+      populate: ['article_categoryrowguid', 'article_subcategoryrowguid'],
+      orderBy: { article_publishedat: 'DESC' },
+      limit
+    });
+  }
+
+  /**
+   * Get articles for each category block where article_categoryblock is true, grouped by category_slug.
+   */
+  async getCategoryBlockArticles(): Promise<{ [categorySlug: string]: Article[] }> {
+    const categories = await this.getAllCategories();
+    const result: { [categorySlug: string]: Article[] } = {};
+    for (const category of categories) {
+      const articles = await this.em.find(Article, {
+        article_categoryrowguid: category,
+        article_categoryblock: true
+      }, {
+        populate: ['article_categoryrowguid', 'article_subcategoryrowguid'],
+        orderBy: { article_publishedat: 'DESC' }
+      });
+      if (articles.length > 0) {
+        result[category.category_slug] = articles;
+      }
+    }
+    return result;
+  }
 } 

@@ -46,6 +46,15 @@ export class Article {
   @Property({ default: false, fieldName: 'article_isopinion' })
   article_isopinion: boolean = false;
 
+  @Property({ default: false, fieldName: 'article_main' })
+  article_main: boolean = false;
+
+  @Property({ default: false, fieldName: 'article_trending' })
+  article_trending: boolean = false;
+
+  @Property({ default: false, fieldName: 'article_categoryblock' })
+  article_categoryblock: boolean = false;
+
   @Property({ onCreate: () => new Date(), fieldName: 'article_createtime' })
   article_createtime: Date = new Date();
 

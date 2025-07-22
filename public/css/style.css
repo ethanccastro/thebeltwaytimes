@@ -360,7 +360,7 @@ body.noscroll {
 
 .article-headline a {
     font-family: var(--font-serif);
-    font-size: 26px;
+    font-size: 16.8px;
     font-weight: bold;
     line-height: 1.2;
 }
@@ -1047,19 +1047,28 @@ body.noscroll {
 }
 
 .category-article-card {
-  flex: 1 1 0;
-  min-width: 180px;
-  max-width: 220px;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
   display: flex;
   flex-direction: column;
-  text-align: left;
+  max-width: 260px;
+  min-width: 0;
+  width: 100%;
+  height: 340px; /* Set a fixed height for all cards */
+  box-sizing: border-box;
+  background: var(--news-card-bg);
+  box-shadow: var(--news-card-shadow);
+  border-radius: 10px;
+  margin-bottom: 0;
+  overflow: hidden;
 }
 
 .category-article-image {
-  height: 90px;
+  height: 110px;
+  flex-shrink: 0;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .category-article-image img {
@@ -1069,39 +1078,47 @@ body.noscroll {
 }
 
 .category-article-text {
-  padding: 16px 14px 12px 14px;
-  flex: 1;
   display: flex;
   flex-direction: column;
-  text-align: left;
+  flex: 1 1 0;
+  padding: 16px 14px 12px 14px;
+  min-height: 0;
 }
 
-.category-article-text .article-category,
-.category-article-text .article-headline,
-.category-article-text .article-excerpt,
-.category-article-text .category-article-meta {
-  text-align: left;
+.category-article-text .article-category {
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin-bottom: 4px;
 }
 
 .category-article-text .article-headline {
   margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--news-accent-blue);
+  line-height: 1.2;
 }
 
 .category-article-text .article-excerpt {
   color: #444;
   font-size: 0.97rem;
   margin-bottom: 8px;
-  flex: 1;
+  flex: 1 1 auto;
   line-height: 1.3;
   max-height: 2.6em;
   text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Show max 2 lines */
+  -webkit-box-orient: vertical;
 }
 
 .category-article-meta {
   font-size: 0.85rem;
   color: #888;
-  margin-top: 4px;
+  margin-top: auto; /* Pushes meta to the bottom */
   text-align: left;
+  flex-shrink: 0;
 }
 
 @media (max-width: 900px) {
@@ -2077,4 +2094,10 @@ body.noscroll {
   background: var(--news-accent);
   color: #fff;
   border-radius: 4px;
+}
+.category-article-card .article-excerpt {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }

@@ -314,11 +314,21 @@ export class AdminController {
         article_readtime,
         article_tags,
         article_featured,
-        article_isopinion
+        article_isopinion,
+        article_main,
+        article_trending,
+        article_categoryblock
       } = req.body;
       
       if (!article_headline || !article_slug || !article_content || !article_author || !article_categoryrowguid) {
         res.status(400).json({ error: 'Headline, slug, content, author, and category are required' });
+        return;
+      }
+
+      // Enforce mutual exclusivity
+      const exclusives = [article_featured, article_main, article_trending, article_categoryblock].filter(Boolean);
+      if (exclusives.length > 1) {
+        res.status(400).json({ error: 'Only one of Featured, Main, Trending, or Category Block can be selected.' });
         return;
       }
 
@@ -336,7 +346,10 @@ export class AdminController {
         article_readtime: article_readtime || 5,
         article_tags: Array.isArray(article_tags) ? article_tags : (article_tags ? article_tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0) : []),
         article_featured: article_featured || false,
-        article_isopinion: article_isopinion || false
+        article_isopinion: article_isopinion || false,
+        article_main: article_main || false,
+        article_trending: article_trending || false,
+        article_categoryblock: article_categoryblock || false
       };
 
       const article = await this.dbService.createArticle(articleData);
@@ -363,6 +376,13 @@ export class AdminController {
       // Handle empty subcategory field
       if (updateData.article_subcategoryrowguid === '') {
         updateData.article_subcategoryrowguid = null;
+      }
+      
+      // Enforce mutual exclusivity for update
+      const exclusives = [updateData.article_featured, updateData.article_main, updateData.article_trending, updateData.article_categoryblock].filter(Boolean);
+      if (exclusives.length > 1) {
+        res.status(400).json({ error: 'Only one of Featured, Main, Trending, or Category Block can be selected.' });
+        return;
       }
       
       const article = await this.dbService.updateArticle(id, updateData);
