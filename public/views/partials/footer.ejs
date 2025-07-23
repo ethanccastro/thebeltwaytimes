@@ -8,11 +8,6 @@
                     <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
                         <% categories.forEach(category => { %>
                             <li><a href="/<%= category.category_slug %>"><%= category.category_name %></a></li>
-                            <% if (category.subcategories && category.subcategories.toArray().length > 0) { %>
-                                <% category.subcategories.toArray().forEach(subcategory => { %>
-                                    <li style="margin-left: 15px;"><a href="/<%= category.category_slug %>/<%= subcategory.subcategory_slug %>"><%= subcategory.subcategory_name %></a></li>
-                                <% }); %>
-                            <% } %>
                         <% }); %>
                     <% } %>
                 </ul>
@@ -21,12 +16,12 @@
                 <h3>About</h3>
                 <ul>
                     <li><a href="/about">About Us</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <!-- <li><a href="#">Contact</a></li> -->
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 The Beltway Times. All rights reserved. | Privacy Policy | Terms of Service</p>
+            <p>&copy; 2025 The Beltway Times. All rights reserved.</p>
         </div>
     </footer>
     <!-- Search functionality -->
