@@ -139,14 +139,6 @@ body.noscroll {
 }
 
 
-
-.header-main.sticky .header-search-icon {
-    position: absolute;
-    right: 50px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
 .header-main.sticky .logo,
 .header-main.sticky.show .logo {
     color: #fff !important;
