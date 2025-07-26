@@ -1,133 +1,145 @@
 <%- include('partials/header') %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= article.article_headline %> - The Beltway Times</title>
-    <meta name="description" content="<%= article.article_excerpt %>">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            <%= article.article_headline %> - The Beltway Times
+        </title>
+        <meta name="description" content="<%= article.article_excerpt %>">
 
-    <meta property="og:title" content="<%= article.article_headline %>">
-    <meta property="og:description" content="<%= article.article_excerpt %>">
-    <meta property="og:image" content="<%= article.article_imageurl %>">
-    <meta property="og:url" content="https://www.thebeltwaytimes.com/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
-    <meta property="og:type" content="article">
-    <meta property="og:site_name" content="The Beltway Times">
+        <meta property="og:title" content="<%= article.article_headline %>">
+        <meta property="og:description" content="<%= article.article_excerpt %>">
+        <meta property="og:image" content="<%= article.article_imageurl %>">
+        <meta property="og:url"
+            content="https://www.thebeltwaytimes.com/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+        <meta property="og:type" content="article">
+        <meta property="og:site_name" content="The Beltway Times">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@thebeltwaytimes">
-    <meta name="twitter:title" content="<%= article.article_headline %>">
-    <meta name="twitter:description" content="<%= article.article_excerpt %>">
-    <meta name="twitter:image" content="<%= article.article_imageurl %>">
-</head>
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@thebeltwaytimes">
+        <meta name="twitter:title" content="<%= article.article_headline %>">
+        <meta name="twitter:description" content="<%= article.article_excerpt %>">
+        <meta name="twitter:image" content="<%= article.article_imageurl %>">
+    </head>
 
-<div class="container">
-    <header class="article-header">
-        <div>
-            <div class="article-category mb-2">
-                <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>" class="article-category-link text-red">
-                    <%= categoryInfo ?
-categoryInfo.category_name : (article.article_categoryrowguid ? article.article_categoryrowguid.category_name : 'News') %>
-                </a>
-                <% if (article.article_subcategoryrowguid) { %>
-                    <span class="mx-2">›</span>
-                    <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= article.article_subcategoryrowguid.subcategory_slug %>" class="article-subcategory-link text-gray">
-     
-                   <%= article.article_subcategoryrowguid.subcategory_name.charAt(0).toUpperCase() + article.article_subcategoryrowguid.subcategory_name.slice(1) %>
+    <div class="container">
+        <header class="article-header">
+            <div>
+                <div class="article-category mb-2">
+                    <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>"
+                        class="article-category-link text-red">
+                        <%= categoryInfo ? categoryInfo.category_name : (article.article_categoryrowguid ?
+                            article.article_categoryrowguid.category_name : 'News' ) %>
                     </a>
-                <% } %>
-                <% if (article.article_isopinion) { %>
-                   
- <span class="article-type">• OPINION</span>
-                <% } %>
-            </div>
-            <h1 class="article-title"><%= article.article_headline %></h1>
-            <div class="article-meta-large">
-                <span class="article-author-large">By <%= article.article_author %></span>
-                <span><%= new Date(article.article_publishedat).toLocaleDateString('en-US', 
-{ 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-           
-     }) %></span>
-                <span><%= article.article_readtime %> min read</span>
-            </div>
-            <p class="article-excerpt-large text-gray">
-                <%= article.article_excerpt %>
-            </p>
-        </div>
-    </header>
+                    <% if (article.article_subcategoryrowguid) { %>
+                        <span class="mx-2">›</span>
+                        <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= article.article_subcategoryrowguid.subcategory_slug %>"
+                            class="article-subcategory-link text-gray">
 
-    <article class="article-content">
-        <div>
-            <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" class="article-image-large" onerror="this.src='/img/600x300.png'">
-            <%- article.article_content %>
-            <% if (article.article_tags && article.article_tags.length > 0) { %>
-                <div 
-class="article-tags-section">
-                    <h4 class="mb-2 text-dark">Tags:</h4>
-                    <div class="article-tags-list d-flex flex-wrap gap-2">
-                        <% article.article_tags.forEach(tag => { %>
-                          
-  <span class="article-tag">
-                                <%= tag %>
-                            </span>
-                        <% });
-%>
+                            <%= article.article_subcategoryrowguid.subcategory_name.charAt(0).toUpperCase() +
+                                article.article_subcategoryrowguid.subcategory_name.slice(1) %>
+                        </a>
+                        <% } %>
+                            <% if (article.article_isopinion) { %>
+
+                                <span class="article-type">• OPINION</span>
+                                <% } %>
+                </div>
+                <h1 class="article-title">
+                    <%= article.article_headline %>
+                </h1>
+                <div class="article-meta-large">
+                    <span class="article-author-large">By <%= article.article_author %></span>
+                    <span>
+                        <%= new Date(article.article_publishedat).toLocaleDateString('en-US', { weekday: 'long' ,
+                            year: 'numeric' , month: 'long' , day: 'numeric' }) %>
+                    </span>
+                    <span>
+                        <%= article.article_readtime %> min read
+                    </span>
+                </div>
+                <p class="article-excerpt-large text-gray">
+                    <%= article.article_excerpt %>
+                </p>
+            </div>
+        </header>
+
+        <article class="article-content">
+            <div>
+                <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>"
+                    class="article-image-large" onerror="this.src='/img/600x300.png'">
+                <%- article.article_content %>
+                    <% if (article.article_tags && article.article_tags.length> 0) { %>
+                        <div class="article-tags-section">
+                            <h4 class="mb-2 text-dark">Tags:</h4>
+                            <div class="article-tags-list d-flex flex-wrap gap-2">
+                                <% article.article_tags.forEach(tag=> { %>
+
+                                    <span class="article-tag">
+                                        <%= tag %>
+                                    </span>
+                                    <% }); %>
+                            </div>
+                        </div>
+                        <% } %>
+            </div>
+        </article>
+
+        <% if (relatedArticles && relatedArticles.length> 0) { %>
+            <section class="related-articles">
+
+                <div>
+                    <h2 class="related-title">Related Articles</h2>
+                    <div class="related-grid">
+                        <% relatedArticles.forEach(article=> { %>
+                            <article class="article-card">
+
+                                <div class="article-container-text">
+                                    <div class="article-category">
+                                        <%= article.article_categoryrowguid ?
+                                            article.article_categoryrowguid.category_name.charAt(0).toUpperCase() +
+                                            article.article_categoryrowguid.category_name.slice(1) : 'News' %>
+
+                                            <% if (article.article_isopinion) { %>
+                                                <span class="article-type">• OPINION</span>
+
+                                                <% } %>
+                                    </div>
+                                    <h3 class="article-headline">
+
+                                        <a
+                                            href="/<%= article.article_categoryrowguid ?
+article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+                                            <%= article.article_headline %>
+                                        </a>
+
+                                    </h3>
+                                    <p class="article-excerpt"><%- article.article_excerpt %></p>
+                                    <div class="article-meta">
+
+                                        <span class="article-author">By <%= article.article_author %></span>
+                                        <span>
+                                            <%= new Date(article.article_publishedat).toLocaleDateString() %>
+                                        </span>
+
+                                        <span>
+                                            <%= article.article_readtime %> min read
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="article-container-image">
+                                    <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>"
+                                        class="article-image" onerror="this.src='/img/600x300.png'">
+                                </div>
+                            </article>
+
+                            <% }); %>
                     </div>
                 </div>
+            </section>
             <% } %>
-        </div>
-    </article>
+    </div>
 
-    <% if (relatedArticles && relatedArticles.length > 0) { %>
-        <section class="related-articles">
-          
-  <div>
-                <h2 class="related-title">Related Articles</h2>
-                <div class="related-grid">
-                    <% relatedArticles.forEach(article => { %>
-                        <article class="article-card">
-              
-              <div class="article-container-text">
-                                <div class="article-category">
-                                    <%= article.article_categoryrowguid ? article.article_categoryrowguid.category_name.charAt(0).toUpperCase() + article.article_categoryrowguid.category_name.slice(1) : 'News' %>
-        
-                            <% if (article.article_isopinion) { %>
-                                        <span class="article-type">• OPINION</span>
-                          
-          <% } %>
-                                </div>
-                                <h3 class="article-headline">
-                       
-             <a href="/<%= article.article_categoryrowguid ?
-article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
-                                        <%= article.article_headline %>
-                                    </a>
-    
-                            </h3>
-                                <p class="article-excerpt"><%- article.article_excerpt %></p>
-                                <div class="article-meta">
-    
-                                <span class="article-author">By <%= article.article_author %></span>
-                                    <span><%= new Date(article.article_publishedat).toLocaleDateString() %></span>
-                         
-           <span><%= article.article_readtime %> min read</span>
-                                </div>
-                            </div>
-                         
-   <div class="article-container-image">
-                                <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" class="article-image" onerror="this.src='/img/600x300.png'">
-                            </div>
-                        </article>
-    
-                <% });
-%>
-                </div>
-            </div>
-        </section>
-    <% } %>
-</div>
-
-<%- include('partials/footer') %>
+    <%- include('partials/footer') %>

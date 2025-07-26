@@ -260,7 +260,6 @@ body.noscroll {
     display: flex;
     flex-direction: column;
     gap: 30px;
-    font-family: "Playfair Display", serif;
     overflow-wrap: break-word;
     word-break: break-word;
 }
@@ -577,12 +576,6 @@ body.noscroll {
     line-height: 1.6;
 }
 
-.category-nav {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
 .category-nav a {
     padding: 10px 20px;
     background-color: var(--wapo-gray-light);
@@ -596,6 +589,69 @@ body.noscroll {
 .category-nav a.active {
     background-color: var(--wapo-red);
     color: var(--wapo-white);
+}
+
+/* --- New Category Navigation --- */
+
+/* Desktop Navigation (Tabs) */
+.category-nav-desktop {
+  margin-top: 30px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.category-nav-desktop ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+}
+
+.category-nav-desktop a {
+  display: block;
+  padding: 10px 5px;
+  color: var(--news-text-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px; /* To overlap the container's border */
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.category-nav-desktop a:hover {
+  color: var(--news-text-main);
+  border-bottom-color: var(--news-text-secondary);
+}
+
+.category-nav-desktop a.active {
+  color: var(--news-text-main);
+  border-bottom-color: var(--news-accent);
+}
+
+/* Mobile Navigation (Dropdown) */
+.category-nav-mobile {
+  display: none; /* Hidden by default */
+  margin-top: 20px;
+}
+
+.category-nav-mobile select {
+  width: 100%;
+  padding: 15px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 1em;
+  font-weight: 600;
+  color: var(--news-text-main);
 }
 
 /*---------------------------------------------------------------------*/
@@ -830,6 +886,21 @@ body.noscroll {
   }
   .newsletter-signup-card {
     padding: 18px 10px 14px 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .category-nav-desktop {
+    display: none;
+  }
+  .category-nav-mobile {
+    display: block;
+  }
+  .category-header {
+    padding: 20px;
+  }
+  .category-title {
+    font-size: 32px;
   }
 }
 

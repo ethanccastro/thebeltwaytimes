@@ -1,143 +1,221 @@
 <%- include('partials/header') %>
 
-<!-- Articles Grid --> 
-<div class="container">
-    <!-- Subcategory Header -->
-    <header class="category-header">
-        <div class="container">
-            <div style="margin-bottom: 15px;">
-                <a href="/<%= categoryInfo.category_slug %>" style="color: #666; text-decoration: none;">
-                    <%= categoryInfo.category_name %>
-                </a>
-                <span style="margin: 0 10px; color: #666;">›</span>
-                <span style="color: #333; font-weight: 600;"><%= subcategoryInfo.subcategory_name %></span>
-            </div>
-            
-            <h1 class="category-title"><%= subcategoryInfo.subcategory_name %></h1>
-            <p class="category-description"><%= subcategoryInfo.subcategory_description %></p>
-            
-            <!-- Breadcrumb Navigation -->
-            <nav class="category-nav">
-                <a href="/<%= categoryInfo.category_slug %>"><%= categoryInfo.category_name %></a>
-                <a href="/<%= categoryInfo.category_slug %>/<%= subcategoryInfo.subcategory_slug %>" class="active"><%= subcategoryInfo.subcategory_name %></a>
-            </nav>
-        </div>
-    </header>
-    <% if (articles.length > 0) { %>
-        <div class="article-grid">
-            <!-- Main Articles -->
-            <div class="main-articles">
-                <% articles.forEach(article => { %>
-                    <article class="article-card">
-                        <div class="article-container-text">
-                            <div class="article-category">
-                                <a href="/<%= article.article_categoryrowguid.category_slug %>/<%= article.article_subcategoryrowguid.subcategory_slug %>" style="color: #dc2626; text-decoration: none;">
-                                    <%= article.article_subcategoryrowguid.subcategory_name.charAt(0).toUpperCase() + article.article_subcategoryrowguid.subcategory_name.slice(1) %>
-                                </a>
-                                <% if (article.article_isopinion) { %>
-                                    <span class="article-type">• OPINION</span>
-                                <% } %>
-                            </div>
-                            
-                            <h2 class="article-headline">
-                                <a href="/<%= article.article_categoryrowguid.category_slug %>/<%= article.article_publishedat.getFullYear() %>/<%= (article.article_publishedat.getMonth() + 1).toString().padStart(2, '0') %>/<%= article.article_publishedat.getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
-                                    <%= article.article_headline %>
-                                </a>
-                            </h2>
-                            
-                            <p class="article-excerpt"><%- article.article_excerpt %></p>
-                            
-                            <div class="article-meta">
-                                <span class="article-author">By <%= article.article_author %></span>
-                                <span><%= article.article_publishedat.toLocaleDateString() %></span>
-                                <span><%= article.article_readtime %> min read</span>
-                                <% if (article.article_featured) { %>
-                                    <span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; font-weight: 600;">FEATURED</span>
-                                <% } %>
-                            </div>
-                        </div>
-                        
-                        <div class="article-container-image">
-                            <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" class="article-image" onerror="this.src='/img/600x300.png'">
-                        </div>
-                    </article>
-                <% }); %>
-            </div>
+    <div class="container">
+        <header class="category-header">
+            <div class="container">
+                <div style="margin-bottom: 15px;">
+                    <a href="/<%= categoryInfo.category_slug %>" style="color: #666; text-decoration: none;">
+                        <%= categoryInfo.category_name %>
 
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <!-- Subcategory Info -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">About <%= subcategoryInfo.subcategory_name %></h3>
-                    <p style="color: #666; line-height: 1.6;"><%= subcategoryInfo.subcategory_description %></p>
+                    </a>
+                    <span style="margin: 0 10px; color: #666;">›</span>
+                    <span style="color: #333; font-weight: 600;">
+                        <%= subcategoryInfo.subcategory_name %>
+                    </span>
                 </div>
 
-                <!-- Related Subcategories -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Other <%= categoryInfo.category_name %> Topics</h3>
-                    <% if (categoryInfo.subcategories && categoryInfo.subcategories.length > 0) { %>
-                        <% categoryInfo.subcategories.getItems().forEach(subcategory => { %>
-                            <% if (subcategory.subcategory_slug !== subcategoryInfo.subcategory_slug) { %>
-                                <div class="sidebar-article">
-                                    <h4 class="sidebar-headline">
-                                        <a href="/<%= categoryInfo.category_slug %>/<%= subcategory.subcategory_slug %>">
-                                            <%= subcategory.subcategory_name %>
-                                        </a>
-                                    </h4>
-                                    <p style="font-size: 14px; color: #666; margin-top: 5px;"><%= subcategory.subcategory_description %></p>
-                                </div>
-                            <% } %>
-                        <% }); %>
-                    <% } else { %>
-                        <p style="color: #666; font-style: italic;">No other subcategories available.</p>
+                <h1 class="category-title">
+                    <%= subcategoryInfo.subcategory_name %>
+                </h1>
+                <p class="category-description">
+                    <%= subcategoryInfo.subcategory_description %>
+                </p>
+
+                <% if (categoryInfo.subcategories && categoryInfo.subcategories.length> 0) { %>
+                    <nav class="category-nav-desktop">
+                        <ul>
+                            <li><a href="/<%= categoryInfo.category_slug %>">All</a></li>
+                            <% categoryInfo.subcategories.getItems().forEach(subcategory=> { %>
+                                <li>
+                                    <a href="/<%= categoryInfo.category_slug %>/<%= subcategory.subcategory_slug %>"
+                                        class="<%= (subcategoryInfo.subcategory_slug === subcategory.subcategory_slug) ? 'active' : '' %>">
+                                        <%= subcategory.subcategory_name %>
+                                    </a>
+                                </li>
+                                <% }); %>
+                        </ul>
+                    </nav>
+
+                    <div class="category-nav-mobile">
+                        <select onchange="window.location.href=this.value">
+                            <option value="/<%= categoryInfo.category_slug %>">All <%= categoryInfo.category_name %>
+                            </option>
+                            <% categoryInfo.subcategories.getItems().forEach(subcategory=> { %>
+                                <option value="/<%= categoryInfo.category_slug %>/<%= subcategory.subcategory_slug %>"
+                                    <%=(subcategoryInfo.subcategory_slug===subcategory.subcategory_slug) ? 'selected'
+                                    : '' %>>
+                                    <%= subcategory.subcategory_name %>
+                                </option>
+                                <% }); %>
+                        </select>
+                    </div>
                     <% } %>
-                </div>
 
-                <!-- Newsletter Signup -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Stay Updated</h3>
-                    <p style="margin-bottom: 20px; color: #666;">Get the latest <%= subcategoryInfo.subcategory_name.toLowerCase() %> news delivered to your inbox.</p>
-                    <form style="display: flex; gap: 10px;">
-                        <input type="email" placeholder="Enter your email" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-                        <button type="submit" style="background: #dc2626; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;">Subscribe</button>
-                    </form>
-                </div>
-
-                <!-- Trending in Subcategory -->
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Trending in <%= subcategoryInfo.subcategory_name %></h3>
-                    <% articles.slice(0, 3).forEach((article, index) => { %>
-                        <div class="sidebar-article">
-                            <h4 class="sidebar-headline">
-                                <span style="color: #dc2626; font-weight: 700; margin-right: 8px;"><%= index + 1 %></span>
-                                <a href="/<%= article.article_categoryrowguid.category_slug %>/<%= article.article_publishedat.getFullYear() %>/<%= (article.article_publishedat.getMonth() + 1).toString().padStart(2, '0') %>/<%= article.article_publishedat.getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
-                                    <%= article.article_headline %>
-                                </a>
-                            </h4>
-                            <div class="sidebar-meta">
-                                <span>By <%= article.article_author %></span>
-                                <span><%= article.article_publishedat.toLocaleDateString() %></span>
-                            </div>
-                        </div>
-                    <% }); %>
-                </div>
-            </aside>
-        </div>
-    <% } else { %>
-        <!-- No Articles Found -->
-        <div style="text-align: center; padding: 60px 0;">
-            <h2 style="font-size: 24px; margin-bottom: 15px; color: #333;">No articles found</h2>
-            <p style="color: #666; margin-bottom: 30px;">There are currently no articles in this subcategory.</p>
-            <div style="display: flex; justify-content: center; gap: 15px;">
-                <a href="/<%= categoryInfo.category_slug %>" style="background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">
-                    Back to <%= categoryInfo.category_name %>
-                </a>
-                <a href="/" style="background: #666; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">
-                    Back to Home
-                </a>
             </div>
-        </div>
-    <% } %>
-</div>
+        </header>
+        <% if (articles.length> 0) { %>
+            <div class="article-grid">
+                <div class="main-articles">
+                    <% articles.forEach(article=> { %>
+                        <article class="article-card">
 
-<%- include('partials/footer') %> 
+                            <div class="article-container-text">
+                                <div class="article-category">
+                                    <a href="/<%= article.article_categoryrowguid.category_slug %>/<%= article.article_subcategoryrowguid.subcategory_slug %>"
+                                        style="color: #dc2626;
+ text-decoration: none;">
+                                        <%= article.article_subcategoryrowguid.subcategory_name.charAt(0).toUpperCase()
+                                            + article.article_subcategoryrowguid.subcategory_name.slice(1) %>
+                                    </a>
+
+                                    <% if (article.article_isopinion) { %>
+                                        <span class="article-type">• OPINION</span>
+                                        <% } %>
+
+                                </div>
+
+                                <h2 class="article-headline">
+                                    <a
+                                        href="/<%= 
+ article.article_categoryrowguid.category_slug %>/<%= article.article_publishedat.getFullYear() %>/<%= (article.article_publishedat.getMonth() + 1).toString().padStart(2, '0') %>/<%= article.article_publishedat.getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+                                        <%= article.article_headline %>
+                                    </a>
+
+                                </h2>
+
+                                <p class="article-excerpt"><%- article.article_excerpt %></p>
+
+
+                                <div class="article-meta">
+                                    <span class="article-author">By <%= article.article_author %></span>
+                                    <span>
+                                        <%= article.article_publishedat.toLocaleDateString() %>
+                                    </span>
+
+                                    <span>
+                                        <%= article.article_readtime %> min read
+                                    </span>
+                                    <% if (article.article_featured) { %>
+
+                                        <span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;
+ font-weight: 600;">FEATURED</span>
+                                        <% } %>
+                                </div>
+                            </div>
+
+
+                            <div class="article-container-image">
+                                <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>"
+                                    class="article-image" onerror="this.src='/img/600x300.png'">
+                            </div>
+
+                        </article>
+                        <% }); %>
+                </div>
+
+                <aside class="sidebar">
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">About <%= subcategoryInfo.subcategory_name %>
+                        </h3>
+                        <p style="color: #666;
+ line-height: 1.6;">
+                            <%= subcategoryInfo.subcategory_description %>
+                        </p>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Other <%= categoryInfo.category_name %> Topics</h3>
+
+                        <% if (categoryInfo.subcategories && categoryInfo.subcategories.length> 0) { %>
+                            <% categoryInfo.subcategories.getItems().forEach(subcategory=> { %>
+                                <% if (subcategory.subcategory_slug !==subcategoryInfo.subcategory_slug) { %>
+
+                                    <div class="sidebar-article">
+                                        <h4 class="sidebar-headline">
+                                            <a
+                                                href="/<%= categoryInfo.category_slug %>/<%= subcategory.subcategory_slug %>">
+
+                                                <%= subcategory.subcategory_name %>
+                                            </a>
+
+                                        </h4>
+                                        <p style="font-size: 14px;
+ color: #666; margin-top: 5px;">
+                                            <%= subcategory.subcategory_description %>
+                                        </p>
+                                    </div>
+                                    <% } %>
+                                        <% }); %>
+
+                                            <% } else { %>
+                                                <p style="color: #666;
+ font-style: italic;">No other subcategories available.</p>
+                                                <% } %>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Stay
+                            Updated</h3>
+                        <p style="margin-bottom: 20px;
+ color: #666;">Get the latest <%= subcategoryInfo.subcategory_name.toLowerCase() %> news delivered to your inbox.</p>
+                        <form style="display: flex;
+ gap: 10px;">
+                            <input type="email" placeholder="Enter your email" style="flex: 1;
+ padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <button type="submit" style="background: #dc2626;
+ color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;">Subscribe</button>
+                        </form>
+                    </div>
+
+                    <div class="sidebar-section">
+
+                        <h3 class="sidebar-title">Trending in <%= subcategoryInfo.subcategory_name %>
+                        </h3>
+                        <% articles.slice(0, 3).forEach((article, index)=> { %>
+                            <div class="sidebar-article">
+                                <h4 class="sidebar-headline">
+
+                                    <span style="color: #dc2626; font-weight: 700; margin-right: 8px;">
+                                        <%= index + 1 %>
+                                    </span>
+                                    <a
+                                        href="/<%= article.article_categoryrowguid.category_slug %>/<%= article.article_publishedat.getFullYear() %>/<%= (article.article_publishedat.getMonth() + 1).toString().padStart(2, '0') %>/<%= article.article_publishedat.getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+
+                                        <%= article.article_headline %>
+                                    </a>
+                                </h4>
+
+                                <div class="sidebar-meta">
+                                    <span>By <%= article.article_author %></span>
+                                    <span>
+                                        <%= article.article_publishedat.toLocaleDateString() %>
+                                    </span>
+
+                                </div>
+                            </div>
+                            <% }); %>
+                    </div>
+                </aside>
+            </div>
+            <% } else { %>
+                <div style="text-align: center; padding: 60px 0;">
+                    <h2 style="font-size: 24px; margin-bottom: 15px; color: #333;">No articles found</h2>
+
+                    <p style="color: #666; margin-bottom: 30px;">There are currently no articles in this subcategory.
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 15px;">
+                        <a href="/<%= categoryInfo.category_slug %>"
+                            style="background: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">
+                            Back to <%= categoryInfo.category_name %>
+
+                        </a>
+                        <a href="/"
+                            style="background: #666; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px;">
+                            Back to Home
+                        </a>
+                    </div>
+                </div>
+                <% } %>
+    </div>
+
+    <%- include('partials/footer') %>
