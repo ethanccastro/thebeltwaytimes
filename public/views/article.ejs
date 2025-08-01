@@ -1,28 +1,4 @@
 <%- include('partials/header') %>
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>
-            <%= article.article_headline %> - The Beltway Times
-        </title>
-        <meta name="description" content="<%= article.article_excerpt %>">
-
-        <meta property="og:title" content="<%= article.article_headline %>">
-        <meta property="og:description" content="<%= article.article_excerpt %>">
-        <meta property="og:image" content="<%= article.article_imageurl %>">
-        <meta property="og:url"
-            content="https://www.thebeltwaytimes.com/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
-        <meta property="og:type" content="article">
-        <meta property="og:site_name" content="The Beltway Times">
-
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:site" content="@thebeltwaytimes">
-        <meta name="twitter:title" content="<%= article.article_headline %>">
-        <meta name="twitter:description" content="<%= article.article_excerpt %>">
-        <meta name="twitter:image" content="<%= article.article_imageurl %>">
-    </head>
-
     <div class="container">
         <header class="article-header">
             <div>

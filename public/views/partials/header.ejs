@@ -1,25 +1,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>
-    <%= title %>
-  </title>
+  <title><%= typeof title !== 'undefined' ? title : 'The Beltway Times' %></title>
+  
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
+
   <link rel="stylesheet" href="/css/style.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link rel="icon" type="image/png" sizes="16x16" href="../img/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="../img/favicon-32x32.png">
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4083750040120466"
-    crossorigin="anonymous"></script>
+  
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <% if (typeof article !== 'undefined') { %>
+    <meta name="description" content="<%= article.article_excerpt %>">
+    <meta property="og:title" content="<%= article.article_headline %>">
+    <meta property="og:description" content="<%= article.article_excerpt %>">
+    <meta property="og:image" content="<%= article.article_imageurl %>">
+    <meta property="og:url" content="https://www.thebeltwaytimes.com/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="The Beltway Times">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@thebeltwaytimes">
+    <meta name="twitter:title" content="<%= article.article_headline %>">
+    <meta name="twitter:description" content="<%= article.article_excerpt %>">
+    <meta name="twitter:image" content="<%= article.article_imageurl %>">
+  <% } %>
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4083750040120466" crossorigin="anonymous"></script>
   <meta name="google-adsense-account" content="ca-pub-4083750040120466">
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X487K0DR4H"></script>
+  
+  <script async src="https://www.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4083750040120466" crossorigin="anonymous"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
+    function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-X487K0DR4H');
   </script>
+
+  <% if (currentSection === 'admin') { %>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hugerte@latest/hugerte.min.js"></script>
+  <% } %>
 </head>
 
 <body>
@@ -35,10 +61,8 @@
           <a href="/" class="logo">The Beltway Times</a>
         </div>
         <div class="header-search-icon">
-          <button id="openHeaderSearch" aria-label="Search"
-            style="background:none;border:none;padding:0;cursor:pointer;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"
-              stroke-linecap="round" stroke-linejoin="round">
+          <button id="openHeaderSearch" aria-label="Search" style="background:none;border:none;padding:0;cursor:pointer;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="7" />
               <line x1="16.5" y1="16.5" x2="22" y2="22" />
             </svg>
@@ -48,15 +72,14 @@
       <div id="hamburgerDropdown" class="hamburger-dropdown" style="display:none;">
         <ul class="hamburger-menu-list">
           <li><a href="/" class="<%= currentSection === 'home' ? 'active' : '' %>">Home</a></li>
-          <% if (locals.categories && categories.length> 0) { %>
+          <% if (locals.categories && categories.length > 0) { %>
             <% categories.forEach(function(category) { %>
-              <li><a href="/<%= category.category_slug %>"
-                  class="<%= currentSection === category.category_slug ? 'active' : '' %>">
+              <li><a href="/<%= category.category_slug %>" class="<%= currentSection === category.category_slug ? 'active' : '' %>">
                   <%= category.category_name %>
                 </a></li>
               <% }); %>
-                <% } %>
-                  <li><a href="/about" class="<%= currentSection === 'about' ? 'active' : '' %>">About</a></li>
+          <% } %>
+          <li><a href="/about" class="<%= currentSection === 'about' ? 'active' : '' %>">About</a></li>
         </ul>
       </div>
     </div>
@@ -64,15 +87,14 @@
       <nav>
         <ul class="nav-menu">
           <li><a href="/" class="<%= currentSection === 'home' ? 'active' : '' %>">Home</a></li>
-          <% if (locals.categories && categories.length> 0) { %>
+          <% if (locals.categories && categories.length > 0) { %>
             <% categories.forEach(function(category) { %>
-              <li><a href="/<%= category.category_slug %>"
-                  class="<%= currentSection === category.category_slug ? 'active' : '' %>">
+              <li><a href="/<%= category.category_slug %>" class="<%= currentSection === category.category_slug ? 'active' : '' %>">
                   <%= category.category_name %>
                 </a></li>
               <% }); %>
-                <% } %>
-                  <li><a href="/about" class="<%= currentSection === 'about' ? 'active' : '' %>">About</a></li>
+          <% } %>
+          <li><a href="/about" class="<%= currentSection === 'about' ? 'active' : '' %>">About</a></li>
         </ul>
       </nav>
     </div>
@@ -86,8 +108,7 @@
           <div class="search-bar-floating">
             <input type="text" id="headerSearchInput" class="search-bar-input" name="q">
             <label for="headerSearchInput" class="search-bar-label">Ask a question or search</label>
-            <button type="button" class="search-bar-clear" id="headerSearchClear" aria-label="Clear"
-              style="display:none;">
+            <button type="button" class="search-bar-clear" id="headerSearchClear" aria-label="Clear" style="display:none;">
               <span aria-hidden="true">&times;</span>
             </button>
             <span class="search-bar-divider"></span>
@@ -105,7 +126,6 @@
   </header>
   <main class="main-content">
     <script>
-      // Set date in header widget
       (function () {
         var dateEl = document.getElementById('header-date');
         if (dateEl) {
@@ -114,8 +134,6 @@
           dateEl.textContent = now.toLocaleDateString(undefined, opts);
         }
       })();
-
-      // Make header-main sticky when scrolling
       (function () {
         var headerMain = document.querySelector('.header-main');
         var windowHeight = window.innerHeight;
@@ -129,8 +147,6 @@
             headerMain.classList.remove('sticky', 'show');
           }
         }
-
-        // Throttle scroll events for better performance
         var ticking = false;
         function requestTick() {
           if (!ticking) {
@@ -141,15 +157,12 @@
             ticking = true;
           }
         }
-
         window.addEventListener('scroll', requestTick);
         window.addEventListener('resize', function () {
           windowHeight = window.innerHeight;
           scrollThreshold = windowHeight * 0.1;
         });
       })();
-
-      // Header search overlay logic
       (function () {
         var overlay = document.getElementById('headerSearchOverlay');
         var openBtn = document.getElementById('openHeaderSearch');
@@ -161,12 +174,12 @@
 
         function showOverlay() {
           overlay.style.display = 'block';
-          document.body.classList.add('noscroll'); // Disable scrolling
+          document.body.classList.add('noscroll');
           setTimeout(function () { input.focus(); }, 100);
         }
         function hideOverlay() {
           overlay.style.display = 'none';
-          document.body.classList.remove('noscroll'); // Enable scrolling
+          document.body.classList.remove('noscroll');
           input.value = '';
           updateState();
         }
@@ -183,14 +196,11 @@
           e.preventDefault();
           showOverlay();
         });
-
-        // Close when clicking the background, but not the search container itself
         overlay.addEventListener('click', function (e) {
           if (e.target === bg) {
             hideOverlay();
           }
         });
-
         input.addEventListener('focus', function () { label.classList.add('float'); });
         input.addEventListener('blur', function () { if (!input.value) label.classList.remove('float'); });
         input.addEventListener('input', updateState);
@@ -204,8 +214,6 @@
           if (overlay.style.display === 'block' && e.key === 'Escape') hideOverlay();
         });
       })();
-
-      // Hamburger menu toggle
       (function () {
         var btn = document.getElementById('hamburgerMenuBtn');
         var dropdown = document.getElementById('hamburgerDropdown');
@@ -217,4 +225,4 @@
           }
         });
       })();
-    </script>
+  </script>
