@@ -310,6 +310,10 @@ body.noscroll {
   border-radius: 0 6px 6px 0;
 }
 
+.article-image-large {
+  padding-bottom: 48px;
+}
+
 .article-card {
     background-color: var(--wapo-white);
     border: 1px solid var(--wapo-gray-light);
