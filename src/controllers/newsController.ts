@@ -235,24 +235,51 @@ export class NewsController {
     }
   };
 
-  public getSitemap = async (_req: Request, res: Response): Promise<void> => {
+  public getSitemapXml = async (_req: Request, res: Response): Promise<void> => {
     try {
+      const baseUrl = `${_req.protocol}://${_req.get('host')}`;
       const articles = await this.dbService.getAllArticles();
       const categories = await this.dbService.getCategoriesWithSubcategories();
+
+      res.header('Content-Type', 'application/xml');
+      res.header('Content-Encoding', 'UTF-8');
       
-      res.render('sitemap', {
-        title: 'Sitemap - The Beltway Times',
-        categories,
-        articles,
-        currentSection: 'sitemap'
+      let xml = '<?xml version="1.0" encoding="UTF-8"?>';
+      xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+
+      // Add static pages
+      xml += `<url><loc>${baseUrl}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`;
+      xml += `<url><loc>${baseUrl}/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`;
+
+      // Add category pages
+      categories.forEach(category => {
+        xml += `<url><loc>${baseUrl}/${category.category_slug}</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>`;
+        // Add subcategory pages
+        if (category.subcategories) {
+            category.subcategories.getItems().forEach(sub => {
+                 xml += `<url><loc>${baseUrl}/${category.category_slug}/${sub.subcategory_slug}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`;
+            });
+        }
       });
+
+      // Add article pages
+      articles.forEach(article => {
+        const pubDate = new Date(article.article_publishedat);
+        const urlDate = `${pubDate.getFullYear()}/${(pubDate.getMonth() + 1).toString().padStart(2, '0')}/${pubDate.getDate().toString().padStart(2, '0')}`;
+        const articleUrl = `${baseUrl}/${article.article_categoryrowguid.category_slug}/${urlDate}/${article.article_slug}`;
+        
+        // Format date to YYYY-MM-DD for lastmod
+        const lastMod = pubDate.toISOString().split('T')[0];
+
+        xml += `<url><loc>${articleUrl}</loc><lastmod>${lastMod}</lastmod><changefreq>never</changefreq><priority>0.7</priority></url>`;
+      });
+
+      xml += '</urlset>';
+      res.send(xml);
+
     } catch (error) {
-      console.error('Error in getSitemap:', error);
-      res.status(500).render('error', {
-        title: 'Error',
-        message: 'An error occurred while loading the sitemap',
-        currentSection: 'error'
-      });
+      console.error('Error generating XML sitemap:', error);
+      res.status(500).send('Error generating sitemap');
     }
   };
 } 
