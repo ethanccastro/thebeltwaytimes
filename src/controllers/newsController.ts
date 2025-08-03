@@ -234,4 +234,25 @@ export class NewsController {
       });
     }
   };
+
+  public getSitemap = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const articles = await this.dbService.getAllArticles();
+      const categories = await this.dbService.getCategoriesWithSubcategories();
+      
+      res.render('sitemap', {
+        title: 'Sitemap - The Beltway Times',
+        categories,
+        articles,
+        currentSection: 'sitemap'
+      });
+    } catch (error) {
+      console.error('Error in getSitemap:', error);
+      res.status(500).render('error', {
+        title: 'Error',
+        message: 'An error occurred while loading the sitemap',
+        currentSection: 'error'
+      });
+    }
+  };
 } 

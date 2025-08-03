@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <header class="category-header">
+        <h1 class="category-title">Sitemap</h1>
+        <p class="category-description">
+            A complete overview of all pages on The Beltway Times.
+        </p>
+    </header>
+
+    <div class="sitemap-container" style="background: #fff; padding: 30px; border-radius: 8px;">
+        <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;">Main Pages</h2>
+        <ul style="list-style: none; padding-left: 0; margin-bottom: 30px;">
+            <li style="margin-bottom: 10px;"><a href="/" style="text-decoration: none; color: #dc2626;">Home</a></li>
+            <li style="margin-bottom: 10px;"><a href="/about" style="text-decoration: none; color: #dc2626;">About</a></li>
+        </ul>
+
+        <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px;">Categories & Articles</h2>
+        <ul style="list-style: none; padding-left: 0;">
+            <% categories.forEach(category => { %>
+                <li style="margin-bottom: 20px;">
+                    <a href="/<%= category.category_slug %>" style="font-size: 1.2rem; font-weight: 600; text-decoration: none; color: #333;"><%= category.category_name %></a>
+                    
+                    <% const categoryArticles = articles.filter(a => a.article_categoryrowguid.category_rowguid === category.category_rowguid && !a.article_subcategoryrowguid); %>
+                    <% if (categoryArticles.length > 0) { %>
+                        <ul style="list-style: disc; padding-left: 20px; margin-top: 10px;">
+                            <% categoryArticles.forEach(article => { %>
+                                <li style="margin-bottom: 8px;">
+                                    <a href="/<%= article.article_categoryrowguid.category_slug %>/<%= article.article_publishedat.getFullYear() %>/<%= (article.article_publishedat.getMonth() + 1).toString().padStart(2, '0') %>/<%= article.article_publishedat.getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>" style="text-decoration: none; color: #dc2626;"><%= article.article_headline %></a>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+
+                    <% if (category.subcategories && category.subcategories.length > 0) { %>
+                        <ul style="list-style: none; padding-left: 20px; margin-top: 10px;">
+                            <% category.subcategories.getItems().forEach(subcategory => { %>
+                                <li style="margin-bottom: 15px;">
+                                    <a href="/<%= category.category_slug %>/<%= subcategory.subcategory_slug %>" style="font-weight: 500; text-decoration: none; color: #555;"><%= subcategory.subcategory_name %></a>
+                                    
+                                    <% const subcategoryArticles = articles.filter(a => a.article_subcategoryrowguid && a.article_subcategoryrowguid.subcategory_rowguid === subcategory.subcategory_rowguid); %>
+                                    <% if (subcategoryArticles.length > 0) { %>
+                                        <ul style="list-style: disc; padding-left: 20px; margin-top: 8px;">
+                                            <% subcategoryArticles.forEach(article => { %>
+                                                <li style="margin-bottom: 8px;">
+                                                    <a href="/<%= article.article_categoryrowguid.category_slug %>/<%= article.article_publishedat.getFullYear() %>/<%= (article.article_publishedat.getMonth() + 1).toString().padStart(2, '0') %>/<%= article.article_publishedat.getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>" style="text-decoration: none; color: #dc2626;"><%= article.article_headline %></a>
+                                                </li>
+                                            <% }); %>
+                                        </ul>
+                                    <% } %>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

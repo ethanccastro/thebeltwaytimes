@@ -72,6 +72,8 @@ async function setupRoutes() {
   app.get('/', (req, res) => {
     newsController.getHome(req,res);
   });
+
+  app.get('/sitemap', newsController.getSitemap);
   
   // Admin routes (protected by IP)
   app.get('/admin', adminController.authMiddleware, adminController.getDashboard);
