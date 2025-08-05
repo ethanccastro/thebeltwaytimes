@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class AdminController {
   private dbService: DatabaseService;
   private allowedIPs: string[];
+  private categoryImageVisibility: { [key: string]: boolean } = {};  
 
   constructor(dbService: DatabaseService) {
     this.dbService = dbService;
@@ -411,4 +412,29 @@ export class AdminController {
       res.status(500).json({ error: 'Failed to delete article' });
     }
   };
+
+  public getCategoryImageVisibility = async (req: Request, res: Response): Promise<void> => {
+    try {
+      res.json(this.categoryImageVisibility);
+    } catch (error) {
+      console.error('Error fetching category image visibility:', error);
+      res.status(500).json({ error: 'Failed to fetch settings' });
+    }
+  };
+
+  public updateCategoryImageVisibility = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { categoryId, visible } = req.body;
+      if (typeof categoryId !== 'string' || typeof visible !== 'boolean') {
+        res.status(400).json({ error: 'Invalid request body' });
+        return;
+      }
+      this.categoryImageVisibility[categoryId] = visible;
+      console.log('🖼️ Category image visibility updated:', this.categoryImageVisibility);
+      res.json({ success: true, message: 'Settings updated' });
+    } catch (error) {
+      console.error('Error updating category image visibility:', error);
+      res.status(500).json({ error: 'Failed to update settings' });
+    }
+  };  
 } 

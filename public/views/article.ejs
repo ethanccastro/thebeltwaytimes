@@ -43,22 +43,19 @@
 
         <article class="article-content">
             <div>
+                <% const categoryId = article.article_categoryrowguid ? article.article_categoryrowguid.category_rowguid : null; %>
+                <% const showImage = !locals.categoryImageVisibility || locals.categoryImageVisibility[categoryId] !== false; %>
+                
+                <% if (showImage) { %>
                 <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>"
                     class="article-image-large" onerror="this.src='/img/600x300.png'">
+                <% } %>
+        
                 <%- article.article_content %>
-                    <% if (article.article_tags && article.article_tags.length> 0) { %>
-                        <div class="article-tags-section">
-                            <h4 class="mb-2 text-dark">Tags:</h4>
-                            <div class="article-tags-list d-flex flex-wrap gap-2">
-                                <% article.article_tags.forEach(tag=> { %>
-
-                                    <span class="article-tag">
-                                        <%= tag %>
-                                    </span>
-                                    <% }); %>
-                            </div>
+                <% if (article.article_tags && article.article_tags.length > 0) { %>
+                    <div class="article-tags-section">
                         </div>
-                        <% } %>
+                <% } %>
             </div>
         </article>
 

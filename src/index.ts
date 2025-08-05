@@ -50,14 +50,18 @@ async function setupViewMiddleware() {
     try {
       const categories = await dbService.getCategoriesWithSubcategories();
       res.locals.categories = categories;
+      // Pass the settings to the views
+      res.locals.categoryImageVisibility = adminController['categoryImageVisibility'];
       next();
     } catch (error) {
       console.error('Error loading categories for view:', error);
       res.locals.categories = [];
+      res.locals.categoryImageVisibility = {};
       next();
     }
   });
 }
+
 
 // Dynamic route setup function
 async function setupRoutes() {
@@ -77,7 +81,8 @@ async function setupRoutes() {
   
   // Admin routes (protected by IP)
   app.get('/admin', adminController.authMiddleware, adminController.getDashboard);
-  
+
+ 
   // Admin API routes
   app.get('/admin/api/categories', adminController.authMiddleware, adminController.getCategories);
   app.get('/admin/api/categories/:id', adminController.authMiddleware, adminController.getCategory);
@@ -85,6 +90,10 @@ async function setupRoutes() {
   app.put('/admin/api/categories/:id', adminController.authMiddleware, adminController.updateCategory);
   app.delete('/admin/api/categories/:id', adminController.authMiddleware, adminController.deleteCategory);
   
+  app.get('/admin/api/settings/category-image', adminController.authMiddleware, adminController.getCategoryImageVisibility);
+  app.post('/admin/api/settings/category-image', adminController.authMiddleware, adminController.updateCategoryImageVisibility);  
+
+
   app.get('/admin/api/subcategories', adminController.authMiddleware, adminController.getSubcategories);
   app.get('/admin/api/subcategories/:id', adminController.authMiddleware, adminController.getSubcategory);
   app.post('/admin/api/subcategories', adminController.authMiddleware, adminController.createSubcategory);

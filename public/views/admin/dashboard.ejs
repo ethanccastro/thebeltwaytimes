@@ -185,7 +185,7 @@
                         <h1 class="text-3xl font-bold text-gray-800">Categories Management</h1>
                         <button class="btn-primary" onclick="showCreateModal('category')"><i class="fas fa-plus mr-2"></i>New Category</button>
                     </div>
-                     <div class="bg-white rounded-xl shadow-md overflow-x-auto">
+                    <div class="bg-white rounded-xl shadow-md overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
@@ -193,11 +193,12 @@
                                     <th scope="col" class="px-6 py-3">Slug</th>
                                     <th scope="col" class="px-6 py-3">Description</th>
                                     <th scope="col" class="px-6 py-3">Subcategories</th>
+                                    <th scope="col" class="px-6 py-3">Show Article Image</th>
                                     <th scope="col" class="px-6 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="categories-table-body">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </section>
@@ -274,6 +275,7 @@
         let currentItemType = null;
         let categories = [];
         let subcategories = [];
+        let categoryImageSettings = {};
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -390,13 +392,29 @@
 
         // --- DATA LOADING FUNCTIONS ---
         async function loadCategories() {
-            try {
-                categories = await apiCall('categories');
-                renderCategoriesTable();
-            } catch (error) {
-                console.error('Failed to load categories:', error);
-            }
+    try {
+        // First, fetch the essential category data. This is the critical part.
+        categories = await apiCall('categories');
+
+        // Then, attempt to fetch the visibility settings.
+        // If this fails, the app can continue with default settings.
+        try {
+            categoryImageSettings = await apiCall('settings/category-image');
+        } catch (settingsError) {
+            console.warn('Could not load category image settings, defaulting to visible.', settingsError);
+            categoryImageSettings = {}; // Use empty object on failure
         }
+
+        // Finally, render the table with all available data.
+        renderCategoriesTable();
+    } catch (error) {
+        console.error('Fatal error: Failed to load categories:', error);
+        const tbody = document.querySelector('#categories-table-body');
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Error loading categories. Please check server logs.</td></tr>`;
+        }
+    }
+}   
 
         async function loadSubcategories() {
             try {
@@ -418,48 +436,82 @@
 
         // --- RENDER FUNCTIONS ---
         function renderCategoriesTable() {
-            const tbody = document.querySelector('#categories-table-body');
-            if (!tbody) return;
-            
-            if (categories.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                            <div class="flex flex-col items-center py-8">
-                                <i class="fas fa-folder text-4xl mb-4 text-gray-300"></i>
-                                <h3 class="text-lg font-medium mb-2">No Categories Found</h3>
-                                <p class="mb-4">Create your first category to get started.</p>
-                                <button class="btn-primary" onclick="showCreateModal('category')">
-                                    <i class="fas fa-plus mr-2"></i>Create Category
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            tbody.innerHTML = categories.map(category => `
-                <tr class="bg-white border-b hover:bg-gray-50">
-                    <td class="px-6 py-4 font-medium text-gray-900">${category.category_name}</td>
-                    <td class="px-6 py-4 text-gray-600"><code class="bg-gray-100 px-2 py-1 rounded">${category.category_slug}</code></td>
-                    <td class="px-6 py-4 text-gray-600">${category.category_description || '-'}</td>
-                    <td class="px-6 py-4">
-                        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                            ${category.subcategories ? category.subcategories.length : 0}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        <button class="text-blue-600 hover:text-blue-900" onclick="editItem('category', '${category.category_rowguid}')">
-                            <i class="fas fa-edit"></i>
+    const tbody = document.querySelector('#categories-table-body');
+    if (!tbody) {
+        console.error('Could not find the categories table body element.');
+        return;
+    }
+
+    if (!categories || categories.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                    <div class="flex flex-col items-center py-8">
+                        <i class="fas fa-folder text-4xl mb-4 text-gray-300"></i>
+                        <h3 class="text-lg font-medium mb-2">No Categories Found</h3>
+                        <p class="mb-4">Create your first category to get started.</p>
+                        <button class="btn-primary" onclick="showCreateModal('category')">
+                            <i class="fas fa-plus mr-2"></i>Create Category
                         </button>
-                        <button class="text-red-600 hover:text-red-900" onclick="deleteItem('category', '${category.category_rowguid}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+                    </div>
+                </td>
+            </tr>
+        `;
+        // Apply button styles since this is dynamic content
+        tbody.querySelector('.btn-primary').className = btnPrimaryClasses;
+        return;
+    }
+
+    tbody.innerHTML = categories.map(category => {
+        // Default to true (visible) if the setting is not explicitly false
+        const isVisible = categoryImageSettings[category.category_rowguid] !== false;
+        return `
+            <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-4 font-medium text-gray-900">${category.category_name}</td>
+                <td class="px-6 py-4 text-gray-600"><code class="bg-gray-100 px-2 py-1 rounded">${category.category_slug}</code></td>
+                <td class="px-6 py-4 text-gray-600">${category.category_description || '-'}</td>
+                <td class="px-6 py-4">
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        ${category.subcategories ? category.subcategories.length : 0}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" value="" class="sr-only peer" onchange="updateCategoryImageVisibility('${category.category_rowguid}', this.checked)" ${isVisible ? 'checked' : ''}>
+                      <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    </label>
+                </td>
+                <td class="px-6 py-4 text-right space-x-2">
+                    <button class="text-blue-600 hover:text-blue-900" onclick="editItem('category', '${category.category_rowguid}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-red-600 hover:text-red-900" onclick="deleteItem('category', '${category.category_rowguid}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+
+async function updateCategoryImageVisibility(categoryId, isVisible) {
+    try {
+        await apiCall('settings/category-image', {
+            method: 'POST',
+            body: JSON.stringify({ categoryId: categoryId, visible: isVisible })
+        });
+        categoryImageSettings[categoryId] = isVisible;
+        showNotification('Image visibility updated!', 'success');
+    } catch (error) {
+        console.error('Failed to update image visibility:', error);
+        // Revert the checkbox state on failure
+        const checkbox = document.querySelector(`input[onchange="updateCategoryImageVisibility('${categoryId}', this.checked)"]`);
+        if (checkbox) {
+            checkbox.checked = !isVisible;
         }
+    }
+}
 
         function renderSubcategoriesTable() {
             const tbody = document.querySelector('#subcategories-table-body');
