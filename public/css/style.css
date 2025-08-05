@@ -747,21 +747,23 @@ body.noscroll {
 }
 
 .article-content p:has(video) {
+  /* Removed positioning and padding to allow for natural aspect ratio */
   background-color: black;
   max-width: 740px; 
-  margin: 0 auto;
-  position: relative;
+  margin: 20px auto; /* Added some vertical margin for spacing */
   width: 100%;
-  padding-bottom: 56.25%; /* For 16:9 Widescreen - A common default */
+  display: flex; /* Use flexbox for centering */
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .article-content p > video {
-  position: absolute;
-  top: 0;
-  left: 0;
+  /* Video now scales responsively, maintaining its aspect ratio */
   width: 100%;
-  height: 100%;
-  /* object-fit: cover;  */
+  height: auto;
+  max-height: 80vh; /* Prevents vertical videos from being excessively tall */
+  display: block;
 }
 
 .article-content p {
