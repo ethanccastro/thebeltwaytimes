@@ -30,6 +30,7 @@ body {
   color: var(--news-text-main);
 }
 
+
 .header, .footer {
   background: var(--news-navy);
   color: #fff;
@@ -46,7 +47,7 @@ a {
 
 a:hover, a:focus {
   color: var(--news-accent);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 * {
@@ -737,6 +738,30 @@ body.noscroll {
 .article-content {
     padding: 24px;
     background-color: var(--wapo-white);
+}
+
+.article-content img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.article-content p:has(video) {
+  background-color: black;
+  max-width: 740px; 
+  margin: 0 auto;
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* For 16:9 Widescreen - A common default */
+}
+
+.article-content p > video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* object-fit: cover;  */
 }
 
 .article-content p {
