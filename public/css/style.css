@@ -887,15 +887,12 @@ body.noscroll {
     padding-left: 8px;
     padding-right: 8px;
   }
-  .top-story-card {
-    flex-direction: column;
-    height: auto;
-  }
   .top-story-image {
     min-width: 100%;
     max-width: 100%;
     height: 200px;
   }
+  
   .top-story-content {
     padding: 18px 12px 18px 12px;
   }
@@ -1915,8 +1912,13 @@ body.noscroll {
 
 
 /* --- Top Story Card --- */
+
+@media (min-width: 1024px) {
+  .top-story-card {
+    display: flex;
+  }
+}
 .top-story-card {
-  display: flex;
   flex-wrap: wrap;
   background: var(--news-card-bg);
   box-shadow: var(--news-card-shadow);
@@ -2100,10 +2102,7 @@ body.noscroll {
 
 /* --- Responsive Tweaks --- */
 @media (max-width: 900px) {
-  .top-story-card {
-    flex-direction: column;
-    height: auto;
-  }
+
   .top-story-image {
     min-width: 100%;
     max-width: 100%;
@@ -2123,6 +2122,13 @@ body.noscroll {
   .newsletter-signup-card {
     padding: 18px 10px 14px 10px;
   }
+
+  .top-story-headline {
+  font-size: 1.2rem;
+}
+.top-story-excerpt {
+  font-size: 1rem;
+}
 }
 
 /* HAMBURGER MENU STYLES */
