@@ -826,11 +826,11 @@ body.noscroll {
     margin-top: 24px;
     grid-column: auto;
   }
+  /* --- ADDED/MODIFIED RULES START HERE --- */
   .article-card {
     flex-direction: column;
     min-height: unset;
     max-width: 100%;
-    padding: 14px;
   }
   .article-container-image {
     min-width: 0;
@@ -847,7 +847,6 @@ body.noscroll {
   .article-container-text {
     padding: 20px 16px 16px 16px;
     min-width: 0;
-    order: 1;
   }
   .category-article-row {
     flex-direction: column !important;
@@ -925,7 +924,7 @@ body.noscroll {
 }
 
 /* Mobile (≤600px) */
-@media (max-width: 600px) {
+@media (max-width: 1024px) {
   .container {
     padding-left: 8px;
     padding-right: 8px;
