@@ -65,8 +65,7 @@ async function setupViewMiddleware() {
 
 // Dynamic route setup function
 async function setupRoutes() {
-  const categories = await dbService.getAllCategories();
-  
+  // Define static and specific routes first so they take precedence over dynamic fallbacks
   // /test route for debugging
   app.get('/test', (req, res) => {
     res.send('Test route hit');
@@ -119,24 +118,7 @@ async function setupRoutes() {
   
   // Article routes (matches template URL pattern)
   app.get('/:category_slug/:year/:month/:day/:article_slug', newsController.getArticle);
-  
-  // Category routes
-  for (const category of categories) {
-    app.get(`/${category.category_slug}`, (req, res) => {
-      (req.params as any)['category'] = category.category_slug;
-      newsController.getCategory(req, res);
-    });
-    
-    // Subcategory routes
-    for (const subcategory of category.subcategories) {
-      app.get(`/${category.category_slug}/${subcategory.subcategory_slug}`, (req, res) => {
-        (req.params as any)['category'] = category.category_slug;
-        (req.params as any)['subcategory'] = subcategory.subcategory_slug;
-        newsController.getSubcategory(req, res);
-      });
-    }
-  }
-  
+
   // Article routes (simplified to use slug only)
   app.get('/article/:slug', newsController.getArticle);
   
@@ -145,6 +127,25 @@ async function setupRoutes() {
   
   // About page
   app.get('/about', newsController.getAbout);
+
+ // Privacy Policy page
+ app.get('/privacy', newsController.getPrivacy);
+
+  // Disclaimer page
+  app.get('/disclaimer', newsController.getDisclaimer);
+
+  // Contact page
+  app.get('/contact', newsController.getContact);
+
+  // Dynamic fallback routes for categories and subcategories
+  // These are placed AFTER all specific/static routes to avoid collisions
+  app.get('/:category/:subcategory', (req, res) => {
+    newsController.getSubcategory(req, res);
+  });
+
+  app.get('/:category', (req, res) => {
+    newsController.getCategory(req, res);
+  });
 }
 
 // 404 handler

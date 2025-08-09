@@ -235,6 +235,54 @@ export class NewsController {
     }
   };
 
+  public getPrivacy = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      res.render('privacy', {
+        title: 'Privacy Policy - The Beltway Times',
+        currentSection: 'privacy'
+      });
+    } catch (error) {
+      console.error('Error in getPrivacy:', error);
+      res.status(500).render('error', {
+        title: 'Error',
+        message: 'An error occurred while loading the privacy policy page',
+        currentSection: 'error'
+      });
+    }
+  };
+
+  public getDisclaimer = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      res.render('disclaimer', {
+        title: 'Disclaimer - The Beltway Times',
+        currentSection: 'disclaimer'
+      });
+    } catch (error) {
+      console.error('Error in getDisclaimer:', error);
+      res.status(500).render('error', {
+        title: 'Error',
+        message: 'An error occurred while loading the disclaimer page',
+        currentSection: 'error'
+      });
+    }
+  };
+
+  public getContact = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      res.render('contact', {
+        title: 'Contact Us - The Beltway Times',
+        currentSection: 'contact'
+      });
+    } catch (error) {
+      console.error('Error in getContact:', error);
+      res.status(500).render('error', {
+        title: 'Error',
+        message: 'An error occurred while loading the contact page',
+        currentSection: 'error'
+      });
+    }
+  };
+
   public getSitemapXml = async (_req: Request, res: Response): Promise<void> => {
     try {
       const baseUrl = `${_req.protocol}://${_req.get('host')}`;
@@ -250,6 +298,9 @@ export class NewsController {
       // Add static pages
       xml += `<url><loc>${baseUrl}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`;
       xml += `<url><loc>${baseUrl}/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`;
+      xml += `<url><loc>${baseUrl}/privacy</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>`;
+      xml += `<url><loc>${baseUrl}/disclaimer</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>`;
+      xml += `<url><loc>${baseUrl}/contact</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>`;
 
       // Add category pages
       categories.forEach(category => {
