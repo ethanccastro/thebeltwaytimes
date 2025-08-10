@@ -63,7 +63,7 @@ export class NewsController {
       
       if (!categoryInfo) {
         res.status(404).render('error', {
-          title: 'Category Not Found',
+          title: '404 - Not Found',
           message: 'The requested category does not exist',
           currentSection: 'error'
         });
@@ -109,7 +109,7 @@ export class NewsController {
       
       if (!categoryInfo || !subcategoryInfo) {
         res.status(404).render('error', {
-          title: 'Page Not Found',
+          title: '404 - Not Found',
           message: 'The requested page does not exist',
           currentSection: 'error'
         });
@@ -164,7 +164,7 @@ export class NewsController {
       
       if (!article) {
         res.status(404).render('error', {
-          title: 'Article Not Found',
+          title: '404 - Not Found',
           message: 'The requested article does not exist',
           currentSection: 'error'
         });

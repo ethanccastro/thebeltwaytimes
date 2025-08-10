@@ -69,7 +69,7 @@ export class AdminController {
       const { id } = req.params;
       const category = await this.dbService.getCategoryById(id);
       if (!category) {
-        res.status(404).json({ error: 'Category not found' });
+        res.status(404).json({ error: '404 - Not Found' });
         return;
       }
       res.json(category);
@@ -185,7 +185,7 @@ export class AdminController {
       const { id } = req.params;
       const subcategory = await this.dbService.getSubcategoryById(id);
       if (!subcategory) {
-        res.status(404).json({ error: 'Subcategory not found' });
+        res.status(404).json({ error: '404 - Not Found' });
         return;
       }
       res.json(subcategory);
@@ -298,7 +298,7 @@ export class AdminController {
       const { id } = req.params;
       const article = await this.dbService.getArticleById(id);
       if (!article) {
-        res.status(404).json({ error: 'Article not found' });
+        res.status(404).json({ error: '404 - Not Found' });
         return;
       }
       res.json(article);
