@@ -423,6 +423,172 @@ export class AdminController {
     }
   };
 
+  // ===== SOCIAL USER CRUD =====
+  public getSocialUsers = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const users = await this.dbService.getAllSocialUsers();
+      res.json(users);
+    } catch (error) {
+      console.error('Error fetching social users:', error);
+      res.status(500).json({ error: 'Failed to fetch social users' });
+    }
+  };
+
+  public getSocialUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const user = await this.dbService.getSocialUserById(id);
+      if (!user) {
+        res.status(404).json({ error: '404 - Not Found' });
+        return;
+      }
+      res.json(user);
+    } catch (error) {
+      console.error('Error fetching social user:', error);
+      res.status(500).json({ error: 'Failed to fetch social user' });
+    }
+  };
+
+  public createSocialUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { socialuser_displayname, socialuser_handle, socialuser_profilepictureurl } = req.body;
+      if (!socialuser_displayname || !socialuser_handle) {
+        res.status(400).json({ error: 'Display name and handle are required' });
+        return;
+      }
+      const user = await this.dbService.createSocialUser({
+        socialuser_displayname,
+        socialuser_handle,
+        socialuser_profilepictureurl,
+      });
+      res.status(201).json(user);
+    } catch (error) {
+      console.error('Error creating social user:', error);
+      res.status(500).json({ error: 'Failed to create social user' });
+    }
+  };
+
+  public updateSocialUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const user = await this.dbService.updateSocialUser(id, req.body);
+      if (!user) {
+        res.status(404).json({ error: '404 - Not Found' });
+        return;
+      }
+      res.json(user);
+    } catch (error) {
+      console.error('Error updating social user:', error);
+      res.status(500).json({ error: 'Failed to update social user' });
+    }
+  };
+
+  public deleteSocialUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const success = await this.dbService.deleteSocialUser(id);
+      if (!success) {
+        res.status(404).json({ error: '404 - Not Found' });
+        return;
+      }
+      res.json({ message: 'Social user deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting social user:', error);
+      res.status(500).json({ error: 'Failed to delete social user' });
+    }
+  };
+
+  // ===== SOCIAL CONTENT CRUD =====
+  public getSocialContents = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      const contents = await this.dbService.getAllSocialContents();
+      res.json(contents);
+    } catch (error) {
+      console.error('Error fetching social contents:', error);
+      res.status(500).json({ error: 'Failed to fetch social contents' });
+    }
+  };
+
+  public getSocialContent = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const content = await this.dbService.getSocialContentById(id);
+      if (!content) {
+        res.status(404).json({ error: '404 - Not Found' });
+        return;
+      }
+      res.json(content);
+    } catch (error) {
+      console.error('Error fetching social content:', error);
+      res.status(500).json({ error: 'Failed to fetch social content' });
+    }
+  };
+
+  public createSocialContent = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { socialcontent_text, socialcontent_source, socialuser_rowguid } = req.body;
+      if (!socialcontent_text || !socialuser_rowguid) {
+        res.status(400).json({ error: 'Text and social user are required' });
+        return;
+      }
+      // Ensure social user exists
+      const user = await this.dbService.getSocialUserById(socialuser_rowguid);
+      if (!user) {
+        res.status(400).json({ error: 'Invalid social user' });
+        return;
+      }
+      const content = await this.dbService.createSocialContent({
+        socialcontent_text,
+        socialcontent_source,
+        socialuser: user,
+      });
+      res.status(201).json(content);
+    } catch (error) {
+      console.error('Error creating social content:', error);
+      res.status(500).json({ error: 'Failed to create social content' });
+    }
+  };
+
+  public updateSocialContent = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const updateData = { ...req.body };
+      if (updateData.socialuser_rowguid) {
+        const user = await this.dbService.getSocialUserById(updateData.socialuser_rowguid);
+        if (!user) {
+          res.status(400).json({ error: 'Invalid social user' });
+          return;
+        }
+        updateData.socialuser = user;
+        delete updateData.socialuser_rowguid;
+      }
+      const content = await this.dbService.updateSocialContent(id, updateData);
+      if (!content) {
+        res.status(404).json({ error: '404 - Not Found' });
+        return;
+      }
+      res.json(content);
+    } catch (error) {
+      console.error('Error updating social content:', error);
+      res.status(500).json({ error: 'Failed to update social content' });
+    }
+  };
+
+  public deleteSocialContent = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params;
+      const success = await this.dbService.deleteSocialContent(id);
+      if (!success) {
+        res.status(404).json({ error: '404 - Not Found' });
+        return;
+      }
+      res.json({ message: 'Social content deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting social content:', error);
+      res.status(500).json({ error: 'Failed to delete social content' });
+    }
+  };
+
   public getCategoryImageVisibility = async (req: Request, res: Response): Promise<void> => {
     try {
       res.json(this.categoryImageVisibility);

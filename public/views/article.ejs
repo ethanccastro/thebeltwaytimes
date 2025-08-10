@@ -51,7 +51,61 @@
                     class="article-image-large" onerror="this.src='/img/600x300.png'">
                 <% } %>
         
-                <%- article.article_content %>
+                <%- (article.article_content || '').replace(/&lt;div class="social-card-container"[^>]*data-socialcontent-id="(.*?)"[^>]*&gt;&lt;\/div&gt;/g, (match, id) => {
+                    try {
+                        const list = socialcontents || [];
+                        const sc = list.find(x => x.socialcontent_rowguid === id);
+                        if (!sc) return match;
+                        return `
+                        <div class="social-card-container">
+                            <div class="social-card">
+                                <div class="social-card-header">
+                                    <div class="profile-picture">
+                                        <img src="${sc.socialuser && sc.socialuser.socialuser_profilepictureurl ? sc.socialuser.socialuser_profilepictureurl : '/img/600x300.png'}" alt="Profile Picture">
+                                    </div>
+                                    <div class="user-details">
+                                        <div class="user-name-line">
+                                            <span class="display-name">${sc.socialuser ? sc.socialuser.socialuser_displayname : 'Unknown User'}</span>
+                                            <i class="fas fa-check-circle verified-icon"></i>
+                                        </div>
+                                        <div class="user-handle">
+                                            @${sc.socialuser ? sc.socialuser.socialuser_handle : 'unknown'}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="social-card-body">
+                                    <p>${sc.socialcontent_text}</p>
+                                </div>
+
+                                <div class="social-card-footer">
+                                    <div class="engagement-stats">
+                                        <div class="stat">
+                                            ${sc.socialcontent_source ? `<strong>Source</strong> <a href="${sc.socialcontent_source}" target="_blank">${(() => {
+                                                try {
+                                                    const url = new URL(sc.socialcontent_source);
+                                                    return url.hostname.replace('www.', '');
+                                                } catch (e) {
+                                                    return sc.socialcontent_source;
+                                                }
+                                            })()}</a>` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="timestamp">
+                                        ${new Date(sc.socialcontent_postedat).toLocaleDateString('en-US', { 
+                                            month: 'short', 
+                                            day: '2-digit', 
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true 
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    } catch (e) { return match; }
+                  }) %>
                 <% if (article.article_tags && article.article_tags.length > 0) { %>
                     <div class="article-tags-section">
                         </div>

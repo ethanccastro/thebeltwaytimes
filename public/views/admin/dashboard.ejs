@@ -80,6 +80,14 @@
                         <i class="fas fa-folder-open fa-fw mr-3"></i>
                         Subcategories
                     </a>
+                    <a href="#socialusers" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="socialusers">
+                        <i class="fas fa-user fa-fw mr-3"></i>
+                        Social Users
+                    </a>
+                    <a href="#socialcontents" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="socialcontents">
+                        <i class="fas fa-comments fa-fw mr-3"></i>
+                        Social Content
+                    </a>
                 </nav>
             </div>
         </div>
@@ -113,6 +121,8 @@
                         <a href="#articles" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="articles">Articles</a>
                         <a href="#categories" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="categories">Categories</a>
                         <a href="#subcategories" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="subcategories">Subcategories</a>
+                        <a href="#socialusers" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="socialusers">Social Users</a>
+                        <a href="#socialcontents" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="socialcontents">Social Content</a>
                     </nav>
                 </div>
             </div>
@@ -151,6 +161,51 @@
                             <button class="btn-secondary" onclick="showCreateModal('category')"><i class="fas fa-plus mr-2"></i>New Category</button>
                             <button class="btn-secondary" onclick="showCreateModal('subcategory')"><i class="fas fa-plus mr-2"></i>New Subcategory</button>
                         </div>
+                    </div>
+                </section>
+
+                <section id="socialusers" class="admin-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800">Social Users</h1>
+                        <button class="btn-primary" onclick="showCreateModal('socialuser')"><i class="fas fa-plus mr-2"></i>New Social User</button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Display Name</th>
+                                    <th scope="col" class="px-6 py-3">Handle</th>
+                                    <th scope="col" class="px-6 py-3">Profile Picture</th>
+                                    <th scope="col" class="px-6 py-3" style="width:100px;">Posts</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="socialusers-table-body"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="socialcontents" class="admin-section">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+                        <h1 class="text-3xl font-bold text-gray-800">Social Content</h1>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <input id="socialcontents-search" type="text" placeholder="Search by user, text, or ID..." class="w-full md:w-80 pl-3 pr-3 py-2 border rounded-lg text-sm" oninput="filterSocialContents(this.value)">
+                            <button class="btn-primary" onclick="showCreateModal('socialcontent')"><i class="fas fa-plus mr-2"></i>New Social Content</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">User</th>
+                                    <th scope="col" class="px-6 py-3">Text</th>
+                                    <th scope="col" class="px-6 py-3">Source</th>
+                                    <th scope="col" class="px-6 py-3">Posted</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="socialcontents-table-body"></tbody>
+                        </table>
                     </div>
                 </section>
 
@@ -276,6 +331,9 @@
         let categories = [];
         let subcategories = [];
         let categoryImageSettings = {};
+        let socialusers = [];
+        let socialcontents = [];
+        let socialcontentsFiltered = [];
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -291,6 +349,8 @@
             loadCategories();
             loadSubcategories();
             loadArticles();
+            loadSocialUsers();
+            loadSocialContents();
         });
 
         // --- NAVIGATION LOGIC ---
@@ -434,6 +494,39 @@
             }
         }
 
+        async function loadSocialUsers() {
+            try {
+                socialusers = await apiCall('socialusers');
+                renderSocialUsersTable();
+            } catch (error) {
+                console.error('Failed to load social users:', error);
+            }
+        }
+
+        async function loadSocialContents() {
+            try {
+                socialcontents = await apiCall('socialcontents');
+                socialcontentsFiltered = socialcontents.slice();
+                renderSocialContentsTable();
+            } catch (error) {
+                console.error('Failed to load social contents:', error);
+            }
+        }
+
+        function filterSocialContents(query) {
+            const q = (query || '').toLowerCase();
+            socialcontentsFiltered = (socialcontents || []).filter(c => {
+                const user = c.socialuser || {};
+                return (
+                    (c.socialcontent_rowguid || '').toLowerCase().includes(q) ||
+                    (c.socialcontent_text || '').toLowerCase().includes(q) ||
+                    (user.socialuser_displayname || '').toLowerCase().includes(q) ||
+                    (user.socialuser_handle || '').toLowerCase().includes(q)
+                );
+            });
+            renderSocialContentsTable();
+        }
+
         // --- RENDER FUNCTIONS ---
         function renderCategoriesTable() {
     const tbody = document.querySelector('#categories-table-body');
@@ -575,6 +668,66 @@ async function updateCategoryImageVisibility(categoryId, isVisible) {
             return;
         }
 
+window.renderSocialUsersTable = function() {
+            const tbody = document.querySelector('#socialusers-table-body');
+            if (!tbody) return;
+            if (!socialusers || socialusers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No social users found</td></tr>`;
+                return;
+}
+            tbody.innerHTML = socialusers.map(u => `
+                <tr class=\"bg-white border-b hover:bg-gray-50\"> 
+                    <td class=\"px-6 py-4 font-medium text-gray-900\">${u.socialuser_displayname}</td>
+                    <td class=\"px-6 py-4 text-gray-600\"><code>@${u.socialuser_handle}</code></td>
+                    <td class=\"px-6 py-4 text-gray-600\">${u.socialuser_profilepictureurl ? `<a class=\"text-blue-600\" href=\"${u.socialuser_profilepictureurl}\" target=\"_blank\">View</a>` : '-'}</td>
+                    <td class=\"px-6 py-4 text-gray-600\">${u.posts ? (u.posts.length || 0) : 0}</td>
+                    <td class=\"px-6 py-4 text-right space-x-2\">
+                        <button class=\"text-blue-600 hover:text-blue-900\" onclick=\"editItem('socialuser', '${u.socialuser_rowguid}')\"><i class=\"fas fa-edit\"></i></button>
+                        <button class=\"text-red-600 hover:text-red-900\" onclick=\"deleteItem('socialuser', '${u.socialuser_rowguid}')\"><i class=\"fas fa-trash\"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+window.renderSocialContentsTable = function() {
+            const tbody = document.querySelector('#socialcontents-table-body');
+            if (!tbody) return;
+            if (!socialcontents || socialcontents.length === 0) {
+                tbody.innerHTML = `<tr><td colspan=\"5\" class=\"px-6 py-4 text-center text-gray-500\">No social content found</td></tr>`;
+                return;
+}
+            tbody.innerHTML = socialcontents.map(c => `
+                <tr class=\"bg-white border-b hover:bg-gray-50\">
+                    <td class=\"px-6 py-4 font-medium text-gray-900\">${c.socialuser ? c.socialuser.socialuser_displayname : '-'}</td>
+                    <td class=\"px-6 py-4 text-gray-600\">${c.socialcontent_text}</td>
+                    <td class=\"px-6 py-4 text-gray-600\">${c.socialcontent_source || '-'}</td>
+                    <td class=\"px-6 py-4 text-gray-600\">${c.socialcontent_postedat ? new Date(c.socialcontent_postedat).toLocaleString() : '-'}</td>
+                    <td class=\"px-6 py-4 text-right space-x-2\">
+                        <button class=\"text-green-600 hover:text-green-900\" onclick=\"copySocialEmbed('${c.socialcontent_rowguid}')\" title=\"Copy Embed\"><i class=\"fas fa-link\"></i></button>
+                        <button class=\"text-blue-600 hover:text-blue-900\" onclick=\"editItem('socialcontent', '${c.socialcontent_rowguid}')\"><i class=\"fas fa-edit\"></i></button>
+                        <button class=\"text-red-600 hover:text-red-900\" onclick=\"deleteItem('socialcontent', '${c.socialcontent_rowguid}')\"><i class=\"fas fa-trash\"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.copySocialEmbed = function(id) {
+            const snippet = `<div class="social-card-container" data-socialcontent-id="${id}"></div>`;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(snippet)
+                    .then(() => showNotification('Embed copied to clipboard', 'success'))
+                    .catch(() => showNotification('Failed to copy embed', 'error'));
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = snippet;
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); showNotification('Embed copied to clipboard', 'success'); }
+                catch (e) { showNotification('Failed to copy embed', 'error'); }
+                finally { document.body.removeChild(ta); }
+            }
+        }
+
         tbody.innerHTML = articles.map(article => {
             // Determine article type badges
             const typeBadges = [];
@@ -678,6 +831,11 @@ async function updateCategoryImageVisibility(categoryId, isVisible) {
                 <div class="form-group md:col-span-2">
                     <label for="article_content" class="block text-sm font-medium text-gray-700">Content *</label>
                     <textarea id="article_content" name="article_content" rows="10" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required></textarea>
+                    <div class="mt-2 flex gap-2">
+                        <button type="button" class="${btnSecondaryClasses}" onclick="insertSocialCardIntoEditor()">
+                            <i class="fas fa-comments mr-2"></i>Insert Social Content
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="article_imageurl" class="block text-sm font-medium text-gray-700">Image URL</label>
@@ -755,6 +913,37 @@ async function updateCategoryImageVisibility(categoryId, isVisible) {
                     <label for="subcategory_description" class="block text-sm font-medium text-gray-700">Description</label>
                     <textarea id="subcategory_description" name="subcategory_description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                 </div>
+            `,
+            socialuser: () => `
+                <div class="form-group">
+                    <label for="socialuser_displayname" class="block text-sm font-medium text-gray-700">Display Name *</label>
+                    <input type="text" id="socialuser_displayname" name="socialuser_displayname" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div class="form-group">
+                    <label for="socialuser_handle" class="block text-sm font-medium text-gray-700">Handle *</label>
+                    <input type="text" id="socialuser_handle" name="socialuser_handle" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div class="form-group md:col-span-2">
+                    <label for="socialuser_profilepictureurl" class="block text-sm font-medium text-gray-700">Profile Picture URL</label>
+                    <input type="url" id="socialuser_profilepictureurl" name="socialuser_profilepictureurl" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+            `,
+            socialcontent: () => `
+                <div class="form-group md:col-span-2">
+                    <label for="socialcontent_text" class="block text-sm font-medium text-gray-700">Text *</label>
+                    <textarea id="socialcontent_text" name="socialcontent_text" rows="5" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="socialcontent_source" class="block text-sm font-medium text-gray-700">Source</label>
+                    <input type="text" id="socialcontent_source" name="socialcontent_source" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div class="form-group">
+                    <label for="socialuser_rowguid" class="block text-sm font-medium text-gray-700">User *</label>
+                    <select id="socialuser_rowguid" name="socialuser_rowguid" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                        <option value="">Select a user</option>
+                        ${socialusers.map(u => `<option value="${u.socialuser_rowguid}">${u.socialuser_displayname} (@${u.socialuser_handle})</option>`).join('')}
+                    </select>
+                </div>
             `
         };
 
@@ -821,6 +1010,8 @@ async function updateCategoryImageVisibility(categoryId, isVisible) {
                         } else {
                             input.value = '';
                         }
+                    } else if (fieldName === 'socialuser_rowguid' && item.socialuser) {
+                        input.value = item.socialuser.socialuser_rowguid || '';
                     } else {
                         input.value = item[fieldName];
                     }
@@ -981,6 +1172,8 @@ async function updateCategoryImageVisibility(categoryId, isVisible) {
                 case 'category': return 'category_rowguid';
                 case 'subcategory': return 'subcategory_rowguid';
                 case 'article': return 'article_rowguid';
+                case 'socialuser': return 'socialuser_rowguid';
+                case 'socialcontent': return 'socialcontent_rowguid';
                 default: return 'id';
             }
         }
@@ -991,6 +1184,8 @@ async function updateCategoryImageVisibility(categoryId, isVisible) {
                 case 'category': return 'categories';
                 case 'subcategory': return 'subcategories';
                 case 'article': return 'articles';
+                case 'socialuser': return 'socialusers';
+                case 'socialcontent': return 'socialcontents';
                 default: return 'unknown';
             }
         }
@@ -1041,10 +1236,18 @@ async function updateCategoryImageVisibility(categoryId, isVisible) {
                 case 'subcategories':
                     loadSubcategories();
                     break;
+                case 'socialusers':
+                    loadSocialUsers();
+                    break;
+                case 'socialcontents':
+                    loadSocialContents();
+                    break;
                 default:
                     loadCategories();
                     loadSubcategories();
                     loadArticles();
+                    loadSocialUsers();
+                    loadSocialContents();
             }
         }
 
@@ -1145,6 +1348,24 @@ async function updateCategoryImageVisibility(categoryId, isVisible) {
                 }, 300);
             } else {
                 console.log('HugeRTE not loaded yet');
+            }
+        }
+
+        // Insert a social content card placeholder into the editor/content
+        function insertSocialCardIntoEditor() {
+            const placeholder = `\n<div class="social-card-container" data-socialcontent-id="">\n  <!-- Select or paste social content ID above -->\n</div>\n`;
+            try {
+                if (typeof hugerte !== 'undefined' && hugerte.get('article_content')) {
+                    const editor = hugerte.get('article_content');
+                    editor.insertContent(placeholder);
+                } else {
+                    const ta = document.getElementById('article_content');
+                    if (ta) {
+                        ta.value += placeholder;
+                    }
+                }
+            } catch (e) {
+                console.log('Failed to insert social card:', e);
             }
         }
 

@@ -3,6 +3,8 @@ import { Article } from '../entities/Article';
 import { Category } from '../entities/Category';
 import { Subcategory } from '../entities/Subcategory';
 import { v4 as uuidv4 } from 'uuid';
+import { SocialUser } from '../entities/SocialUser';
+import { SocialContent } from '../entities/SocialContent';
 
 export class DatabaseService {
   private em: EntityManager;
@@ -13,16 +15,20 @@ export class DatabaseService {
 
   // Admin stats method
   async getAdminStats() {
-    const [totalArticles, totalCategories, totalSubcategories] = await Promise.all([
+    const [totalArticles, totalCategories, totalSubcategories, totalSocialUsers, totalSocialContents] = await Promise.all([
       this.em.count(Article),
       this.em.count(Category),
-      this.em.count(Subcategory)
+      this.em.count(Subcategory),
+      this.em.count(SocialUser),
+      this.em.count(SocialContent)
     ]);
 
     return {
       totalArticles,
       totalCategories,
-      totalSubcategories
+      totalSubcategories,
+      totalSocialUsers,
+      totalSocialContents
     };
   }
 
@@ -330,5 +336,74 @@ export class DatabaseService {
       }
     }
     return result;
+  }
+
+  // ===== Social Users =====
+  async getAllSocialUsers(): Promise<SocialUser[]> {
+    return await this.em.find(SocialUser, {}, { orderBy: { socialuser_displayname: 'ASC' } });
+  }
+
+  async getSocialUserById(id: string): Promise<SocialUser | null> {
+    return await this.em.findOne(SocialUser, { socialuser_rowguid: id }, { populate: ['posts'] });
+  }
+
+  async createSocialUser(data: any): Promise<SocialUser> {
+    const user = this.em.create(SocialUser, {
+      socialuser_rowguid: uuidv4(),
+      ...data,
+    });
+    await this.em.persistAndFlush(user);
+    return user;
+  }
+
+  async updateSocialUser(id: string, updateData: any): Promise<SocialUser | null> {
+    const user = await this.getSocialUserById(id);
+    if (!user) return null;
+    this.em.assign(user, updateData);
+    await this.em.flush();
+    return user;
+  }
+
+  async deleteSocialUser(id: string): Promise<boolean> {
+    const user = await this.getSocialUserById(id);
+    if (!user) return false;
+    await this.em.removeAndFlush(user);
+    return true;
+  }
+
+  // ===== Social Content =====
+  async getAllSocialContents(): Promise<SocialContent[]> {
+    return await this.em.find(SocialContent, {}, {
+      populate: ['socialuser'],
+      orderBy: { socialcontent_postedat: 'DESC' }
+    });
+  }
+
+  async getSocialContentById(id: string): Promise<SocialContent | null> {
+    return await this.em.findOne(SocialContent, { socialcontent_rowguid: id }, { populate: ['socialuser'] });
+  }
+
+  async createSocialContent(data: any): Promise<SocialContent> {
+    const content = this.em.create(SocialContent, {
+      socialcontent_rowguid: uuidv4(),
+      ...data,
+    });
+    await this.em.persistAndFlush(content);
+    return content;
+  }
+
+  async updateSocialContent(id: string, updateData: any): Promise<SocialContent | null> {
+    const content = await this.getSocialContentById(id);
+    if (!content) return null;
+    this.em.assign(content, updateData);
+    await this.em.flush();
+    return content;
+  }
+
+  async deleteSocialContent(id: string): Promise<boolean> {
+    const content = await this.getSocialContentById(id);
+    if (!content) return false;
+    await this.em.removeAndFlush(content);
+    return true;
   }
 } 

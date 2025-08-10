@@ -52,6 +52,24 @@ CREATE TABLE article (
     FOREIGN KEY (article_subcategoryrowguid) REFERENCES subcategory(subcategory_rowguid) ON DELETE SET NULL
 );
 
+-- Create socialuser table
+CREATE TABLE socialuser (
+    socialuser_rowguid CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    socialuser_displayname VARCHAR(255) NOT NULL,
+    socialuser_handle VARCHAR(100) UNIQUE NOT NULL,
+    socialuser_profilepictureurl VARCHAR(4000)
+);
+
+-- Create socialcontent table
+CREATE TABLE socialcontent (
+    socialcontent_rowguid CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    socialcontent_socialuserrowguid CHAR(36) NOT NULL,
+    socialcontent_text TEXT NOT NULL,
+    socialcontent_source VARCHAR(255),
+    socialcontent_postedat TIMESTAMP NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (socialcontent_socialuserrowguid) REFERENCES socialuser(socialuser_rowguid) ON DELETE CASCADE
+);
+
 -- Create indexes for better performance
 CREATE INDEX idx_article_category_rowguid ON article(article_categoryrowguid);
 CREATE INDEX idx_article_subcategory_rowguid ON article(article_subcategoryrowguid);
@@ -62,6 +80,8 @@ CREATE INDEX idx_article_slug ON article(article_slug);
 CREATE INDEX idx_subcategory_category_rowguid ON subcategory(subcategory_categoryrowguid);
 CREATE INDEX idx_category_slug ON category(category_slug);
 CREATE INDEX idx_subcategory_slug ON subcategory(subcategory_slug);
+CREATE INDEX idx_socialuser_handle ON socialuser(socialuser_handle);
+CREATE INDEX idx_socialcontent_user ON socialcontent(socialcontent_rowguid);
 
 -- Create a full-text search index on article content and headline
 CREATE FULLTEXT INDEX idx_article_search ON article(article_headline, article_excerpt, article_content);

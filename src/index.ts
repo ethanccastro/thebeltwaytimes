@@ -105,6 +105,20 @@ async function setupRoutes() {
   app.put('/admin/api/articles/:id', adminController.authMiddleware, adminController.updateArticle);
   app.delete('/admin/api/articles/:id', adminController.authMiddleware, adminController.deleteArticle);
   
+  // Social Users API
+  app.get('/admin/api/socialusers', adminController.authMiddleware, adminController.getSocialUsers);
+  app.get('/admin/api/socialusers/:id', adminController.authMiddleware, adminController.getSocialUser);
+  app.post('/admin/api/socialusers', adminController.authMiddleware, adminController.createSocialUser);
+  app.put('/admin/api/socialusers/:id', adminController.authMiddleware, adminController.updateSocialUser);
+  app.delete('/admin/api/socialusers/:id', adminController.authMiddleware, adminController.deleteSocialUser);
+
+  // Social Content API
+  app.get('/admin/api/socialcontents', adminController.authMiddleware, adminController.getSocialContents);
+  app.get('/admin/api/socialcontents/:id', adminController.authMiddleware, adminController.getSocialContent);
+  app.post('/admin/api/socialcontents', adminController.authMiddleware, adminController.createSocialContent);
+  app.put('/admin/api/socialcontents/:id', adminController.authMiddleware, adminController.updateSocialContent);
+  app.delete('/admin/api/socialcontents/:id', adminController.authMiddleware, adminController.deleteSocialContent);
+  
   // Debug route to test API
   app.get('/admin/api/test', adminController.authMiddleware, (req, res) => {
     res.json({ message: 'API is working' });

@@ -179,6 +179,7 @@ export class NewsController {
         article,
         relatedArticles,
         categoryInfo,
+        socialcontents: await this.dbService.getAllSocialContents(),
         currentSection: categoryInfo?.category_slug
       });
     } catch (error) {
