@@ -1,60 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/hugerte@latest/hugerte.min.js"></script>    <style>
+    <script src="https://cdn.jsdelivr.net/npm/hugerte@latest/hugerte.min.js"></script>
+    <style>
         /* Custom styles to complement Tailwind */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* A light gray background */
+            background-color: #f8fafc;
+            /* A light gray background */
         }
+
         /* Custom scrollbar for a cleaner look */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
+
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
         }
+
         ::-webkit-scrollbar-thumb {
             background: #888;
             border-radius: 4px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+
         /* Hide sections by default */
         .admin-section {
             display: none;
         }
+
         /* Show the active section */
         .admin-section.active {
             display: block;
         }
+
         /* Animation for modal */
         .modal-enter {
             animation: fadeIn 0.3s ease-out;
         }
+
         .modal-leave {
             animation: fadeOut 0.3s ease-in;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
+
         @keyframes fadeOut {
-            from { opacity: 1; transform: scale(1); }
-            to { opacity: 0; transform: scale(0.95); }
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(0.95);
+            }
         }
     </style>
 </head>
+
 <body class="bg-gray-50">
 
     <div class="flex h-screen bg-gray-100">
@@ -64,27 +94,39 @@
             </div>
             <div class="flex flex-col flex-1 overflow-y-auto">
                 <nav class="flex-1 px-2 py-4 bg-gray-800">
-                    <a href="#dashboard" class="nav-item flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg" data-section="dashboard">
+                    <a href="#dashboard"
+                        class="nav-item flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg"
+                        data-section="dashboard">
                         <i class="fas fa-tachometer-alt fa-fw mr-3"></i>
                         Dashboard
                     </a>
-                    <a href="#articles" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="articles">
+                    <a href="#articles"
+                        class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                        data-section="articles">
                         <i class="fas fa-newspaper fa-fw mr-3"></i>
                         Articles
                     </a>
-                    <a href="#categories" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="categories">
+                    <a href="#categories"
+                        class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                        data-section="categories">
                         <i class="fas fa-folder fa-fw mr-3"></i>
                         Categories
                     </a>
-                    <a href="#subcategories" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="subcategories">
+                    <a href="#subcategories"
+                        class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                        data-section="subcategories">
                         <i class="fas fa-folder-open fa-fw mr-3"></i>
                         Subcategories
                     </a>
-                    <a href="#socialusers" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="socialusers">
+                    <a href="#socialusers"
+                        class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                        data-section="socialusers">
                         <i class="fas fa-user fa-fw mr-3"></i>
                         Social Users
                     </a>
-                    <a href="#socialcontents" class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="socialcontents">
+                    <a href="#socialcontents"
+                        class="nav-item flex items-center px-4 py-2 mt-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                        data-section="socialcontents">
                         <i class="fas fa-comments fa-fw mr-3"></i>
                         Social Content
                     </a>
@@ -94,7 +136,7 @@
 
         <div class="flex flex-col flex-1 overflow-y-auto">
             <div class="flex items-center justify-between h-16 bg-white border-b border-gray-200 px-4 md:px-8">
-                 <button id="mobile-menu-button" class="md:hidden text-gray-500 focus:outline-none focus:text-gray-700">
+                <button id="mobile-menu-button" class="md:hidden text-gray-500 focus:outline-none focus:text-gray-700">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
                 <div class="relative w-full max-w-xs">
@@ -104,25 +146,39 @@
                     <input type="text" class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm" placeholder="Search...">
                 </div>
             </div>
-            
+
             <div id="mobile-sidebar" class="hidden md:hidden fixed inset-0 flex z-40">
                 <div class="fixed inset-0 bg-black opacity-50"></div>
                 <div class="relative flex-1 flex flex-col max-w-xs w-full bg-gray-800">
                     <div class="absolute top-0 right-0 -mr-12 pt-2">
-                        <button id="close-mobile-sidebar" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none">
+                        <button id="close-mobile-sidebar"
+                            class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none">
                             <i class="fas fa-times text-white"></i>
                         </button>
                     </div>
                     <div class="flex items-center justify-center h-16 bg-gray-900">
-                         <span class="text-white font-bold uppercase text-lg"><i class="fas fa-cog mr-2"></i>Admin Panel</span>
+                        <span class="text-white font-bold uppercase text-lg"><i class="fas fa-cog mr-2"></i>Admin
+                            Panel</span>
                     </div>
                     <nav class="mt-5 flex-1 px-2 bg-gray-800 space-y-1">
-                        <a href="#dashboard" class="nav-item flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg" data-section="dashboard">Dashboard</a>
-                        <a href="#articles" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="articles">Articles</a>
-                        <a href="#categories" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="categories">Categories</a>
-                        <a href="#subcategories" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="subcategories">Subcategories</a>
-                        <a href="#socialusers" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="socialusers">Social Users</a>
-                        <a href="#socialcontents" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg" data-section="socialcontents">Social Content</a>
+                        <a href="#dashboard"
+                            class="nav-item flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg"
+                            data-section="dashboard">Dashboard</a>
+                        <a href="#articles"
+                            class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                            data-section="articles">Articles</a>
+                        <a href="#categories"
+                            class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                            data-section="categories">Categories</a>
+                        <a href="#subcategories"
+                            class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                            data-section="subcategories">Subcategories</a>
+                        <a href="#socialusers"
+                            class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                            data-section="socialusers">Social Users</a>
+                        <a href="#socialcontents"
+                            class="nav-item flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg"
+                            data-section="socialcontents">Social Content</a>
                     </nav>
                 </div>
             </div>
@@ -131,25 +187,37 @@
                 <section id="dashboard" class="admin-section active">
                     <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4 transform hover:scale-105 transition-transform duration-300">
-                            <div class="bg-blue-500 p-4 rounded-full text-white"><i class="fas fa-newspaper text-2xl"></i></div>
+                        <div
+                            class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4 transform hover:scale-105 transition-transform duration-300">
+                            <div class="bg-blue-500 p-4 rounded-full text-white"><i
+                                    class="fas fa-newspaper text-2xl"></i></div>
                             <div>
                                 <p class="text-gray-500 text-sm">Total Articles</p>
-                                <p class="text-2xl font-bold text-gray-800"><%= stats.totalArticles %></p>
+                                <p class="text-2xl font-bold text-gray-800">
+                                    <%= stats.totalArticles %>
+                                </p>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4 transform hover:scale-105 transition-transform duration-300">
-                            <div class="bg-green-500 p-4 rounded-full text-white"><i class="fas fa-folder text-2xl"></i></div>
+                        <div
+                            class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4 transform hover:scale-105 transition-transform duration-300">
+                            <div class="bg-green-500 p-4 rounded-full text-white"><i class="fas fa-folder text-2xl"></i>
+                            </div>
                             <div>
                                 <p class="text-gray-500 text-sm">Categories</p>
-                                <p class="text-2xl font-bold text-gray-800"><%= stats.totalCategories %></p>
+                                <p class="text-2xl font-bold text-gray-800">
+                                    <%= stats.totalCategories %>
+                                </p>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4 transform hover:scale-105 transition-transform duration-300">
-                            <div class="bg-purple-500 p-4 rounded-full text-white"><i class="fas fa-folder-open text-2xl"></i></div>
+                        <div
+                            class="bg-white p-6 rounded-xl shadow-md flex items-center space-x-4 transform hover:scale-105 transition-transform duration-300">
+                            <div class="bg-purple-500 p-4 rounded-full text-white"><i
+                                    class="fas fa-folder-open text-2xl"></i></div>
                             <div>
                                 <p class="text-gray-500 text-sm">Subcategories</p>
-                                <p class="text-2xl font-bold text-gray-800"><%= stats.totalSubcategories %></p>
+                                <p class="text-2xl font-bold text-gray-800">
+                                    <%= stats.totalSubcategories %>
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -157,9 +225,12 @@
                     <div class="mt-8 bg-white p-6 rounded-xl shadow-md">
                         <h2 class="text-xl font-semibold text-gray-700 mb-4">Quick Actions</h2>
                         <div class="flex flex-wrap gap-4">
-                            <button class="btn-primary" onclick="showCreateModal('article')"><i class="fas fa-plus mr-2"></i>New Article</button>
-                            <button class="btn-secondary" onclick="showCreateModal('category')"><i class="fas fa-plus mr-2"></i>New Category</button>
-                            <button class="btn-secondary" onclick="showCreateModal('subcategory')"><i class="fas fa-plus mr-2"></i>New Subcategory</button>
+                            <button class="btn-primary" onclick="showCreateModal('article')"><i
+                                    class="fas fa-plus mr-2"></i>New Article</button>
+                            <button class="btn-secondary" onclick="showCreateModal('category')"><i
+                                    class="fas fa-plus mr-2"></i>New Category</button>
+                            <button class="btn-secondary" onclick="showCreateModal('subcategory')"><i
+                                    class="fas fa-plus mr-2"></i>New Subcategory</button>
                         </div>
                     </div>
                 </section>
@@ -167,7 +238,8 @@
                 <section id="socialusers" class="admin-section">
                     <div class="flex justify-between items-center mb-6">
                         <h1 class="text-3xl font-bold text-gray-800">Social Users</h1>
-                        <button class="btn-primary" onclick="showCreateModal('socialuser')"><i class="fas fa-plus mr-2"></i>New Social User</button>
+                        <button class="btn-primary" onclick="showCreateModal('socialuser')"><i
+                                class="fas fa-plus mr-2"></i>New Social User</button>
                     </div>
                     <div class="bg-white rounded-xl shadow-md overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500">
@@ -189,8 +261,11 @@
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
                         <h1 class="text-3xl font-bold text-gray-800">Social Content</h1>
                         <div class="flex items-center gap-2 w-full md:w-auto">
-                            <input id="socialcontents-search" type="text" placeholder="Search by user, text, or ID..." class="w-full md:w-80 pl-3 pr-3 py-2 border rounded-lg text-sm" oninput="filterSocialContents(this.value)">
-                            <button class="btn-primary" onclick="showCreateModal('socialcontent')"><i class="fas fa-plus mr-2"></i>New Social Content</button>
+                            <input id="socialcontents-search" type="text" placeholder="Search by user, text, or ID..."
+                                class="w-full md:w-80 pl-3 pr-3 py-2 border rounded-lg text-sm"
+                                oninput="filterSocialContents(this.value)">
+                            <button class="btn-primary" onclick="showCreateModal('socialcontent')"><i
+                                    class="fas fa-plus mr-2"></i>New Social Content</button>
                         </div>
                     </div>
                     <div class="bg-white rounded-xl shadow-md overflow-x-auto">
@@ -212,7 +287,8 @@
                 <section id="articles" class="admin-section">
                     <div class="flex justify-between items-center mb-6">
                         <h1 class="text-3xl font-bold text-gray-800">Articles Management</h1>
-                        <button class="btn-primary" onclick="showCreateModal('article')"><i class="fas fa-plus mr-2"></i>New Article</button>
+                        <button class="btn-primary" onclick="showCreateModal('article')"><i
+                                class="fas fa-plus mr-2"></i>New Article</button>
                     </div>
                     <div class="bg-white rounded-xl shadow-md overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500">
@@ -230,7 +306,7 @@
                                 </tr>
                             </thead>
                             <tbody id="articles-table-body">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </section>
@@ -238,7 +314,8 @@
                 <section id="categories" class="admin-section">
                     <div class="flex justify-between items-center mb-6">
                         <h1 class="text-3xl font-bold text-gray-800">Categories Management</h1>
-                        <button class="btn-primary" onclick="showCreateModal('category')"><i class="fas fa-plus mr-2"></i>New Category</button>
+                        <button class="btn-primary" onclick="showCreateModal('category')"><i
+                                class="fas fa-plus mr-2"></i>New Category</button>
                     </div>
                     <div class="bg-white rounded-xl shadow-md overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500">
@@ -261,9 +338,10 @@
                 <section id="subcategories" class="admin-section">
                     <div class="flex justify-between items-center mb-6">
                         <h1 class="text-3xl font-bold text-gray-800">Subcategories Management</h1>
-                        <button class="btn-primary" onclick="showCreateModal('subcategory')"><i class="fas fa-plus mr-2"></i>New Subcategory</button>
+                        <button class="btn-primary" onclick="showCreateModal('subcategory')"><i
+                                class="fas fa-plus mr-2"></i>New Subcategory</button>
                     </div>
-                     <div class="bg-white rounded-xl shadow-md overflow-x-auto">
+                    <div class="bg-white rounded-xl shadow-md overflow-x-auto">
                         <table class="w-full text-sm text-left text-gray-500">
                             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
@@ -275,7 +353,7 @@
                                 </tr>
                             </thead>
                             <tbody id="subcategories-table-body">
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </section>
@@ -284,14 +362,15 @@
     </div>
 
     <div id="modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 px-4">
-        <div id="modal-content" class="bg-white rounded-lg shadow-xl w-full max-w-5xl p-8 modal-enter max-h-[90vh] flex flex-col">
+        <div id="modal-content"
+            class="bg-white rounded-lg shadow-xl w-full max-w-5xl p-8 modal-enter max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 id="modal-title" class="text-xl font-semibold text-gray-800">Create New Item</h3>
                 <button class="text-gray-400 hover:text-gray-600" onclick="closeModal()">&times;</button>
             </div>
             <div class="mt-4 overflow-y-auto flex-1" style="max-height:60vh;">
                 <form id="modal-form" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                    </form>
+                </form>
             </div>
             <div class="mt-6 flex justify-end space-x-4">
                 <button class="btn-secondary" onclick="closeModal()">Cancel</button>
@@ -300,7 +379,8 @@
         </div>
     </div>
 
-    <div id="delete-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 px-4">
+    <div id="delete-modal"
+        class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 px-4">
         <div id="delete-modal-content" class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 modal-enter">
             <div class="text-center">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
@@ -308,7 +388,8 @@
                 </div>
                 <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Confirm Deletion</h3>
                 <div class="mt-2">
-                    <p class="text-sm text-gray-500">Are you sure you want to delete this item? This action cannot be undone.</p>
+                    <p class="text-sm text-gray-500">Are you sure you want to delete this item? This action cannot be
+                        undone.</p>
                 </div>
             </div>
             <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
@@ -335,455 +416,6 @@
         let socialcontents = [];
         let socialcontentsFiltered = [];
 
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Apply button classes
-            document.querySelectorAll('.btn-primary').forEach(btn => btn.className = btnPrimaryClasses);
-            document.querySelectorAll('.btn-secondary').forEach(btn => btn.className = btnSecondaryClasses);
-            document.querySelectorAll('.btn-danger').forEach(btn => btn.className = btnDangerClasses);
-            
-            // Initialize navigation
-            initializeNavigation();
-            
-            // Load data
-            loadCategories();
-            loadSubcategories();
-            loadArticles();
-            loadSocialUsers();
-            loadSocialContents();
-        });
-
-        // --- NAVIGATION LOGIC ---
-        const navLinks = document.querySelectorAll('.nav-item');
-        const sections = document.querySelectorAll('.admin-section');
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const closeMobileSidebarButton = document.getElementById('close-mobile-sidebar');
-        const mobileSidebar = document.getElementById('mobile-sidebar');
-
-        function initializeNavigation() {
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const sectionId = e.currentTarget.dataset.section;
-                    setActiveSection(sectionId);
-                });
-            });
-            
-            // Mobile sidebar toggle
-            mobileMenuButton.addEventListener('click', () => {
-                mobileSidebar.classList.remove('hidden');
-            });
-            
-            closeMobileSidebarButton.addEventListener('click', () => {
-                mobileSidebar.classList.add('hidden');
-            });
-
-            // Set initial section
-            const initialSection = window.location.hash.substring(1) || 'dashboard';
-            setActiveSection(initialSection);
-        }
-
-        function setActiveSection(sectionId) {
-            // Update active link
-            navLinks.forEach(link => {
-                link.classList.remove('bg-gray-900', 'text-white');
-                link.classList.add('text-gray-300');
-                if (link.dataset.section === sectionId) {
-                    link.classList.add('bg-gray-900', 'text-white');
-                    link.classList.remove('text-gray-300');
-                }
-            });
-
-            // Show active section
-            sections.forEach(section => {
-                section.classList.remove('active');
-                if (section.id === sectionId) {
-                    section.classList.add('active');
-                }
-            });
-            
-            // Close mobile sidebar on navigation
-            if(!mobileSidebar.classList.contains('hidden')) {
-                mobileSidebar.classList.add('hidden');
-            }
-            
-            currentSection = sectionId;
-        }
-
-        // --- API FUNCTIONS ---
-        async function apiCall(endpoint, options = {}) {
-            const url = `/admin/api/${endpoint}`;
-            console.log('🌐 API Call:', options.method || 'GET', url);
-            console.log('🌐 Options:', options);
-            
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...options.headers
-                    },
-                    ...options
-                });
-                
-                console.log('🌐 Response status:', response.status);
-                console.log('🌐 Response headers:', response.headers);
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.log('🌐 Error response text:', errorText);
-                    
-                    try {
-                        const error = JSON.parse(errorText);
-                        throw new Error(error.error || 'API request failed');
-                    } catch (parseError) {
-                        throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
-                    }
-                }
-                
-                const data = await response.json();
-                console.log('🌐 Response data:', data);
-                return data;
-            } catch (error) {
-                console.error('API Error:', error);
-                showNotification(error.message, 'error');
-                throw error;
-            }
-        }
-
-        // --- DATA LOADING FUNCTIONS ---
-        async function loadCategories() {
-    try {
-        // First, fetch the essential category data. This is the critical part.
-        categories = await apiCall('categories');
-
-        // Then, attempt to fetch the visibility settings.
-        // If this fails, the app can continue with default settings.
-        try {
-            categoryImageSettings = await apiCall('settings/category-image');
-        } catch (settingsError) {
-            console.warn('Could not load category image settings, defaulting to visible.', settingsError);
-            categoryImageSettings = {}; // Use empty object on failure
-        }
-
-        // Finally, render the table with all available data.
-        renderCategoriesTable();
-    } catch (error) {
-        console.error('Fatal error: Failed to load categories:', error);
-        const tbody = document.querySelector('#categories-table-body');
-        if (tbody) {
-            tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Error loading categories. Please check server logs.</td></tr>`;
-        }
-    }
-}   
-
-        async function loadSubcategories() {
-            try {
-                subcategories = await apiCall('subcategories');
-                renderSubcategoriesTable();
-            } catch (error) {
-                console.error('Failed to load subcategories:', error);
-            }
-        }
-
-        async function loadArticles() {
-            try {
-                const articles = await apiCall('articles');
-                renderArticlesTable(articles);
-            } catch (error) {
-                console.error('Failed to load articles:', error);
-            }
-        }
-
-        async function loadSocialUsers() {
-            try {
-                socialusers = await apiCall('socialusers');
-                renderSocialUsersTable();
-            } catch (error) {
-                console.error('Failed to load social users:', error);
-            }
-        }
-
-        async function loadSocialContents() {
-            try {
-                socialcontents = await apiCall('socialcontents');
-                socialcontentsFiltered = socialcontents.slice();
-                renderSocialContentsTable();
-            } catch (error) {
-                console.error('Failed to load social contents:', error);
-            }
-        }
-
-        function filterSocialContents(query) {
-            const q = (query || '').toLowerCase();
-            socialcontentsFiltered = (socialcontents || []).filter(c => {
-                const user = c.socialuser || {};
-                return (
-                    (c.socialcontent_rowguid || '').toLowerCase().includes(q) ||
-                    (c.socialcontent_text || '').toLowerCase().includes(q) ||
-                    (user.socialuser_displayname || '').toLowerCase().includes(q) ||
-                    (user.socialuser_handle || '').toLowerCase().includes(q)
-                );
-            });
-            renderSocialContentsTable();
-        }
-
-        // --- RENDER FUNCTIONS ---
-        function renderCategoriesTable() {
-    const tbody = document.querySelector('#categories-table-body');
-    if (!tbody) {
-        console.error('Could not find the categories table body element.');
-        return;
-    }
-
-    if (!categories || categories.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                    <div class="flex flex-col items-center py-8">
-                        <i class="fas fa-folder text-4xl mb-4 text-gray-300"></i>
-                        <h3 class="text-lg font-medium mb-2">No Categories Found</h3>
-                        <p class="mb-4">Create your first category to get started.</p>
-                        <button class="btn-primary" onclick="showCreateModal('category')">
-                            <i class="fas fa-plus mr-2"></i>Create Category
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `;
-        // Apply button styles since this is dynamic content
-        tbody.querySelector('.btn-primary').className = btnPrimaryClasses;
-        return;
-    }
-
-    tbody.innerHTML = categories.map(category => {
-        // Default to true (visible) if the setting is not explicitly false
-        const isVisible = categoryImageSettings[category.category_rowguid] !== false;
-        return `
-            <tr class="bg-white border-b hover:bg-gray-50">
-                <td class="px-6 py-4 font-medium text-gray-900">${category.category_name}</td>
-                <td class="px-6 py-4 text-gray-600"><code class="bg-gray-100 px-2 py-1 rounded">${category.category_slug}</code></td>
-                <td class="px-6 py-4 text-gray-600">${category.category_description || '-'}</td>
-                <td class="px-6 py-4">
-                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                        ${category.subcategories ? category.subcategories.length : 0}
-                    </span>
-                </td>
-                <td class="px-6 py-4">
-                    <label class="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" value="" class="sr-only peer" onchange="updateCategoryImageVisibility('${category.category_rowguid}', this.checked)" ${isVisible ? 'checked' : ''}>
-                      <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                    </label>
-                </td>
-                <td class="px-6 py-4 text-right space-x-2">
-                    <button class="text-blue-600 hover:text-blue-900" onclick="editItem('category', '${category.category_rowguid}')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="text-red-600 hover:text-red-900" onclick="deleteItem('category', '${category.category_rowguid}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-
-async function updateCategoryImageVisibility(categoryId, isVisible) {
-    try {
-        await apiCall('settings/category-image', {
-            method: 'POST',
-            body: JSON.stringify({ categoryId: categoryId, visible: isVisible })
-        });
-        categoryImageSettings[categoryId] = isVisible;
-        showNotification('Image visibility updated!', 'success');
-    } catch (error) {
-        console.error('Failed to update image visibility:', error);
-        // Revert the checkbox state on failure
-        const checkbox = document.querySelector(`input[onchange="updateCategoryImageVisibility('${categoryId}', this.checked)"]`);
-        if (checkbox) {
-            checkbox.checked = !isVisible;
-        }
-    }
-}
-
-        function renderSubcategoriesTable() {
-            const tbody = document.querySelector('#subcategories-table-body');
-            if (!tbody) return;
-            
-            if (subcategories.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                            <div class="flex flex-col items-center py-8">
-                                <i class="fas fa-folder-open text-4xl mb-4 text-gray-300"></i>
-                                <h3 class="text-lg font-medium mb-2">No Subcategories Found</h3>
-                                <p class="mb-4">Create your first subcategory to get started.</p>
-                                <button class="btn-primary" onclick="showCreateModal('subcategory')">
-                                    <i class="fas fa-plus mr-2"></i>Create Subcategory
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            tbody.innerHTML = subcategories.map(subcategory => `
-                <tr class="bg-white border-b hover:bg-gray-50">
-                    <td class="px-6 py-4 font-medium text-gray-900">${subcategory.subcategory_name}</td>
-                    <td class="px-6 py-4 text-gray-600"><code class="bg-gray-100 px-2 py-1 rounded">${subcategory.subcategory_slug}</code></td>
-                    <td class="px-6 py-4 text-gray-600">${subcategory.category ? subcategory.category.category_name : '-'}</td>
-                    <td class="px-6 py-4 text-gray-600">${subcategory.subcategory_description || '-'}</td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        <button class="text-blue-600 hover:text-blue-900" onclick="editItem('subcategory', '${subcategory.subcategory_rowguid}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="text-red-600 hover:text-red-900" onclick="deleteItem('subcategory', '${subcategory.subcategory_rowguid}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function renderArticlesTable(articles) {
-        const tbody = document.querySelector('#articles-table-body');
-        if (!tbody) return;
-
-        if (articles.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="px-6 py-4 text-center text-gray-500">
-                        <div class="flex flex-col items-center py-8">
-                            <i class="fas fa-newspaper text-4xl mb-4 text-gray-300"></i>
-                            <h3 class="text-lg font-medium mb-2">No Articles Found</h3>
-                            <p class="mb-4">Create your first article to get started.</p>
-                            <button class="btn-primary" onclick="showCreateModal('article')">
-                                <i class="fas fa-plus mr-2"></i>Create Article
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-window.renderSocialUsersTable = function() {
-            const tbody = document.querySelector('#socialusers-table-body');
-            if (!tbody) return;
-            if (!socialusers || socialusers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No social users found</td></tr>`;
-                return;
-}
-            tbody.innerHTML = socialusers.map(u => `
-                <tr class=\"bg-white border-b hover:bg-gray-50\"> 
-                    <td class=\"px-6 py-4 font-medium text-gray-900\">${u.socialuser_displayname}</td>
-                    <td class=\"px-6 py-4 text-gray-600\"><code>@${u.socialuser_handle}</code></td>
-                    <td class=\"px-6 py-4 text-gray-600\">${u.socialuser_profilepictureurl ? `<a class=\"text-blue-600\" href=\"${u.socialuser_profilepictureurl}\" target=\"_blank\">View</a>` : '-'}</td>
-                    <td class=\"px-6 py-4 text-gray-600\">${u.posts ? (u.posts.length || 0) : 0}</td>
-                    <td class=\"px-6 py-4 text-right space-x-2\">
-                        <button class=\"text-blue-600 hover:text-blue-900\" onclick=\"editItem('socialuser', '${u.socialuser_rowguid}')\"><i class=\"fas fa-edit\"></i></button>
-                        <button class=\"text-red-600 hover:text-red-900\" onclick=\"deleteItem('socialuser', '${u.socialuser_rowguid}')\"><i class=\"fas fa-trash\"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-window.renderSocialContentsTable = function() {
-            const tbody = document.querySelector('#socialcontents-table-body');
-            if (!tbody) return;
-            if (!socialcontents || socialcontents.length === 0) {
-                tbody.innerHTML = `<tr><td colspan=\"5\" class=\"px-6 py-4 text-center text-gray-500\">No social content found</td></tr>`;
-                return;
-}
-            tbody.innerHTML = socialcontents.map(c => `
-                <tr class=\"bg-white border-b hover:bg-gray-50\">
-                    <td class=\"px-6 py-4 font-medium text-gray-900\">${c.socialuser ? c.socialuser.socialuser_displayname : '-'}</td>
-                    <td class=\"px-6 py-4 text-gray-600\">${c.socialcontent_text}</td>
-                    <td class=\"px-6 py-4 text-gray-600\">${c.socialcontent_source || '-'}</td>
-                    <td class=\"px-6 py-4 text-gray-600\">${c.socialcontent_postedat ? new Date(c.socialcontent_postedat).toLocaleString() : '-'}</td>
-                    <td class=\"px-6 py-4 text-right space-x-2\">
-                        <button class=\"text-green-600 hover:text-green-900\" onclick=\"copySocialEmbed('${c.socialcontent_rowguid}')\" title=\"Copy Embed\"><i class=\"fas fa-link\"></i></button>
-                        <button class=\"text-blue-600 hover:text-blue-900\" onclick=\"editItem('socialcontent', '${c.socialcontent_rowguid}')\"><i class=\"fas fa-edit\"></i></button>
-                        <button class=\"text-red-600 hover:text-red-900\" onclick=\"deleteItem('socialcontent', '${c.socialcontent_rowguid}')\"><i class=\"fas fa-trash\"></i></button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        window.copySocialEmbed = function(id) {
-            const snippet = `<div class="social-card-container" data-socialcontent-id="${id}"></div>`;
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(snippet)
-                    .then(() => showNotification('Embed copied to clipboard', 'success'))
-                    .catch(() => showNotification('Failed to copy embed', 'error'));
-            } else {
-                const ta = document.createElement('textarea');
-                ta.value = snippet;
-                document.body.appendChild(ta);
-                ta.select();
-                try { document.execCommand('copy'); showNotification('Embed copied to clipboard', 'success'); }
-                catch (e) { showNotification('Failed to copy embed', 'error'); }
-                finally { document.body.removeChild(ta); }
-            }
-        }
-
-        tbody.innerHTML = articles.map(article => {
-            // Determine article type badges
-            const typeBadges = [];
-            if (article.article_featured) {
-                typeBadges.push('<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Featured</span>');
-            }
-            if (article.article_isopinion) {
-                typeBadges.push('<span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Opinion</span>');
-            }
-            if (typeBadges.length === 0) {
-                typeBadges.push('<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Regular</span>');
-            }
-
-            const renderCheckmark = (value) => {
-                return value 
-                    ? '<i class="fas fa-check-circle text-green-500" title="Yes"></i>' 
-                    : '<i class="fas fa-times-circle text-gray-400" title="No"></i>';
-            };
-
-            return `
-            <tr class="bg-white border-b hover:bg-gray-50">
-                <td class="px-6 py-4">
-                    <div>
-                        <div class="font-medium text-gray-900">${article.article_headline}</div>
-                        <div class="text-sm text-gray-500">${article.article_slug}</div>
-                    </div>
-                </td>
-                <td class="px-6 py-4 text-gray-600">${article.article_author}</td>
-                <td class="px-6 py-4 text-gray-600">${article.article_categoryrowguid ? article.article_categoryrowguid.category_name : '-'}</td>
-                <td class="px-6 py-4">
-                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                        ${new Date(article.article_publishedat).toLocaleDateString()}
-                    </span>
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex flex-wrap gap-1">
-                        ${typeBadges.join('')}
-                    </div>
-                </td>
-                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_main)}</td>
-                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_trending)}</td>
-                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_categoryblock)}</td>
-                <td class="px-6 py-4 text-right space-x-2">
-                    <button class="text-blue-600 hover:text-blue-900" onclick="editItem('article', '${article.article_rowguid}')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="text-red-600 hover:text-red-900" onclick="deleteItem('article', '${article.article_rowguid}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-            `;
-        }).join('');
-    }
-
-        // --- MODAL LOGIC ---
         const modal = document.getElementById('modal');
         const modalContent = document.getElementById('modal-content');
         const modalTitle = document.getElementById('modal-title');
@@ -893,7 +525,7 @@ window.renderSocialContentsTable = function() {
                     <input type="color" id="category_color" name="category_color" class="h-10 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 </div>
             `,
-                        subcategory: () => `
+            subcategory: () => `
                 <div class="form-group">
                     <label for="subcategory_name" class="block text-sm font-medium text-gray-700">Subcategory Name *</label>
                     <input type="text" id="subcategory_name" name="subcategory_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
@@ -947,6 +579,511 @@ window.renderSocialContentsTable = function() {
             `
         };
 
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Apply button classes
+            document.querySelectorAll('.btn-primary').forEach(btn => btn.className = btnPrimaryClasses);
+            document.querySelectorAll('.btn-secondary').forEach(btn => btn.className = btnSecondaryClasses);
+            document.querySelectorAll('.btn-danger').forEach(btn => btn.className = btnDangerClasses);
+
+            // Initialize navigation
+            initializeNavigation();
+
+            // Load data
+            loadCategories();
+            loadSubcategories();
+            loadArticles();
+            loadSocialUsers();
+            loadSocialContents();
+        });
+
+        // --- NAVIGATION LOGIC ---
+        const navLinks = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.admin-section');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileSidebarButton = document.getElementById('close-mobile-sidebar');
+        const mobileSidebar = document.getElementById('mobile-sidebar');
+
+        function initializeNavigation() {
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = e.currentTarget.dataset.section;
+                    setActiveSection(sectionId);
+                });
+            });
+
+            // Mobile sidebar toggle
+            mobileMenuButton.addEventListener('click', () => {
+                mobileSidebar.classList.remove('hidden');
+            });
+
+            closeMobileSidebarButton.addEventListener('click', () => {
+                mobileSidebar.classList.add('hidden');
+            });
+
+            // Set initial section
+            const initialSection = window.location.hash.substring(1) || 'dashboard';
+            setActiveSection(initialSection);
+        }
+
+        function setActiveSection(sectionId) {
+            // Update active link
+            navLinks.forEach(link => {
+                link.classList.remove('bg-gray-900', 'text-white');
+                link.classList.add('text-gray-300');
+                if (link.dataset.section === sectionId) {
+                    link.classList.add('bg-gray-900', 'text-white');
+                    link.classList.remove('text-gray-300');
+                }
+            });
+
+            // Show active section
+            sections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === sectionId) {
+                    section.classList.add('active');
+                }
+            });
+
+            // Close mobile sidebar on navigation
+            if (!mobileSidebar.classList.contains('hidden')) {
+                mobileSidebar.classList.add('hidden');
+            }
+
+            currentSection = sectionId;
+        }
+
+        // --- API FUNCTIONS ---
+        async function apiCall(endpoint, options = {}) {
+            const url = `/admin/api/${endpoint}`;
+            console.log('🌐 API Call:', options.method || 'GET', url);
+            console.log('🌐 Options:', options);
+
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+
+                console.log('🌐 Response status:', response.status);
+                console.log('🌐 Response headers:', response.headers);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.log('🌐 Error response text:', errorText);
+
+                    try {
+                        const error = JSON.parse(errorText);
+                        throw new Error(error.error || 'API request failed');
+                    } catch (parseError) {
+                        throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
+                    }
+                }
+
+                const data = await response.json();
+                console.log('🌐 Response data:', data);
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                showNotification(error.message, 'error');
+                throw error;
+            }
+        }
+
+        // --- DATA LOADING FUNCTIONS ---
+        async function loadCategories() {
+            try {
+                // First, fetch the essential category data. This is the critical part.
+                categories = await apiCall('categories');
+
+                // Then, attempt to fetch the visibility settings.
+                // If this fails, the app can continue with default settings.
+                try {
+                    categoryImageSettings = await apiCall('settings/category-image');
+                } catch (settingsError) {
+                    console.warn('Could not load category image settings, defaulting to visible.', settingsError);
+                    categoryImageSettings = {}; // Use empty object on failure
+                }
+
+                // Finally, render the table with all available data.
+                renderCategoriesTable();
+            } catch (error) {
+                console.error('Fatal error: Failed to load categories:', error);
+                const tbody = document.querySelector('#categories-table-body');
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-4 text-center text-red-500">Error loading categories. Please check server logs.</td></tr>`;
+                }
+            }
+        }
+
+        async function loadSubcategories() {
+            try {
+                subcategories = await apiCall('subcategories');
+                renderSubcategoriesTable();
+            } catch (error) {
+                console.error('Failed to load subcategories:', error);
+            }
+        }
+
+        async function loadArticles() {
+            try {
+                const articles = await apiCall('articles');
+                renderArticlesTable(articles);
+            } catch (error) {
+                console.error('Failed to load articles:', error);
+            }
+        }
+
+        async function loadSocialUsers() {
+            try {
+                socialusers = await apiCall('socialusers');
+                window.renderSocialUsersTable();
+            } catch (error) {
+                console.error('Failed to load social users:', error);
+            }
+        }
+
+        async function loadSocialContents() {
+            try {
+                socialcontents = await apiCall('socialcontents');
+                socialcontentsFiltered = socialcontents.slice();
+                window.renderSocialContentsTable();
+            } catch (error) {
+                console.error('Failed to load social contents:', error);
+            }
+        }
+
+        function filterSocialContents(query) {
+            const q = (query || '').toLowerCase();
+            socialcontentsFiltered = (socialcontents || []).filter(c => {
+                const user = c.socialuser || {};
+                return (
+                    (c.socialcontent_rowguid || '').toLowerCase().includes(q) ||
+                    (c.socialcontent_text || '').toLowerCase().includes(q) ||
+                    (user.socialuser_displayname || '').toLowerCase().includes(q) ||
+                    (user.socialuser_handle || '').toLowerCase().includes(q)
+                );
+            });
+            window.renderSocialContentsTable();
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderCategoriesTable() {
+            const tbody = document.querySelector('#categories-table-body');
+            if (!tbody) {
+                console.error('Could not find the categories table body element.');
+                return;
+            }
+
+            if (!categories || categories.length === 0) {
+                tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                    <div class="flex flex-col items-center py-8">
+                        <i class="fas fa-folder text-4xl mb-4 text-gray-300"></i>
+                        <h3 class="text-lg font-medium mb-2">No Categories Found</h3>
+                        <p class="mb-4">Create your first category to get started.</p>
+                        <button class="btn-primary" onclick="showCreateModal('category')">
+                            <i class="fas fa-plus mr-2"></i>Create Category
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+                // Apply button styles since this is dynamic content
+                tbody.querySelector('.btn-primary').className = btnPrimaryClasses;
+                return;
+            }
+
+            tbody.innerHTML = categories.map(category => {
+                // Default to true (visible) if the setting is not explicitly false
+                const isVisible = categoryImageSettings[category.category_rowguid] !== false;
+                return `
+            <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-4 font-medium text-gray-900">${category.category_name}</td>
+                <td class="px-6 py-4 text-gray-600"><code class="bg-gray-100 px-2 py-1 rounded">${category.category_slug}</code></td>
+                <td class="px-6 py-4 text-gray-600">${category.category_description || '-'}</td>
+                <td class="px-6 py-4">
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        ${category.subcategories ? category.subcategories.length : 0}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" value="" class="sr-only peer" onchange="updateCategoryImageVisibility('${category.category_rowguid}', this.checked)" ${isVisible ? 'checked' : ''}>
+                      <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    </label>
+                </td>
+                <td class="px-6 py-4 text-right space-x-2">
+                    <button class="text-blue-600 hover:text-blue-900" onclick="editItem('category', '${category.category_rowguid}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-red-600 hover:text-red-900" onclick="deleteItem('category', '${category.category_rowguid}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+            }).join('');
+        }
+
+
+        async function updateCategoryImageVisibility(categoryId, isVisible) {
+            try {
+                await apiCall('settings/category-image', {
+                    method: 'POST',
+                    body: JSON.stringify({ categoryId: categoryId, visible: isVisible })
+                });
+                categoryImageSettings[categoryId] = isVisible;
+                showNotification('Image visibility updated!', 'success');
+            } catch (error) {
+                console.error('Failed to update image visibility:', error);
+                // Revert the checkbox state on failure
+                const checkbox = document.querySelector(`input[onchange="updateCategoryImageVisibility('${categoryId}', this.checked)"]`);
+                if (checkbox) {
+                    checkbox.checked = !isVisible;
+                }
+            }
+        }
+
+        function renderSubcategoriesTable() {
+            const tbody = document.querySelector('#subcategories-table-body');
+            if (!tbody) return;
+
+            if (subcategories.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                            <div class="flex flex-col items-center py-8">
+                                <i class="fas fa-folder-open text-4xl mb-4 text-gray-300"></i>
+                                <h3 class="text-lg font-medium mb-2">No Subcategories Found</h3>
+                                <p class="mb-4">Create your first subcategory to get started.</p>
+                                <button class="btn-primary" onclick="showCreateModal('subcategory')">
+                                    <i class="fas fa-plus mr-2"></i>Create Subcategory
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = subcategories.map(subcategory => `
+                <tr class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-6 py-4 font-medium text-gray-900">${subcategory.subcategory_name}</td>
+                    <td class="px-6 py-4 text-gray-600"><code class="bg-gray-100 px-2 py-1 rounded">${subcategory.subcategory_slug}</code></td>
+                    <td class="px-6 py-4 text-gray-600">${subcategory.category ? subcategory.category.category_name : '-'}</td>
+                    <td class="px-6 py-4 text-gray-600">${subcategory.subcategory_description || '-'}</td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <button class="text-blue-600 hover:text-blue-900" onclick="editItem('subcategory', '${subcategory.subcategory_rowguid}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900" onclick="deleteItem('subcategory', '${subcategory.subcategory_rowguid}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderArticlesTable(articles) {
+            const tbody = document.querySelector('#articles-table-body');
+            if (!tbody) return;
+
+            if (articles.length === 0) {
+                tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="px-6 py-4 text-center text-gray-500">
+                        <div class="flex flex-col items-center py-8">
+                            <i class="fas fa-newspaper text-4xl mb-4 text-gray-300"></i>
+                            <h3 class="text-lg font-medium mb-2">No Articles Found</h3>
+                            <p class="mb-4">Create your first article to get started.</p>
+                            <button class="btn-primary" onclick="showCreateModal('article')">
+                                <i class="fas fa-plus mr-2"></i>Create Article
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+                return;
+            }
+
+            tbody.innerHTML = articles.map(article => {
+                // Determine article type badges
+                const typeBadges = [];
+                if (article.article_featured) {
+                    typeBadges.push('<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Featured</span>');
+                }
+                if (article.article_isopinion) {
+                    typeBadges.push('<span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Opinion</span>');
+                }
+                if (typeBadges.length === 0) {
+                    typeBadges.push('<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Regular</span>');
+                }
+
+                const renderCheckmark = (value) => {
+                    return value
+                        ? '<i class="fas fa-check-circle text-green-500" title="Yes"></i>'
+                        : '<i class="fas fa-times-circle text-gray-400" title="No"></i>';
+                };
+
+                return `
+            <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-4">
+                    <div>
+                        <div class="font-medium text-gray-900">${article.article_headline}</div>
+                        <div class="text-sm text-gray-500">${article.article_slug}</div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-gray-600">${article.article_author}</td>
+                <td class="px-6 py-4 text-gray-600">${article.article_categoryrowguid ? article.article_categoryrowguid.category_name : '-'}</td>
+                <td class="px-6 py-4">
+                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        ${new Date(article.article_publishedat).toLocaleDateString()}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex flex-wrap gap-1">
+                        ${typeBadges.join('')}
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_main)}</td>
+                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_trending)}</td>
+                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_categoryblock)}</td>
+                <td class="px-6 py-4 text-right space-x-2">
+                    <button class="text-blue-600 hover:text-blue-900" onclick="editItem('article', '${article.article_rowguid}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-red-600 hover:text-red-900" onclick="deleteItem('article', '${article.article_rowguid}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+            }).join('');
+        }
+
+        window.renderSocialUsersTable = function () {
+            const tbody = document.querySelector('#socialusers-table-body');
+            if (!tbody) return;
+            if (!socialusers || socialusers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No social users found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = socialusers.map(u => `
+                <tr class=\"bg-white border-b hover:bg-gray-50\"> 
+                    <td class=\"px-6 py-4 font-medium text-gray-900\">${u.socialuser_displayname}</td>
+                    <td class=\"px-6 py-4 text-gray-600\"><code>@${u.socialuser_handle}</code></td>
+                    <td class=\"px-6 py-4 text-gray-600\">${u.socialuser_profilepictureurl ? `<a class=\"text-blue-600\" href=\"${u.socialuser_profilepictureurl}\" target=\"_blank\">View</a>` : '-'}</td>
+                    <td class=\"px-6 py-4 text-gray-600\">${u.posts ? (u.posts.length || 0) : 0}</td>
+                    <td class=\"px-6 py-4 text-right space-x-2\">
+                        <button class=\"text-blue-600 hover:text-blue-900\" onclick=\"editItem('socialuser', '${u.socialuser_rowguid}')\"><i class=\"fas fa-edit\"></i></button>
+                        <button class=\"text-red-600 hover:text-red-900\" onclick=\"deleteItem('socialuser', '${u.socialuser_rowguid}')\"><i class=\"fas fa-trash\"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.renderSocialContentsTable = function () {
+            const tbody = document.querySelector('#socialcontents-table-body');
+            if (!tbody) return;
+            if (!socialcontents || socialcontents.length === 0) {
+                tbody.innerHTML = `<tr><td colspan=\"5\" class=\"px-6 py-4 text-center text-gray-500\">No social content found</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = socialcontents.map(c => `
+                <tr class=\"bg-white border-b hover:bg-gray-50\">
+                    <td class=\"px-6 py-4 font-medium text-gray-900\">${c.socialuser ? c.socialuser.socialuser_displayname : '-'}</td>
+                    <td class=\"px-6 py-4 text-gray-600\">${c.socialcontent_text}</td>
+                    <td class=\"px-6 py-4 text-gray-600\">${c.socialcontent_source || '-'}</td>
+                    <td class=\"px-6 py-4 text-gray-600\">${c.socialcontent_postedat ? new Date(c.socialcontent_postedat).toLocaleString() : '-'}</td>
+                    <td class=\"px-6 py-4 text-right space-x-2\">
+                        <button class=\"text-green-600 hover:text-green-900\" onclick=\"copySocialEmbed('${c.socialcontent_rowguid}')\" title=\"Copy Embed\"><i class=\"fas fa-link\"></i></button>
+                        <button class=\"text-blue-600 hover:text-blue-900\" onclick=\"editItem('socialcontent', '${c.socialcontent_rowguid}')\"><i class=\"fas fa-edit\"></i></button>
+                        <button class=\"text-red-600 hover:text-red-900\" onclick=\"deleteItem('socialcontent', '${c.socialcontent_rowguid}')\"><i class=\"fas fa-trash\"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        window.copySocialEmbed = function (id) {
+            const snippet = `<div class="social-card-container" data-socialcontent-id="${id}"></div>`;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(snippet)
+                    .then(() => showNotification('Embed copied to clipboard', 'success'))
+                    .catch(() => showNotification('Failed to copy embed', 'error'));
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = snippet;
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); showNotification('Embed copied to clipboard', 'success'); }
+                catch (e) { showNotification('Failed to copy embed', 'error'); }
+                finally { document.body.removeChild(ta); }
+            }
+        }
+
+        tbody.innerHTML = articles.map(article => {
+            // Determine article type badges
+            const typeBadges = [];
+            if (article.article_featured) {
+                typeBadges.push('<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Featured</span>');
+            }
+            if (article.article_isopinion) {
+                typeBadges.push('<span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full mr-1">Opinion</span>');
+            }
+            if (typeBadges.length === 0) {
+                typeBadges.push('<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Regular</span>');
+            }
+
+            const renderCheckmark = (value) => {
+                return value
+                    ? '<i class="fas fa-check-circle text-green-500" title="Yes"></i>'
+                    : '<i class="fas fa-times-circle text-gray-400" title="No"></i>';
+            };
+
+            return `
+            <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-4">
+                    <div>
+                        <div class="font-medium text-gray-900">${article.article_headline}</div>
+                        <div class="text-sm text-gray-500">${article.article_slug}</div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-gray-600">${article.article_author}</td>
+                <td class="px-6 py-4 text-gray-600">${article.article_categoryrowguid ? article.article_categoryrowguid.category_name : '-'}</td>
+                <td class="px-6 py-4">
+                    <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        ${new Date(article.article_publishedat).toLocaleDateString()}
+                    </span>
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex flex-wrap gap-1">
+                        ${typeBadges.join('')}
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_main)}</td>
+                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_trending)}</td>
+                <td class="px-6 py-4 text-center">${renderCheckmark(article.article_categoryblock)}</td>
+                <td class="px-6 py-4 text-right space-x-2">
+                    <button class="text-blue-600 hover:text-blue-900" onclick="editItem('article', '${article.article_rowguid}')">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-red-600 hover:text-red-900" onclick="deleteItem('article', '${article.article_rowguid}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+        }).join('');
+
+
+        // --- MODAL LOGIC ---       
+
         function showCreateModal(type) {
             currentItem = null;
             currentItemType = type;
@@ -955,7 +1092,7 @@ window.renderSocialContentsTable = function() {
             modal.classList.remove('hidden');
             modalContent.classList.remove('modal-leave');
             modalContent.classList.add('modal-enter');
-            
+
             // Initialize HugeRTE if it's an article form
             if (type === 'article') {
                 setTimeout(() => initHugeRTE(), 300);
@@ -972,7 +1109,7 @@ window.renderSocialContentsTable = function() {
                 modal.classList.remove('hidden');
                 modalContent.classList.remove('modal-leave');
                 modalContent.classList.add('modal-enter');
-                
+
                 // Initialize HugeRTE if it's an article form
                 if (type === 'article') {
                     setTimeout(() => initHugeRTE(), 300);
@@ -985,7 +1122,7 @@ window.renderSocialContentsTable = function() {
         function populateForm(type, item) {
             const form = document.getElementById('modal-form');
             const inputs = form.querySelectorAll('input, select, textarea');
-            
+
             inputs.forEach(input => {
                 const fieldName = input.name;
                 if (item[fieldName] !== undefined) {
@@ -1017,14 +1154,14 @@ window.renderSocialContentsTable = function() {
                     }
                 }
             });
-            
+
             // Trigger category change event to populate subcategories
             const categorySelect = form.querySelector('[name="article_categoryrowguid"]');
             if (categorySelect && categorySelect.value) {
                 const event = new Event('change', { bubbles: true });
                 categorySelect.dispatchEvent(event);
             }
-            
+
             // Set HugeRTE content if it exists
             if (typeof hugerte !== 'undefined' && hugerte.get('article_content') && item.article_content) {
                 hugerte.get('article_content').setContent(item.article_content);
@@ -1050,7 +1187,7 @@ window.renderSocialContentsTable = function() {
                     console.log('HugeRTE cleanup error:', e);
                 }
             }
-            
+
             modalContent.classList.remove('modal-enter');
             modalContent.classList.add('modal-leave');
             setTimeout(() => {
@@ -1075,91 +1212,91 @@ window.renderSocialContentsTable = function() {
         }
 
         async function saveItem() {
-        const form = document.getElementById('modal-form');
-        if (!form) return;
+            const form = document.getElementById('modal-form');
+            if (!form) return;
 
-        const data = {};
-        
-        // Manually iterate over form elements to correctly handle all values, especially unchecked checkboxes.
-        for (const el of form.elements) {
-            if (!el.name) continue;
+            const data = {};
 
-            switch (el.type) {
-                case 'checkbox':
-                    data[el.name] = el.checked;
-                    break;
-                case 'datetime-local':
-                case 'number':
-                case 'url':
-                case 'text':
-                case 'hidden':
-                case 'color':
-                    data[el.name] = el.value;
-                    break;
-                case 'select-one':
-                    data[el.name] = el.value;
-                    break;
-                case 'textarea':
-                    if (el.name !== 'article_content') { // Defer article_content to HugeRTE
+            // Manually iterate over form elements to correctly handle all values, especially unchecked checkboxes.
+            for (const el of form.elements) {
+                if (!el.name) continue;
+
+                switch (el.type) {
+                    case 'checkbox':
+                        data[el.name] = el.checked;
+                        break;
+                    case 'datetime-local':
+                    case 'number':
+                    case 'url':
+                    case 'text':
+                    case 'hidden':
+                    case 'color':
                         data[el.name] = el.value;
-                    }
-                    break;
+                        break;
+                    case 'select-one':
+                        data[el.name] = el.value;
+                        break;
+                    case 'textarea':
+                        if (el.name !== 'article_content') { // Defer article_content to HugeRTE
+                            data[el.name] = el.value;
+                        }
+                        break;
+                }
             }
-        }
-        
-        // Handle specific data transformations
-        
-        // Tags: Convert comma-separated string to array
-        if (data.article_tags && typeof data.article_tags === 'string') {
-            data.article_tags = data.article_tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
-        } else {
-            data.article_tags = [];
-        }
 
-        // Subcategory: Convert empty string to null
-        if (data.article_subcategoryrowguid === '') {
-            data.article_subcategoryrowguid = null;
-        }
+            // Handle specific data transformations
 
-        // Get content from the rich text editor
-        if (typeof hugerte !== 'undefined' && hugerte.get('article_content')) {
-            data.article_content = hugerte.get('article_content').getContent();
-        } else {
-            // Fallback for when RTE fails to initialize or is not present
-            const contentTextarea = form.querySelector('#article_content');
-            if (contentTextarea) {
-                data.article_content = contentTextarea.value;
-            }
-        }
-        
-        console.log('💾 Saving item with data:', data);
-
-        try {
-            if (currentItem) {
-                // Update existing item
-                const endpoint = `${getItemTypePlural()}/${currentItem[getItemIdField()]}`;
-                await apiCall(endpoint, {
-                    method: 'PUT',
-                    body: JSON.stringify(data)
-                });
-                showNotification('Item updated successfully!', 'success');
+            // Tags: Convert comma-separated string to array
+            if (data.article_tags && typeof data.article_tags === 'string') {
+                data.article_tags = data.article_tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
             } else {
-                // Create new item
-                const endpoint = `${getItemTypePlural()}`;
-                await apiCall(endpoint, {
-                    method: 'POST',
-                    body: JSON.stringify(data)
-                });
-                showNotification('Item created successfully!', 'success');
+                data.article_tags = [];
             }
-            
-            closeModal();
-            refreshData();
-        } catch (error) {
-            console.error('Failed to save item:', error);
-            // The apiCall function already shows a notification on error
+
+            // Subcategory: Convert empty string to null
+            if (data.article_subcategoryrowguid === '') {
+                data.article_subcategoryrowguid = null;
+            }
+
+            // Get content from the rich text editor
+            if (typeof hugerte !== 'undefined' && hugerte.get('article_content')) {
+                data.article_content = hugerte.get('article_content').getContent();
+            } else {
+                // Fallback for when RTE fails to initialize or is not present
+                const contentTextarea = form.querySelector('#article_content');
+                if (contentTextarea) {
+                    data.article_content = contentTextarea.value;
+                }
+            }
+
+            console.log('💾 Saving item with data:', data);
+
+            try {
+                if (currentItem) {
+                    // Update existing item
+                    const endpoint = `${getItemTypePlural()}/${currentItem[getItemIdField()]}`;
+                    await apiCall(endpoint, {
+                        method: 'PUT',
+                        body: JSON.stringify(data)
+                    });
+                    showNotification('Item updated successfully!', 'success');
+                } else {
+                    // Create new item
+                    const endpoint = `${getItemTypePlural()}`;
+                    await apiCall(endpoint, {
+                        method: 'POST',
+                        body: JSON.stringify(data)
+                    });
+                    showNotification('Item created successfully!', 'success');
+                }
+
+                closeModal();
+                refreshData();
+            } catch (error) {
+                console.error('Failed to save item:', error);
+                // The apiCall function already shows a notification on error
+            }
         }
-    }
 
         function getItemType() {
             console.log('🔍 Current item type:', currentItemType);
@@ -1192,25 +1329,25 @@ window.renderSocialContentsTable = function() {
 
         async function confirmDelete() {
             if (!currentItem) return;
-            
+
             try {
                 const itemId = currentItem[getItemIdField()];
                 console.log('🗑️ Deleting item:', currentItem, 'ID:', itemId, 'Type:', getItemType());
-                
+
                 if (!itemId) {
                     throw new Error('Item ID is undefined');
                 }
-                
+
                 const response = await apiCall(`${getItemTypePlural()}/${itemId}`, {
                     method: 'DELETE'
                 });
-                
+
                 showNotification('Item deleted successfully!', 'success');
                 closeDeleteModal();
                 refreshData();
             } catch (error) {
                 console.error('Failed to delete item:', error);
-                
+
                 // Handle validation errors
                 if (error.message && error.message.includes('Cannot delete')) {
                     try {
@@ -1256,7 +1393,7 @@ window.renderSocialContentsTable = function() {
             // Create notification element
             const notification = document.createElement('div');
             notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
-            
+
             if (type === 'success') {
                 notification.className += ' bg-green-500 text-white';
             } else if (type === 'error') {
@@ -1264,21 +1401,21 @@ window.renderSocialContentsTable = function() {
             } else {
                 notification.className += ' bg-blue-500 text-white';
             }
-            
+
             notification.innerHTML = `
                 <div class="flex items-center">
                     <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} mr-2"></i>
                     <span>${message}</span>
                 </div>
             `;
-            
+
             document.body.appendChild(notification);
-            
+
             // Animate in
             setTimeout(() => {
                 notification.classList.remove('translate-x-full');
             }, 100);
-            
+
             // Remove after 3 seconds
             setTimeout(() => {
                 notification.classList.add('translate-x-full');
@@ -1303,7 +1440,7 @@ window.renderSocialContentsTable = function() {
                 } catch (e) {
                     console.log('HugeRTE removal error:', e);
                 }
-                
+
                 // Wait a bit for the DOM to be ready and ensure cleanup is complete
                 setTimeout(() => {
                     const textarea = document.getElementById('article_content');
@@ -1314,21 +1451,21 @@ window.renderSocialContentsTable = function() {
                             hugerte.init({
                                 selector: '#article_content',
                                 plugins: [
-                                // Core editing features
-                                'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
-                                // Your account includes a free trial of HugeRTE premium features
-                                // Try the most popular premium features until Jul 19, 2025:
-                                'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'hugertespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+                                    // Core editing features
+                                    'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists', 'media', 'searchreplace', 'table', 'visualblocks', 'wordcount',
+                                    // Your account includes a free trial of HugeRTE premium features
+                                    // Try the most popular premium features until Jul 19, 2025:
+                                    'checklist', 'mediaembed', 'casechange', 'formatpainter', 'pageembed', 'a11ychecker', 'hugertespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown', 'importword', 'exportword', 'exportpdf'
                                 ],
                                 toolbar: 'undo redo | blocks | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
                                 tinycomments_mode: 'embedded',
                                 tinycomments_author: 'Author name',
                                 mergetags_list: [
-                                { value: 'First.Name', title: 'First Name' },
-                                { value: 'Email', title: 'Email' },
+                                    { value: 'First.Name', title: 'First Name' },
+                                    { value: 'Email', title: 'Email' },
                                 ],
                                 ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
-                                setup: function(editor) {
+                                setup: function (editor) {
                                     console.log('HugeRTE initialized successfully');
                                 }
                             });
@@ -1370,14 +1507,14 @@ window.renderSocialContentsTable = function() {
         }
 
         // Handle category selection for subcategories in article form
-        document.addEventListener('change', function(e) {
+        document.addEventListener('change', function (e) {
             if (e.target.name === 'article_categoryrowguid') {
                 const subcategorySelect = document.getElementById('article_subcategoryrowguid');
                 const categoryId = e.target.value;
-                
+
                 console.log('🔄 Category changed to:', categoryId);
                 console.log('🔄 Available subcategories:', subcategories);
-                
+
                 if (categoryId) {
                     // Try different possible data structures
                     const categorySubcategories = subcategories.filter(sub => {
@@ -1392,9 +1529,9 @@ window.renderSocialContentsTable = function() {
                         }
                         return false;
                     });
-                    
+
                     console.log('🔄 Filtered subcategories:', categorySubcategories);
-                    
+
                     subcategorySelect.innerHTML = '<option value="">Select a subcategory (optional)</option>' +
                         categorySubcategories.map(sub => `<option value="${sub.subcategory_rowguid}">${sub.subcategory_name}</option>`).join('');
                 } else {
@@ -1404,4 +1541,5 @@ window.renderSocialContentsTable = function() {
         });
     </script>
 </body>
+
 </html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSP Test - The Beltway Times</title>
+    
+    <!-- Test external stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Test Google Ads -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4083750040120466" crossorigin="anonymous"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .icon-test {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+        .google-ad {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔒 Content Security Policy Test</h1>
+    
+    <div class="test-section success">
+        <h2>✅ CSP Headers Applied</h2>
+        <p>If you can see this page without CSP errors in the console, the CSP headers are working correctly!</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎨 Font Awesome Icons Test</h2>
+        <p>Testing Font Awesome icons (should display properly):</p>
+        <div class="icon-test">
+            <i class="fas fa-home"></i> Home
+            <i class="fas fa-search"></i> Search
+            <i class="fas fa-user"></i> User
+            <i class="fas fa-cog"></i> Settings
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📝 Google Fonts Test</h2>
+        <p>This text should be displayed in Inter font from Google Fonts.</p>
+        <p style="font-weight: 600;">This is bold Inter font.</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>📢 Google Ads Test</h2>
+        <p>Testing Google Ads script (should load without CSP errors):</p>
+        <div class="google-ad">
+            <p>Google Ads placeholder</p>
+            <p><small>Check browser console for any CSP violations</small></p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔍 Console Check</h2>
+        <p>Open your browser's developer console (F12) and check for any CSP violations.</p>
+        <p>You should see:</p>
+        <ul>
+            <li>✅ No CSP errors for Font Awesome</li>
+            <li>✅ No CSP errors for Google Fonts</li>
+            <li>✅ No CSP errors for Google Ads</li>
+            <li>✅ No CSP errors for inline scripts</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>⚙️ CSP Configuration Options</h2>
+        <p>In <code>src/index.ts</code>, you can choose between:</p>
+        <ul>
+            <li><strong>Development mode</strong> (current): <code>CSPMiddleware.setDevCSPHeaders</code></li>
+            <li><strong>Production mode</strong>: <code>CSPMiddleware.setCSPHeaders</code></li>
+            <li><strong>Disabled</strong> (for debugging): <code>CSPMiddleware.disableCSP</code></li>
+        </ul>
+    </div>
+    
+    <script>
+        // Test inline script execution
+        console.log('✅ Inline script executed successfully');
+        
+        // Test external script loading
+        window.addEventListener('load', function() {
+            console.log('✅ Page loaded successfully');
+            console.log('✅ CSP test completed');
+        });
+    </script>
+</body>
+</html>

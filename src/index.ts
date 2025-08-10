@@ -7,6 +7,7 @@ import config from './mikro-orm.config';
 import { NewsController } from './controllers/newsController';
 import { AdminController } from './controllers/adminController';
 import { DatabaseService } from './services/databaseService';
+import { CSPMiddleware } from './middleware/cspMiddleware';
 
 const app = express();
 const PORT = process.env['PORT'] || 3000;
@@ -188,6 +189,15 @@ async function startServer() {
     app.set('view engine', 'ejs');
     app.set('views', path.join(process.cwd(), 'public/views'));
     app.set('trust proxy', true);
+
+    // Content Security Policy middleware
+    // Choose one of the following options:
+    // 1. For development (less restrictive):
+    app.use(CSPMiddleware.setDevCSPHeaders);
+    // 2. For production (more secure):
+    // app.use(CSPMiddleware.setCSPHeaders);
+    // 3. To disable CSP (for debugging):
+    // app.use(CSPMiddleware.disableCSP);
 
     // Body parser - MUST be before routes
     app.use(express.json());
