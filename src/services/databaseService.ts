@@ -348,12 +348,9 @@ export class DatabaseService {
   }
 
   async createSocialUser(data: any): Promise<SocialUser> {
-    const user = this.em.create(SocialUser, {
-      socialuser_rowguid: uuidv4(),
-      ...data,
-    });
-    await this.em.persistAndFlush(user);
-    return user;
+    const socialUser = this.em.create(SocialUser, data);
+    await this.em.persistAndFlush(socialUser);
+    return socialUser;
   }
 
   async updateSocialUser(id: string, updateData: any): Promise<SocialUser | null> {
