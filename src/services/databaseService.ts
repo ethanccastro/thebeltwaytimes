@@ -348,10 +348,13 @@ export class DatabaseService {
   }
 
   async createSocialUser(data: any): Promise<SocialUser> {
-    const user = this.em.create(SocialUser, {
-      socialuser_rowguid: uuidv4(),
-      ...data,
-    });
+    // Check if a user with this handle already exists
+    const existing = await this.em.findOne(SocialUser, { socialuser_handle: data.socialuser_handle });
+    if (existing) {
+      throw new Error(`A social user with the handle "${data.socialuser_handle}" already exists.`);
+    }
+
+    const user = this.em.create(SocialUser, data);
     await this.em.persistAndFlush(user);
     return user;
   }
@@ -406,4 +409,4 @@ export class DatabaseService {
     await this.em.removeAndFlush(content);
     return true;
   }
-} 
+}

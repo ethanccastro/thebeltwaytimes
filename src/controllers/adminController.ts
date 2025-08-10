@@ -457,6 +457,7 @@ export class AdminController {
         return;
       }
       const user = await this.dbService.createSocialUser({
+        socialuser_rowguid: uuidv4(),
         socialuser_displayname,
         socialuser_handle,
         socialuser_profilepictureurl,
@@ -464,7 +465,8 @@ export class AdminController {
       res.status(201).json(user);
     } catch (error) {
       console.error('Error creating social user:', error);
-      res.status(500).json({ error: 'Failed to create social user' });
+      const err = error as Error;
+      res.status(500).json({ error: 'Failed to create social user', message: err.message });
     }
   };
 
@@ -613,4 +615,4 @@ export class AdminController {
       res.status(500).json({ error: 'Failed to update settings' });
     }
   };  
-} 
+}
