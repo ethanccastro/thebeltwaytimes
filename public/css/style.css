@@ -729,7 +729,7 @@ body.noscroll {
 
 .article-header {
   background-color: var(--wapo-white);
-  padding: 24px;
+  padding: 24px 0;
   border-bottom: 1px solid var(--wapo-gray-light);
 }
 
