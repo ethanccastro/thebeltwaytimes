@@ -757,7 +757,6 @@ body.noscroll {
 }
 
 .article-content {
-  padding: 24px;
   background-color: var(--wapo-white);
 }
 
@@ -970,9 +969,7 @@ body.noscroll {
 
 /* Mobile (≤600px) */
 
-  .main-content {
-    padding: 16px 0;
-  }
+
 
   .main-articles .article-container-text {
     padding: 14px 8px 12px 8px;
@@ -997,7 +994,7 @@ body.noscroll {
   }
 
   .article-card {
-    flex-direction: column;
+    flex-direction: row-reverse;
     overflow: hidden;
     margin: 16px 0;
     background: #fff;
@@ -1057,7 +1054,7 @@ body.noscroll {
   .header-navigation {
     display: none;
   }
-}
+
 
 /* Utility classes */
 .text-center {
