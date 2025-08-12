@@ -253,10 +253,9 @@ body.noscroll {
 /*---------------------------------------------------------------------*/
 
 .main-content {
-  padding: 30px 0;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 30px 10px;
 }
 
 .article-grid {
@@ -1187,11 +1186,6 @@ body.noscroll {
 
   .about .sidebar {
     margin-top: 32px;
-  }
-
-
-  .article-card {
-    padding: 14px;
   }
 }
 
@@ -2279,7 +2273,6 @@ body.noscroll {
   background: var(--news-card-bg);
   border-radius: 10px;
   box-shadow: var(--news-card-shadow);
-  padding: 18px 24px 12px 24px;
 }
 
 .trending-title {
@@ -2288,6 +2281,7 @@ body.noscroll {
   margin-bottom: 12px;
   font-weight: 700;
   letter-spacing: 1px;
+  padding: .5rem;
 }
 
 .trending-cards {
@@ -2297,9 +2291,6 @@ body.noscroll {
 }
 
 .trending-card {
-  background: var(--news-bg);
-  border-radius: 8px;
-  box-shadow: 0 1px 6px rgba(30, 40, 90, 0.06);
   overflow: hidden;
   width: 220px;
   min-width: 180px;
@@ -2317,6 +2308,7 @@ body.noscroll {
   height: 110px;
   object-fit: cover;
   background: #eee;
+  border-radius: 6px 6px 0 0;
 }
 
 .trending-card-content {
