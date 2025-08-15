@@ -284,6 +284,22 @@ export class NewsController {
     }
   };
 
+  public getTerms = async (_req: Request, res: Response): Promise<void> => {
+    try {
+      res.render('terms', {
+        title: 'Terms and Conditions - The Beltway Times',
+        currentSection: 'terms'
+      });
+    } catch (error) {
+      console.error('Error in getTerms:', error);
+      res.status(500).render('error', {
+        title: 'Error',
+        message: 'An error occurred while loading the terms and conditions page',
+        currentSection: 'error'
+      });
+    }
+  };  
+
   public getSitemapXml = async (_req: Request, res: Response): Promise<void> => {
     try {
       const baseUrl = `${_req.protocol}://${_req.get('host')}`;

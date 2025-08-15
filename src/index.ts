@@ -151,6 +151,8 @@ async function setupRoutes() {
   // Contact page
   app.get('/contact', newsController.getContact);
 
+  app.get('/terms', newsController.getTerms); 
+
   // Dynamic fallback routes for categories and subcategories
   // These are placed AFTER all specific/static routes to avoid collisions
   app.get('/:category/:subcategory', (req, res) => {

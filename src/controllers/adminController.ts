@@ -91,7 +91,7 @@ export class AdminController {
       // Prevent collisions with reserved/static routes
       const reservedSlugs = new Set([
         'admin', 'article', 'search', 'about', 'privacy', 'disclaimer', 'contact', 'sitemap.xml',
-        'test'
+        'test', 'terms'
       ]);
       if (reservedSlugs.has(String(category_slug).toLowerCase())) {
         res.status(400).json({ error: `Slug "${category_slug}" is reserved. Please choose a different slug.` });
