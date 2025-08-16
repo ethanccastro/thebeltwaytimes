@@ -55,6 +55,9 @@ log "Installing and using Node.js v$NODE_VERSION"
 nvm install $NODE_VERSION
 nvm use $NODE_VERSION
 
+# Get the full path to the Node.js executable
+NODE_EXEC_PATH=$(which node)
+
 # Stop the service if it's running
 if systemctl is-active --quiet "$SERVICE_NAME"; then
     log "Stopping $SERVICE_NAME service"
@@ -120,7 +123,7 @@ After=network.target mysql.service
 Type=simple
 User=$USER
 WorkingDirectory=$APP_DIR
-ExecStart=$HOME/.nvm/versions/node/v$NODE_VERSION/bin/node dist/server.js
+ExecStart=$NODE_EXEC_PATH dist/server.js
 Restart=always
 RestartSec=10
 Environment=NODE_ENV=production
