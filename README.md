@@ -15,7 +15,7 @@ A modern TypeScript boilerplate project with comprehensive tooling and best prac
 
 ```
 ├── src/
-│   ├── index.ts              # Main entry point
+│   ├── server.ts              # Main entry point
 │   └── utils/
 │       ├── calculator.ts      # Calculator utility class
 │       ├── logger.ts          # Logger utility class

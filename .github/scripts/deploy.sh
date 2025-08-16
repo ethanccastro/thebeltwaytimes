@@ -107,7 +107,7 @@ After=network.target mysql.service
 Type=simple
 User=$USER
 WorkingDirectory=$APP_DIR
-ExecStart=/usr/bin/node dist/index.js
+ExecStart=/usr/bin/node dist/server.js
 Restart=always
 RestartSec=10
 Environment=NODE_ENV=production
@@ -157,7 +157,7 @@ else
     fi
     log "Trying to start application manually for debugging:"
     cd "$APP_DIR"
-    timeout 10s node dist/index.js || log "Manual start failed (expected if no .env)"
+    timeout 10s node dist/server.js || log "Manual start failed (expected if no .env)"
     exit 1
 fi
 
