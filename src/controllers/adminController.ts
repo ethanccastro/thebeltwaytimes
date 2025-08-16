@@ -1,21 +1,21 @@
 import { Request, Response } from 'express';
-import { DatabaseService } from '../services/databaseService';
+import { AdminService } from '../services/adminService';
 import { v4 as uuidv4 } from 'uuid';
 
 export class AdminController {
-  private dbService: DatabaseService;
+  private adminService: AdminService;
   private allowedIPs: string[];
-  private categoryImageVisibility: { [key: string]: boolean } = {};  
+  private categoryImageVisibility: { [key: string]: boolean } = {};
 
-  constructor(dbService: DatabaseService) {
-    this.dbService = dbService;
+  constructor(adminService: AdminService) {
+    this.adminService = adminService;
     // Add your local IP addresses here for security
     this.allowedIPs = ['127.0.0.1', '::1', 'localhost', '192.168.1.139', '162.207.201.37', '12.75.116.102'];
   }
 
   private isAuthorized(req: Request): boolean {
     const forwardedFor = req.headers['x-forwarded-for'];
-    const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || 
+    const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress ||
                     (typeof forwardedFor === 'string' ? forwardedFor : Array.isArray(forwardedFor) ? forwardedFor[0] : '');
     console.log('Client IP:', clientIP);
     console.log('Allowed IPs:', this.allowedIPs);
@@ -28,7 +28,7 @@ export class AdminController {
     console.log('🔐 Client IP:', req.ip);
     console.log('🔐 X-Forwarded-For:', req.headers['x-forwarded-for']);
     console.log('🔐 Remote Address:', req.connection.remoteAddress);
-    
+
     if (!this.isAuthorized(req)) {
       console.log('❌ Access denied for IP:', req.ip);
       res.status(403).json({ error: 'Access denied. Admin access only.' });
@@ -41,7 +41,7 @@ export class AdminController {
   // Admin dashboard
   public getDashboard = async (req: Request, res: Response) => {
     try {
-      const stats = await this.dbService.getAdminStats();
+      const stats = await this.adminService.getAdminStats();
       res.render('admin/dashboard', {
         title: 'Admin Dashboard',
         stats,
@@ -56,7 +56,7 @@ export class AdminController {
   // ===== CATEGORY CRUD OPERATIONS =====
   public getCategories = async (req: Request, res: Response): Promise<void> => {
     try {
-      const categories = await this.dbService.getAllCategories();
+      const categories = await this.adminService.getAllCategories();
       res.json(categories);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -67,7 +67,7 @@ export class AdminController {
   public getCategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const category = await this.dbService.getCategoryById(id);
+      const category = await this.adminService.getCategoryById(id);
       if (!category) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -82,7 +82,7 @@ export class AdminController {
   public createCategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { category_slug, category_name, category_description, category_color } = req.body;
-      
+
       if (!category_slug || !category_name) {
         res.status(400).json({ error: 'Slug and name are required' });
         return;
@@ -98,28 +98,39 @@ export class AdminController {
         return;
       }
 
+      const now = new Date();
       const categoryData = {
         category_rowguid: uuidv4(),
         category_slug,
         category_name,
         category_description,
-        category_color
+        category_color,
+        category_createtime: now,
+        category_updatetime: now
       };
 
-      const category = await this.dbService.createCategory(categoryData);
+      const category = await this.adminService.createCategory(categoryData);
       res.status(201).json(category);
     } catch (error) {
       console.error('Error creating category:', error);
-      res.status(500).json({ error: 'Failed to create category' });
+      const err = error as Error;
+      res.status(500).json({ error: 'Failed to create category', message: err.message });
     }
   };
 
   public updateCategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const updateData = req.body;
-      
-      const category = await this.dbService.updateCategory(id, updateData);
+      const { category_slug, category_name, category_description, category_color } = req.body;
+      const updateData = {
+        category_slug,
+        category_name,
+        category_description,
+        category_color,
+        category_updatetime: new Date()
+      };
+
+      const category = await this.adminService.updateCategory(id, updateData);
       if (!category) {
         res.status(404).json({ error: 'Category not found' });
         return;
@@ -134,30 +145,8 @@ export class AdminController {
   public deleteCategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      
-      // Check if category has articles
-      const articlesUsingCategory = await this.dbService.getArticlesByCategoryId(id);
-      if (articlesUsingCategory.length > 0) {
-        res.status(400).json({ 
-          error: 'Cannot delete category', 
-          message: `This category is being used by ${articlesUsingCategory.length} article(s). Please remove or reassign these articles first.`,
-          articlesCount: articlesUsingCategory.length
-        });
-        return;
-      }
-      
-      // Check if category has subcategories
-      const category = await this.dbService.getCategoryById(id);
-      if (category && category.subcategories && category.subcategories.length > 0) {
-        res.status(400).json({ 
-          error: 'Cannot delete category', 
-          message: `This category has ${category.subcategories.length} subcategory(ies). Please delete the subcategories first.`,
-          subcategoriesCount: category.subcategories.length
-        });
-        return;
-      }
-      
-      const success = await this.dbService.deleteCategory(id);
+
+      const success = await this.adminService.deleteCategory(id);
       if (!success) {
         res.status(404).json({ error: 'Category not found' });
         return;
@@ -172,7 +161,7 @@ export class AdminController {
   // ===== SUBCATEGORY CRUD OPERATIONS =====
   public getSubcategories = async (req: Request, res: Response): Promise<void> => {
     try {
-      const subcategories = await this.dbService.getAllSubcategories();
+      const subcategories = await this.adminService.getAllSubcategories();
       res.json(subcategories);
     } catch (error) {
       console.error('Error fetching subcategories:', error);
@@ -183,7 +172,7 @@ export class AdminController {
   public getSubcategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const subcategory = await this.dbService.getSubcategoryById(id);
+      const subcategory = await this.adminService.getSubcategoryById(id);
       if (!subcategory) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -198,28 +187,24 @@ export class AdminController {
   public createSubcategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { subcategory_slug, subcategory_name, subcategory_description, category_rowguid } = req.body;
-      
+
       if (!subcategory_slug || !subcategory_name || !category_rowguid) {
         res.status(400).json({ error: 'Slug, name, and category are required' });
         return;
       }
 
-      // Fetch the category object first
-      const category = await this.dbService.getCategoryById(category_rowguid);
-      if (!category) {
-        res.status(400).json({ error: 'Category not found' });
-        return;
-      }
-
+      const now = new Date();
       const subcategoryData = {
         subcategory_rowguid: uuidv4(),
         subcategory_slug,
         subcategory_name,
         subcategory_description,
-        category: category
+        subcategory_categoryrowguid: category_rowguid,
+        subcategory_createtime: now,
+        subcategory_updatetime: now
       };
 
-      const subcategory = await this.dbService.createSubcategory(subcategoryData);
+      const subcategory = await this.adminService.createSubcategory(subcategoryData);
       res.status(201).json(subcategory);
     } catch (error) {
       console.error('Error creating subcategory:', error);
@@ -230,20 +215,19 @@ export class AdminController {
   public updateSubcategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const updateData = req.body;
-      
-      // If category_rowguid is provided, fetch the category object
-      if (updateData.category_rowguid) {
-        const category = await this.dbService.getCategoryById(updateData.category_rowguid);
-        if (!category) {
-          res.status(400).json({ error: 'Category not found' });
-          return;
-        }
-        updateData.category = category;
-        delete updateData.category_rowguid;
+      const { subcategory_slug, subcategory_name, subcategory_description, category_rowguid } = req.body;
+      const updateData: any = {
+        subcategory_slug,
+        subcategory_name,
+        subcategory_description,
+        subcategory_updatetime: new Date()
+      };
+
+      if (category_rowguid) {
+        updateData.subcategory_categoryrowguid = category_rowguid;
       }
-      
-      const subcategory = await this.dbService.updateSubcategory(id, updateData);
+
+      const subcategory = await this.adminService.updateSubcategory(id, updateData);
       if (!subcategory) {
         res.status(404).json({ error: 'Subcategory not found' });
         return;
@@ -258,19 +242,8 @@ export class AdminController {
   public deleteSubcategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      
-      // Check if subcategory has articles
-      const articlesUsingSubcategory = await this.dbService.getArticlesBySubcategoryId(id);
-      if (articlesUsingSubcategory.length > 0) {
-        res.status(400).json({ 
-          error: 'Cannot delete subcategory', 
-          message: `This subcategory is being used by ${articlesUsingSubcategory.length} article(s). Please remove or reassign these articles first.`,
-          articlesCount: articlesUsingSubcategory.length
-        });
-        return;
-      }
-      
-      const success = await this.dbService.deleteSubcategory(id);
+
+      const success = await this.adminService.deleteSubcategory(id);
       if (!success) {
         res.status(404).json({ error: 'Subcategory not found' });
         return;
@@ -285,7 +258,7 @@ export class AdminController {
   // ===== ARTICLE CRUD OPERATIONS =====
   public getArticles = async (req: Request, res: Response): Promise<void> => {
     try {
-      const articles = await this.dbService.getAllArticles();
+      const articles = await this.adminService.getAllArticles();
       res.json(articles);
     } catch (error) {
       console.error('Error fetching articles:', error);
@@ -296,7 +269,7 @@ export class AdminController {
   public getArticle = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const article = await this.dbService.getArticleById(id);
+      const article = await this.adminService.getArticleById(id);
       if (!article) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -311,7 +284,7 @@ export class AdminController {
   public createArticle = async (req: Request, res: Response): Promise<void> => {
     try {
       console.log('📝 Creating article with data:', req.body);
-      
+
       const {
         article_headline,
         article_slug,
@@ -330,7 +303,7 @@ export class AdminController {
         article_trending,
         article_categoryblock
       } = req.body;
-      
+
       if (!article_headline || !article_slug || !article_content || !article_author || !article_categoryrowguid) {
         res.status(400).json({ error: 'Headline, slug, content, author, and category are required' });
         return;
@@ -343,6 +316,7 @@ export class AdminController {
         return;
       }
 
+      const now = new Date();
       const articleData = {
         article_rowguid: uuidv4(),
         article_headline,
@@ -360,10 +334,12 @@ export class AdminController {
         article_isopinion: article_isopinion || false,
         article_main: article_main || false,
         article_trending: article_trending || false,
-        article_categoryblock: article_categoryblock || false
+        article_categoryblock: article_categoryblock || false,
+        article_createtime: now,
+        article_updatetime: now
       };
 
-      const article = await this.dbService.createArticle(articleData);
+      const article = await this.adminService.createArticle(articleData);
       res.status(201).json(article);
     } catch (error) {
       console.error('Error creating article:', error);
@@ -374,29 +350,68 @@ export class AdminController {
   public updateArticle = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const updateData = req.body;
-      
+      const {
+        article_headline,
+        article_slug,
+        article_excerpt,
+        article_content,
+        article_author,
+        article_categoryrowguid,
+        article_subcategoryrowguid,
+        article_publishedat,
+        article_imageurl,
+        article_readtime,
+        article_tags,
+        article_featured,
+        article_isopinion,
+        article_main,
+        article_trending,
+        article_categoryblock
+      } = req.body;
+
+      const updateData: any = {
+        article_headline,
+        article_slug,
+        article_excerpt,
+        article_content,
+        article_author,
+        article_categoryrowguid,
+        article_publishedat,
+        article_imageurl,
+        article_readtime,
+        article_featured,
+        article_isopinion,
+        article_main,
+        article_trending,
+        article_categoryblock,
+        article_updatetime: new Date()
+      };
+
       // Handle date fields
       if (updateData.article_publishedat) {
         updateData.article_publishedat = new Date(updateData.article_publishedat);
       }
-      if (updateData.article_tags && typeof updateData.article_tags === 'string') {
-        updateData.article_tags = updateData.article_tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0);
+      if (article_tags && typeof article_tags === 'string') {
+        updateData.article_tags = article_tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0);
+      } else if (Array.isArray(article_tags)) {
+        updateData.article_tags = article_tags;
       }
-      
+
       // Handle empty subcategory field
-      if (updateData.article_subcategoryrowguid === '') {
+      if (article_subcategoryrowguid === '') {
         updateData.article_subcategoryrowguid = null;
+      } else {
+        updateData.article_subcategoryrowguid = article_subcategoryrowguid;
       }
-      
+
       // Enforce mutual exclusivity for update
       const exclusives = [updateData.article_featured, updateData.article_main, updateData.article_trending, updateData.article_categoryblock].filter(Boolean);
       if (exclusives.length > 1) {
         res.status(400).json({ error: 'Only one of Featured, Main, Trending, or Category Block can be selected.' });
         return;
       }
-      
-      const article = await this.dbService.updateArticle(id, updateData);
+
+      const article = await this.adminService.updateArticle(id, updateData);
       if (!article) {
         res.status(404).json({ error: 'Article not found' });
         return;
@@ -411,7 +426,7 @@ export class AdminController {
   public deleteArticle = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const success = await this.dbService.deleteArticle(id);
+      const success = await this.adminService.deleteArticle(id);
       if (!success) {
         res.status(404).json({ error: 'Article not found' });
         return;
@@ -426,7 +441,7 @@ export class AdminController {
   // ===== SOCIAL USER CRUD =====
   public getSocialUsers = async (_req: Request, res: Response): Promise<void> => {
     try {
-      const users = await this.dbService.getAllSocialUsers();
+      const users = await this.adminService.getAllSocialUsers();
       res.json(users);
     } catch (error) {
       console.error('Error fetching social users:', error);
@@ -437,7 +452,7 @@ export class AdminController {
   public getSocialUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const user = await this.dbService.getSocialUserById(id);
+      const user = await this.adminService.getSocialUserById(id);
       if (!user) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -456,7 +471,7 @@ export class AdminController {
         res.status(400).json({ error: 'Display name and handle are required' });
         return;
       }
-      const user = await this.dbService.createSocialUser({
+      const user = await this.adminService.createSocialUser({
         socialuser_rowguid: uuidv4(),
         socialuser_displayname,
         socialuser_handle,
@@ -473,7 +488,13 @@ export class AdminController {
   public updateSocialUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const user = await this.dbService.updateSocialUser(id, req.body);
+      const { socialuser_displayname, socialuser_handle, socialuser_profilepictureurl } = req.body;
+      const updateData = {
+        socialuser_displayname,
+        socialuser_handle,
+        socialuser_profilepictureurl
+      };
+      const user = await this.adminService.updateSocialUser(id, updateData);
       if (!user) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -488,7 +509,7 @@ export class AdminController {
   public deleteSocialUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const success = await this.dbService.deleteSocialUser(id);
+      const success = await this.adminService.deleteSocialUser(id);
       if (!success) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -503,7 +524,7 @@ export class AdminController {
   // ===== SOCIAL CONTENT CRUD =====
   public getSocialContents = async (_req: Request, res: Response): Promise<void> => {
     try {
-      const contents = await this.dbService.getAllSocialContents();
+      const contents = await this.adminService.getAllSocialContents();
       res.json(contents);
     } catch (error) {
       console.error('Error fetching social contents:', error);
@@ -514,7 +535,7 @@ export class AdminController {
   public getSocialContent = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const content = await this.dbService.getSocialContentById(id);
+      const content = await this.adminService.getSocialContentById(id);
       if (!content) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -533,38 +554,33 @@ export class AdminController {
         res.status(400).json({ error: 'Text and social user are required' });
         return;
       }
-      // Ensure social user exists
-      const user = await this.dbService.getSocialUserById(socialuser_rowguid);
-      if (!user) {
-        res.status(400).json({ error: 'Invalid social user' });
-        return;
-      }
-      const content = await this.dbService.createSocialContent({
+      const content = await this.adminService.createSocialContent({
         socialcontent_text,
         socialcontent_source,
-        socialuser: user,
+        socialcontent_socialuserrowguid: socialuser_rowguid,
+        socialcontent_postedat: new Date(),
       });
       res.status(201).json(content);
     } catch (error) {
       console.error('Error creating social content:', error);
-      res.status(500).json({ error: 'Failed to create social content' });
+      const err = error as Error;
+      res.status(500).json({ error: 'Failed to create social content', message: err.message });
     }
   };
 
   public updateSocialContent = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const updateData = { ...req.body };
-      if (updateData.socialuser_rowguid) {
-        const user = await this.dbService.getSocialUserById(updateData.socialuser_rowguid);
-        if (!user) {
-          res.status(400).json({ error: 'Invalid social user' });
-          return;
-        }
-        updateData.socialuser = user;
-        delete updateData.socialuser_rowguid;
+      const { socialuser_rowguid, socialcontent_text, socialcontent_source } = req.body;
+      const updateData: any = {
+        socialcontent_text,
+        socialcontent_source,
+      };
+
+      if (socialuser_rowguid) {
+        updateData.socialcontent_socialuserrowguid = socialuser_rowguid;
       }
-      const content = await this.dbService.updateSocialContent(id, updateData);
+      const content = await this.adminService.updateSocialContent(id, updateData);
       if (!content) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -579,7 +595,7 @@ export class AdminController {
   public deleteSocialContent = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const success = await this.dbService.deleteSocialContent(id);
+      const success = await this.adminService.deleteSocialContent(id);
       if (!success) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -614,5 +630,5 @@ export class AdminController {
       console.error('Error updating category image visibility:', error);
       res.status(500).json({ error: 'Failed to update settings' });
     }
-  };  
+  };
 }

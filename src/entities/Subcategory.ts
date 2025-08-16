@@ -1,4 +1,11 @@
-import { Entity, PrimaryKey, Property, ManyToOne, OneToMany, Collection } from '@mikro-orm/core';
+import {
+  Entity,
+  PrimaryKey,
+  Property,
+  ManyToOne,
+  OneToMany,
+  Collection,
+} from '@mikro-orm/core';
 import { Category } from './Category';
 import { Article } from './Article';
 
@@ -27,4 +34,4 @@ export class Subcategory {
 
   @OneToMany(() => Article, article => article.article_subcategoryrowguid)
   articles = new Collection<Article>(this);
-} 
+}

@@ -25,7 +25,10 @@ export class Article {
   @ManyToOne(() => Category, { fieldName: 'article_categoryrowguid' })
   article_categoryrowguid!: Category;
 
-  @ManyToOne(() => Subcategory, { nullable: true, fieldName: 'article_subcategoryrowguid' })
+  @ManyToOne(() => Subcategory, {
+    nullable: true,
+    fieldName: 'article_subcategoryrowguid',
+  })
   article_subcategoryrowguid?: Subcategory;
 
   @Property({ fieldName: 'article_publishedat' })
@@ -60,4 +63,4 @@ export class Article {
 
   @Property({ onUpdate: () => new Date(), fieldName: 'article_updatetime' })
   article_updatetime: Date = new Date();
-} 
+}

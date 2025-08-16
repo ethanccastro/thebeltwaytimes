@@ -1,9 +1,9 @@
 import { defineConfig } from '@mikro-orm/mysql';
-import { Article } from './entities/Article';
-import { Category } from './entities/Category';
-import { Subcategory } from './entities/Subcategory';
-import { SocialUser } from './entities/SocialUser';
-import { SocialContent } from './entities/SocialContent';
+import { Article } from '../entities/Article';
+import { Category } from '../entities/Category';
+import { Subcategory } from '../entities/Subcategory';
+import { SocialUser } from '../entities/SocialUser';
+import { SocialContent } from '../entities/SocialContent';
 import 'dotenv/config';
 
 export default defineConfig({
@@ -14,4 +14,4 @@ export default defineConfig({
   dbName: process.env.DB_NAME || 'test',
   entities: [Article, Category, Subcategory, SocialUser, SocialContent],
   debug: true,
-}); 
+});

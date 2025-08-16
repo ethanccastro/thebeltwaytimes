@@ -18,5 +18,3 @@ export class SocialContent {
   @Property({ fieldName: 'socialcontent_postedat', onCreate: () => new Date() })
   socialcontent_postedat: Date = new Date();
 }
-
-

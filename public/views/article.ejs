@@ -124,7 +124,7 @@
 
                                 <div class="article-container-text">
                                     <div class="article-category">
-                                        <%= article.article_categoryrowguid ?
+                                        <%= article.article_categoryrowguid && article.article_categoryrowguid.category_name ?
                                             article.article_categoryrowguid.category_name.charAt(0).toUpperCase() +
                                             article.article_categoryrowguid.category_name.slice(1) : 'News' %>
 
