@@ -9,6 +9,7 @@ APP_DIR="/opt/$APP_NAME"
 BACKUP_DIR="/opt/backups"
 SERVICE_NAME="$APP_NAME"
 DEPLOYMENT_FILE="/tmp/deployment.tar.gz"
+NODE_VERSION="20" # Specify your desired Node.js version here
 
 # Colors for output
 RED='\033[0;31m'
@@ -40,6 +41,19 @@ log "Starting deployment for $APP_NAME"
 # Create directories if they don't exist
 sudo mkdir -p "$APP_DIR"
 sudo mkdir -p "$BACKUP_DIR"
+
+# Install nvm and Node.js
+export NVM_DIR="$HOME/.nvm"
+if [ ! -s "$NVM_DIR/nvm.sh" ]; then
+    log "Installing nvm..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+fi
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+log "Installing and using Node.js v$NODE_VERSION"
+nvm install $NODE_VERSION
+nvm use $NODE_VERSION
 
 # Stop the service if it's running
 if systemctl is-active --quiet "$SERVICE_NAME"; then
@@ -107,7 +121,7 @@ After=network.target mysql.service
 Type=simple
 User=$USER
 WorkingDirectory=$APP_DIR
-ExecStart=/usr/bin/node dist/server.js
+ExecStart=$HOME/.nvm/versions/node/v$NODE_VERSION/bin/node dist/server.js
 Restart=always
 RestartSec=10
 Environment=NODE_ENV=production
