@@ -22,7 +22,7 @@ on:
         type: boolean
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
 
 jobs:
   test:
@@ -137,7 +137,6 @@ jobs:
           public/ \
           package.json \
           package-lock.json \
-          src/config/mikro-orm.config.ts \
           tsconfig.json
         
         # Copy files to EC2

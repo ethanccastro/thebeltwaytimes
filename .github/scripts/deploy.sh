@@ -92,7 +92,7 @@ npm ci --only=production
 
 # Run database migrations
 log "Running database migrations"
-npm run db:up || warn "Database migration failed, continuing..."
+npm run db:up:prod || warn "Database migration failed, continuing..."
 
 # Create systemd service file if it doesn't exist
 SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"

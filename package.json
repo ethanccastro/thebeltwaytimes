@@ -20,6 +20,7 @@
     "db:update": "mikro-orm schema:update",
     "db:migrate": "mikro-orm migration:create",
     "db:up": "mikro-orm migration:up",
+    "db:up:prod": "mikro-orm migration:up --config dist/config/mikro-orm.config.js",
     "db:down": "mikro-orm migration:down",
     "db:fresh": "mikro-orm schema:fresh"
   },
