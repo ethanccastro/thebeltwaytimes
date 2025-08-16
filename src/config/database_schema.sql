@@ -42,7 +42,6 @@ CREATE TABLE article (
     article_tags JSON,
     article_featured BOOLEAN DEFAULT FALSE,
     article_isopinion BOOLEAN DEFAULT FALSE,
-    -- Section assignment fields for homepage/article placement
     article_main BOOLEAN NOT NULL DEFAULT FALSE,
     article_trending BOOLEAN NOT NULL DEFAULT FALSE,
     article_categoryblock BOOLEAN NOT NULL DEFAULT FALSE,

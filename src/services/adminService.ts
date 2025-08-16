@@ -66,7 +66,7 @@ export class AdminService extends BaseService {
   // Subcategory methods
   async getAllSubcategories(): Promise<Subcategory[]> {
     const sql = `
-        SELECT s.*, c.category_name
+        SELECT s.*, c.category_name, c.category_rowguid
         FROM subcategory s
         LEFT JOIN category c ON s.subcategory_categoryrowguid = c.category_rowguid
         ORDER BY s.subcategory_name ASC;
@@ -114,14 +114,20 @@ export class AdminService extends BaseService {
     if (!articleData.article_rowguid) {
         articleData.article_rowguid = uuidv4();
     }
+    if (Array.isArray(articleData.article_tags)) {
+      articleData.article_tags = JSON.stringify(articleData.article_tags);
+    }
     const columns = Object.keys(articleData).join(', ');
-    const placeholders = '?'.repeat(Object.keys(articleData).length).split('').join(', ');
+    const placeholders = Object.keys(articleData).map(() => '?').join(', ');
     await this.execute(`INSERT INTO article (${columns}) VALUES (${placeholders});`, Object.values(articleData));
     return articleData as Article;
   }
 
   async updateArticle(id: string, updateData: any): Promise<Article | null> {
     if (Object.keys(updateData).length === 0) return this.getArticleById(id);
+    if (Array.isArray(updateData.article_tags)) {
+      updateData.article_tags = JSON.stringify(updateData.article_tags);
+    }
     const setClauses = Object.keys(updateData).map(key => `${key} = ?`).join(', ');
     const values = [...Object.values(updateData), id];
     const result = await this.execute<any>(`UPDATE article SET ${setClauses} WHERE article_rowguid = ?;`, values);
@@ -170,7 +176,7 @@ export class AdminService extends BaseService {
   // ===== Social Content =====
   async getAllSocialContents(): Promise<SocialContent[]> {
     const sql = `
-      SELECT sc.*, su.socialuser_handle
+      SELECT sc.*, su.socialuser_displayname, su.socialuser_handle, su.socialuser_profilepictureurl
       FROM socialcontent sc
       LEFT JOIN socialuser su ON sc.socialcontent_socialuserrowguid = su.socialuser_rowguid
       ORDER BY sc.socialcontent_postedat DESC;

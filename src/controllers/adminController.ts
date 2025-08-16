@@ -98,26 +98,37 @@ export class AdminController {
         return;
       }
 
+      const now = new Date();
       const categoryData = {
         category_rowguid: uuidv4(),
         category_slug,
         category_name,
         category_description,
-        category_color
+        category_color,
+        category_createtime: now,
+        category_updatetime: now
       };
 
       const category = await this.adminService.createCategory(categoryData);
       res.status(201).json(category);
     } catch (error) {
       console.error('Error creating category:', error);
-      res.status(500).json({ error: 'Failed to create category' });
+      const err = error as Error;
+      res.status(500).json({ error: 'Failed to create category', message: err.message });
     }
   };
 
   public updateCategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const updateData = req.body;
+      const { category_slug, category_name, category_description, category_color } = req.body;
+      const updateData = {
+        category_slug,
+        category_name,
+        category_description,
+        category_color,
+        category_updatetime: new Date()
+      };
 
       const category = await this.adminService.updateCategory(id, updateData);
       if (!category) {
@@ -182,19 +193,15 @@ export class AdminController {
         return;
       }
 
-      // Fetch the category object first
-      const category = await this.adminService.getCategoryById(category_rowguid);
-      if (!category) {
-        res.status(400).json({ error: 'Category not found' });
-        return;
-      }
-
+      const now = new Date();
       const subcategoryData = {
         subcategory_rowguid: uuidv4(),
         subcategory_slug,
         subcategory_name,
         subcategory_description,
-        category: category
+        subcategory_categoryrowguid: category_rowguid,
+        subcategory_createtime: now,
+        subcategory_updatetime: now
       };
 
       const subcategory = await this.adminService.createSubcategory(subcategoryData);
@@ -208,17 +215,16 @@ export class AdminController {
   public updateSubcategory = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const updateData = req.body;
+      const { subcategory_slug, subcategory_name, subcategory_description, category_rowguid } = req.body;
+      const updateData: any = {
+        subcategory_slug,
+        subcategory_name,
+        subcategory_description,
+        subcategory_updatetime: new Date()
+      };
 
-      // If category_rowguid is provided, fetch the category object
-      if (updateData.category_rowguid) {
-        const category = await this.adminService.getCategoryById(updateData.category_rowguid);
-        if (!category) {
-          res.status(400).json({ error: 'Category not found' });
-          return;
-        }
-        updateData.category = category;
-        delete updateData.category_rowguid;
+      if (category_rowguid) {
+        updateData.subcategory_categoryrowguid = category_rowguid;
       }
 
       const subcategory = await this.adminService.updateSubcategory(id, updateData);
@@ -310,6 +316,7 @@ export class AdminController {
         return;
       }
 
+      const now = new Date();
       const articleData = {
         article_rowguid: uuidv4(),
         article_headline,
@@ -327,7 +334,9 @@ export class AdminController {
         article_isopinion: article_isopinion || false,
         article_main: article_main || false,
         article_trending: article_trending || false,
-        article_categoryblock: article_categoryblock || false
+        article_categoryblock: article_categoryblock || false,
+        article_createtime: now,
+        article_updatetime: now
       };
 
       const article = await this.adminService.createArticle(articleData);
@@ -341,19 +350,58 @@ export class AdminController {
   public updateArticle = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const updateData = req.body;
+      const {
+        article_headline,
+        article_slug,
+        article_excerpt,
+        article_content,
+        article_author,
+        article_categoryrowguid,
+        article_subcategoryrowguid,
+        article_publishedat,
+        article_imageurl,
+        article_readtime,
+        article_tags,
+        article_featured,
+        article_isopinion,
+        article_main,
+        article_trending,
+        article_categoryblock
+      } = req.body;
+
+      const updateData: any = {
+        article_headline,
+        article_slug,
+        article_excerpt,
+        article_content,
+        article_author,
+        article_categoryrowguid,
+        article_publishedat,
+        article_imageurl,
+        article_readtime,
+        article_featured,
+        article_isopinion,
+        article_main,
+        article_trending,
+        article_categoryblock,
+        article_updatetime: new Date()
+      };
 
       // Handle date fields
       if (updateData.article_publishedat) {
         updateData.article_publishedat = new Date(updateData.article_publishedat);
       }
-      if (updateData.article_tags && typeof updateData.article_tags === 'string') {
-        updateData.article_tags = updateData.article_tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0);
+      if (article_tags && typeof article_tags === 'string') {
+        updateData.article_tags = article_tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag.length > 0);
+      } else if (Array.isArray(article_tags)) {
+        updateData.article_tags = article_tags;
       }
 
       // Handle empty subcategory field
-      if (updateData.article_subcategoryrowguid === '') {
+      if (article_subcategoryrowguid === '') {
         updateData.article_subcategoryrowguid = null;
+      } else {
+        updateData.article_subcategoryrowguid = article_subcategoryrowguid;
       }
 
       // Enforce mutual exclusivity for update
@@ -440,7 +488,13 @@ export class AdminController {
   public updateSocialUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const user = await this.adminService.updateSocialUser(id, req.body);
+      const { socialuser_displayname, socialuser_handle, socialuser_profilepictureurl } = req.body;
+      const updateData = {
+        socialuser_displayname,
+        socialuser_handle,
+        socialuser_profilepictureurl
+      };
+      const user = await this.adminService.updateSocialUser(id, updateData);
       if (!user) {
         res.status(404).json({ error: '404 - Not Found' });
         return;
@@ -500,36 +554,31 @@ export class AdminController {
         res.status(400).json({ error: 'Text and social user are required' });
         return;
       }
-      // Ensure social user exists
-      const user = await this.adminService.getSocialUserById(socialuser_rowguid);
-      if (!user) {
-        res.status(400).json({ error: 'Invalid social user' });
-        return;
-      }
       const content = await this.adminService.createSocialContent({
         socialcontent_text,
         socialcontent_source,
-        socialuser: user,
+        socialcontent_socialuserrowguid: socialuser_rowguid,
+        socialcontent_postedat: new Date(),
       });
       res.status(201).json(content);
     } catch (error) {
       console.error('Error creating social content:', error);
-      res.status(500).json({ error: 'Failed to create social content' });
+      const err = error as Error;
+      res.status(500).json({ error: 'Failed to create social content', message: err.message });
     }
   };
 
   public updateSocialContent = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
-      const updateData = { ...req.body };
-      if (updateData.socialuser_rowguid) {
-        const user = await this.adminService.getSocialUserById(updateData.socialuser_rowguid);
-        if (!user) {
-          res.status(400).json({ error: 'Invalid social user' });
-          return;
-        }
-        updateData.socialuser = user;
-        delete updateData.socialuser_rowguid;
+      const { socialuser_rowguid, socialcontent_text, socialcontent_source } = req.body;
+      const updateData: any = {
+        socialcontent_text,
+        socialcontent_source,
+      };
+
+      if (socialuser_rowguid) {
+        updateData.socialcontent_socialuserrowguid = socialuser_rowguid;
       }
       const content = await this.adminService.updateSocialContent(id, updateData);
       if (!content) {
