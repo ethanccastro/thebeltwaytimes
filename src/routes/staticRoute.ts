@@ -14,4 +14,5 @@ export function setUpStaticRoutes(
   app.get('/contact', staticController.getContact);
   app.get('/terms', staticController.getTerms);
   app.get('/sitemap.xml', staticController.getSitemapXml);
+  app.get('/health', staticController.getHealth);
 }

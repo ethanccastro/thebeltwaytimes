@@ -49,14 +49,15 @@ export class StaticController {
           trendingArticles.push(article);
           processedIds.add(article.article_rowguid);
         } else if (article.article_categoryblock) {
-            const categorySlug = (article.article_categoryrowguid as Category)?.category_slug;
-            if (categorySlug) {
-                if (!categoryBlockArticles[categorySlug]) {
-                    categoryBlockArticles[categorySlug] = [];
-                }
-                categoryBlockArticles[categorySlug].push(article);
-                processedIds.add(article.article_rowguid);
+          const categorySlug = (article.article_categoryrowguid as Category)
+            ?.category_slug;
+          if (categorySlug) {
+            if (!categoryBlockArticles[categorySlug]) {
+              categoryBlockArticles[categorySlug] = [];
             }
+            categoryBlockArticles[categorySlug].push(article);
+            processedIds.add(article.article_rowguid);
+          }
         }
       }
 
@@ -67,35 +68,37 @@ export class StaticController {
         mainArticles,
         trendingArticles,
         categoryBlockArticles,
-        currentSection: 'home'
+        currentSection: 'home',
       });
     } catch (error) {
       console.error('Error in getHome:', error);
       res.status(500).render('error', {
         title: 'Error',
         message: 'An error occurred while loading the home page',
-        currentSection: 'home'
+        currentSection: 'home',
       });
     }
   };
 
   public search = async (req: Request, res: Response): Promise<void> => {
     try {
-      const query = req.query['q'] as string || '';
+      const query = (req.query['q'] as string) || '';
       const results = await this.staticService.searchArticles(query);
 
       res.render('search', {
-        title: query ? `Search Results for "${query}" - The Beltway Times` : 'Search Results - The Beltway Times',
+        title: query
+          ? `Search Results for "${query}" - The Beltway Times`
+          : 'Search Results - The Beltway Times',
         results,
         query,
-        currentSection: 'search'
+        currentSection: 'search',
       });
     } catch (error) {
       console.error('Error in search:', error);
       res.status(500).render('error', {
         title: 'Error',
         message: 'An error occurred while searching',
-        currentSection: 'search'
+        currentSection: 'search',
       });
     }
   };
@@ -104,14 +107,14 @@ export class StaticController {
     try {
       res.render('about', {
         title: 'About Us - The Beltway Times',
-        currentSection: 'about'
+        currentSection: 'about',
       });
     } catch (error) {
       console.error('Error in getAbout:', error);
       res.status(500).render('error', {
         title: 'Error',
         message: 'An error occurred while loading the about page',
-        currentSection: 'error'
+        currentSection: 'error',
       });
     }
   };
@@ -120,30 +123,33 @@ export class StaticController {
     try {
       res.render('privacy', {
         title: 'Privacy Policy - The Beltway Times',
-        currentSection: 'privacy'
+        currentSection: 'privacy',
       });
     } catch (error) {
       console.error('Error in getPrivacy:', error);
       res.status(500).render('error', {
         title: 'Error',
         message: 'An error occurred while loading the privacy policy page',
-        currentSection: 'error'
+        currentSection: 'error',
       });
     }
   };
 
-  public getDisclaimer = async (_req: Request, res: Response): Promise<void> => {
+  public getDisclaimer = async (
+    _req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       res.render('disclaimer', {
         title: 'Disclaimer - The Beltway Times',
-        currentSection: 'disclaimer'
+        currentSection: 'disclaimer',
       });
     } catch (error) {
       console.error('Error in getDisclaimer:', error);
       res.status(500).render('error', {
         title: 'Error',
         message: 'An error occurred while loading the disclaimer page',
-        currentSection: 'error'
+        currentSection: 'error',
       });
     }
   };
@@ -152,14 +158,14 @@ export class StaticController {
     try {
       res.render('contact', {
         title: 'Contact Us - The Beltway Times',
-        currentSection: 'contact'
+        currentSection: 'contact',
       });
     } catch (error) {
       console.error('Error in getContact:', error);
       res.status(500).render('error', {
         title: 'Error',
         message: 'An error occurred while loading the contact page',
-        currentSection: 'error'
+        currentSection: 'error',
       });
     }
   };
@@ -168,40 +174,45 @@ export class StaticController {
     try {
       res.render('terms', {
         title: 'Terms and Conditions - The Beltway Times',
-        currentSection: 'terms'
+        currentSection: 'terms',
       });
     } catch (error) {
       console.error('Error in getTerms:', error);
       res.status(500).render('error', {
         title: 'Error',
-        message: 'An error occurred while loading the terms and conditions page',
-        currentSection: 'error'
+        message:
+          'An error occurred while loading the terms and conditions page',
+        currentSection: 'error',
       });
     }
   };
 
-  public getSitemapXml = async (_req: Request, res: Response): Promise<void> => {
+  public getSitemapXml = async (
+    _req: Request,
+    res: Response
+  ): Promise<void> => {
     try {
       const baseUrl = `${_req.protocol}://${_req.get('host')}`;
       const articles = await this.staticService.getAllArticles();
-      const flatCategoryData = await this.staticService.getCategoriesWithSubcategories();
+      const flatCategoryData =
+        await this.staticService.getCategoriesWithSubcategories();
 
       // **FIXED**: Process the flat data into a structured map
       const categoryMap = new Map<string, any>();
-      flatCategoryData.forEach(row => {
+      flatCategoryData.forEach((row) => {
         if (!categoryMap.has(row.category_rowguid)) {
           categoryMap.set(row.category_rowguid, {
             category_slug: row.category_slug,
-            subcategories: []
+            subcategories: [],
           });
         }
-        if (row.sub_id) { // Check if a subcategory exists for this row
+        if (row.sub_id) {
+          // Check if a subcategory exists for this row
           categoryMap.get(row.category_rowguid).subcategories.push({
-            subcategory_slug: row.Subcategory_slug
+            subcategory_slug: row.Subcategory_slug,
           });
         }
       });
-
 
       res.header('Content-Type', 'application/xml');
       res.header('Content-Encoding', 'UTF-8');
@@ -216,20 +227,22 @@ export class StaticController {
       xml += `<url><loc>${baseUrl}/contact</loc><changefreq>yearly</changefreq><priority>0.4</priority></url>`;
 
       // **FIXED**: Loop through the processed map instead of the raw data
-      categoryMap.forEach(category => {
+      categoryMap.forEach((category) => {
         xml += `<url><loc>${baseUrl}/${category.category_slug}</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>`;
         if (category.subcategories && category.subcategories.length > 0) {
-            category.subcategories.forEach((sub: any) => {
-                 xml += `<url><loc>${baseUrl}/${category.category_slug}/${sub.subcategory_slug}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`;
-            });
+          category.subcategories.forEach((sub: any) => {
+            xml += `<url><loc>${baseUrl}/${category.category_slug}/${sub.subcategory_slug}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`;
+          });
         }
       });
 
-      articles.forEach(article => {
+      articles.forEach((article) => {
         const pubDate = new Date(article.article_publishedat);
         const urlDate = `${pubDate.getFullYear()}/${(pubDate.getMonth() + 1).toString().padStart(2, '0')}/${pubDate.getDate().toString().padStart(2, '0')}`;
         // The category object is now correctly nested on the article
-        const categorySlug = (article.article_categoryrowguid as Category)?.category_slug || 'uncategorized';
+        const categorySlug =
+          (article.article_categoryrowguid as Category)?.category_slug ||
+          'uncategorized';
         const articleUrl = `${baseUrl}/${categorySlug}/${urlDate}/${article.article_slug}`;
 
         const lastMod = pubDate.toISOString().split('T')[0];
@@ -239,10 +252,13 @@ export class StaticController {
 
       xml += '</urlset>';
       res.send(xml);
-
     } catch (error) {
       console.error('Error generating XML sitemap:', error);
       res.status(500).send('Error generating sitemap');
     }
+  };
+
+  public getHealth = async (_req: Request, res: Response): Promise<void> => {
+    res.status(200).send('OK');
   };
 }

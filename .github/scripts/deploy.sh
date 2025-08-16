@@ -9,7 +9,7 @@ APP_DIR="/opt/$APP_NAME"
 BACKUP_DIR="/opt/backups"
 SERVICE_NAME="$APP_NAME"
 DEPLOYMENT_FILE="/tmp/deployment.tar.gz"
-NODE_VERSION="20" # Specify your desired Node.js version here
+NODE_VERSION="20" # Explicitly set the Node.js version to match your GitHub Action
 
 # Colors for output
 RED='\033[0;31m'
@@ -140,8 +140,23 @@ fi
 log "Starting $SERVICE_NAME service"
 sudo systemctl start "$SERVICE_NAME"
 
-# Wait a moment for the service to start
-sleep 5
+# Wait for the service to be ready
+log "Waiting for application to start..."
+MAX_WAIT=30
+INTERVAL=2
+ELAPSED=0
+HEALTH_URL="http://localhost:3000/health"
+
+while ! curl -s --fail "$HEALTH_URL"; do
+    if [ $ELAPSED -ge $MAX_WAIT ]; then
+        error "Application failed to start within $MAX_WAIT seconds."
+        # Grab the last 50 lines of the service logs for debugging
+        sudo journalctl -u $SERVICE_NAME -n 50
+        break
+    fi
+    sleep $INTERVAL
+    ELAPSED=$((ELAPSED + INTERVAL))
+done
 
 # Check if service is running
 if systemctl is-active --quiet "$SERVICE_NAME"; then
