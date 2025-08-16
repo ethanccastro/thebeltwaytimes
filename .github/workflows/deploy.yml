@@ -129,25 +129,25 @@ jobs:
         echo "Key file size:"
         wc -l ~/.ssh/deploy_key
     
-    - name: Deploy to EC2
-      run: |
-        # Create deployment package
-        tar -czf deployment.tar.gz \
-          dist/ \
-          public/ \
-          package.json \
-          package-lock.json \
-          mikro-orm.config.ts \
-          tsconfig.json
-        
-        # Copy files to EC2
-        scp -o StrictHostKeyChecking=no \
-          -i ~/.ssh/deploy_key \
-          deployment.tar.gz \
-          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/
-        
-        # Execute deployment script on EC2
-        ssh -o StrictHostKeyChecking=no \
-          -i ~/.ssh/deploy_key \
-          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
-          'bash -s' < .github/scripts/deploy.sh 
+        - name: Deploy to EC2
+        run: |
+          # Create deployment package
+          tar -czf deployment.tar.gz \
+            dist/ \
+            public/ \
+            package.json \
+            package-lock.json \
+            src/config/mikro-orm.config.ts \
+            tsconfig.json
+          
+          # Copy files to EC2
+          scp -o StrictHostKeyChecking=no \
+            -i ~/.ssh/deploy_key \
+            deployment.tar.gz \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/
+          
+          # Execute deployment script on EC2
+          ssh -o StrictHostKeyChecking=no \
+            -i ~/.ssh/deploy_key \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
+            'bash -s' < .github/scripts/deploy.sh

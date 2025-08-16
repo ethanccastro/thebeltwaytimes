@@ -5,51 +5,11 @@ import { Subcategory } from '../entities/Subcategory';
 import { v4 as uuidv4 } from 'uuid';
 import { SocialUser } from '../entities/SocialUser';
 import { SocialContent } from '../entities/SocialContent';
+import { BaseService } from './baseService';
 
-export class DatabaseService {
-  private em: EntityManager;
-
+export class AdminService extends BaseService {
   constructor(em: EntityManager) {
-    this.em = em;
-  }
-
-  /**
-   * Helper to execute raw SQL queries.
-   */
-  private async execute<T = any[]>(sql: string, params: any[] = []): Promise<T> {
-    return this.em.getConnection('write').execute(sql, params);
-  }
-
-  /**
-   * Helper to map flat SQL results into a nested Article object.
-   */
-  private mapArticleResults(rows: any[]): Article[] {
-    return rows.map(row => {
-        const article: Article = { ...row };
-
-        // **FIX**: Convert the date string from the DB into a true Date object.
-        if (row.article_publishedat) {
-            article.article_publishedat = new Date(row.article_publishedat);
-        }
-
-        // Map Category
-        if (row.category_slug && row.article_categoryrowguid) {
-            article.article_categoryrowguid = {
-                category_rowguid: row.article_categoryrowguid,
-                category_name: row.category_name,
-                category_slug: row.category_slug,
-            } as Category;
-        }
-        // Map Subcategory
-        if (row.subcategory_slug && row.article_subcategoryrowguid) {
-            article.article_subcategoryrowguid = {
-                subcategory_rowguid: row.article_subcategoryrowguid,
-                subcategory_name: row.subcategory_name,
-                subcategory_slug: row.subcategory_slug,
-            } as Subcategory;
-        }
-        return article;
-    });
+    super(em);
   }
 
   // Admin stats method
@@ -75,21 +35,6 @@ export class DatabaseService {
   async getAllCategories(): Promise<Category[]> {
     const sql = 'SELECT * FROM category ORDER BY category_name ASC;';
     return await this.execute(sql);
-  }
-
-  async getCategoriesWithSubcategories(): Promise<any[]> {
-    const sql = `
-      SELECT c.*, s.subcategory_rowguid as sub_id, s.subcategory_name, s.subcategory_slug
-      FROM category c
-      LEFT JOIN subcategory s ON c.category_rowguid = s.category_rowguid
-      ORDER BY c.category_name ASC;
-    `;
-    return await this.execute(sql);
-  }
-
-  async getCategoryBySlug(slug: string): Promise<Category | null> {
-    const [category] = await this.execute<Category[]>('SELECT * FROM category WHERE category_slug = ? LIMIT 1;', [slug]);
-    return category || null;
   }
 
   async getCategoryById(id: string): Promise<Category | null> {
@@ -121,23 +66,12 @@ export class DatabaseService {
   // Subcategory methods
   async getAllSubcategories(): Promise<Subcategory[]> {
     const sql = `
-        SELECT s.*, c.category_name 
-        FROM subcategory s 
+        SELECT s.*, c.category_name
+        FROM subcategory s
         LEFT JOIN category c ON s.subcategory_categoryrowguid = c.category_rowguid
         ORDER BY s.subcategory_name ASC;
     `;
     return await this.execute(sql);
-  }
-
-  async getSubcategoryBySlug(categorySlug: string, subcategorySlug: string): Promise<Subcategory | null> {
-    const sql = `
-      SELECT s.* FROM subcategory s
-      INNER JOIN category c ON s.subcategory_categoryrowguid = c.category_rowguid
-      WHERE c.category_slug = ? AND s.subcategory_slug = ? 
-      LIMIT 1;
-    `;
-    const [subcategory] = await this.execute<Subcategory[]>(sql, [categorySlug, subcategorySlug]);
-    return subcategory || null;
   }
 
   async getSubcategoryById(id: string): Promise<Subcategory | null> {
@@ -166,15 +100,6 @@ export class DatabaseService {
   }
 
   // Article methods
-  private get baseArticleQuery(): string {
-    return `
-      SELECT a.*, c.category_slug, c.category_name, s.subcategory_slug, s.subcategory_name
-      FROM article a
-      LEFT JOIN category c ON a.article_categoryrowguid = c.category_rowguid
-      LEFT JOIN subcategory s ON a.article_subcategoryrowguid = s.subcategory_rowguid
-    `;
-  }
-
   async getAllArticles(): Promise<Article[]> {
     const results = await this.execute<any[]>(`${this.baseArticleQuery} ORDER BY a.article_publishedat DESC;`);
     return this.mapArticleResults(results);
@@ -208,118 +133,7 @@ export class DatabaseService {
     return result.affectedRows > 0;
   }
 
-  async getFeaturedArticles(limit: number = 5): Promise<Article[]> {
-    const results = await this.execute<any[]>(`${this.baseArticleQuery} WHERE a.article_featured = TRUE ORDER BY a.article_publishedat DESC LIMIT ?;`, [limit]);
-    return this.mapArticleResults(results);
-  }
-
-  async getOpinionArticles(limit: number = 5): Promise<Article[]> {
-    const results = await this.execute<any[]>(`${this.baseArticleQuery} WHERE a.article_isopinion = TRUE ORDER BY a.article_publishedat DESC LIMIT ?;`, [limit]);
-    return this.mapArticleResults(results);
-  }
-
-  async getArticlesByCategory(categorySlug: string, limit: number = 20): Promise<Article[]> {
-    const results = await this.execute<any[]>(`${this.baseArticleQuery} WHERE c.category_slug = ? ORDER BY a.article_publishedat DESC LIMIT ?;`, [categorySlug, limit]);
-    return this.mapArticleResults(results);
-  }
-
-  async getArticlesByCategoryId(categoryId: string): Promise<Article[]> {
-    const results = await this.execute<any[]>(`${this.baseArticleQuery} WHERE a.article_categoryrowguid = ?;`, [categoryId]);
-    return this.mapArticleResults(results);
-  }
-
-  async getArticlesBySubcategory(categorySlug: string, subcategorySlug: string, limit: number = 20): Promise<Article[]> {
-    const results = await this.execute<any[]>(`${this.baseArticleQuery} WHERE c.category_slug = ? AND s.subcategory_slug = ? ORDER BY a.article_publishedat DESC LIMIT ?;`, [categorySlug, subcategorySlug, limit]);
-    return this.mapArticleResults(results);
-  }
-
-  async getArticlesBySubcategoryId(subcategoryId: string): Promise<Article[]> {
-    const results = await this.execute<any[]>(`${this.baseArticleQuery} WHERE a.article_subcategoryrowguid = ?;`, [subcategoryId]);
-    return this.mapArticleResults(results);
-  }
-
-  async getArticleBySlug(slug: string): Promise<Article | null> {
-    const [article] = await this.execute<any[]>(`${this.baseArticleQuery} WHERE a.article_slug = ? LIMIT 1;`, [slug]);
-    return article ? this.mapArticleResults([article])[0] : null;
-  }
-
-  async getRelatedArticles(article: Article, limit: number = 5): Promise<Article[]> {
-    const categoryGuid = (article.article_categoryrowguid as Category)?.category_rowguid;
-    const subcategoryGuid = (article.article_subcategoryrowguid as Subcategory)?.subcategory_rowguid;
-    if (!categoryGuid) return [];
-
-    const conditions: string[] = ['a.article_categoryrowguid = ?'];
-    const params: any[] = [categoryGuid];
-    if (subcategoryGuid) {
-      conditions.push('a.article_subcategoryrowguid = ?');
-      params.push(subcategoryGuid);
-    }
-  
-    const whereClause = conditions.join(' OR ');
-    params.push(article.article_rowguid, limit);
-  
-    const sql = `${this.baseArticleQuery} WHERE (${whereClause}) AND a.article_rowguid <> ? ORDER BY a.article_publishedat DESC LIMIT ?;`;
-    const results = await this.execute<any[]>(sql, params);
-    return this.mapArticleResults(results);
-  }
-
-  async searchArticles(query: string, limit: number = 20): Promise<Article[]> {
-    const searchTerm = `%${query}%`;
-    const params = [searchTerm, searchTerm, searchTerm, searchTerm, limit];
-    const sql = `${this.baseArticleQuery} WHERE a.article_headline LIKE ? OR a.article_excerpt LIKE ? OR a.article_content LIKE ? OR a.article_tags LIKE ? ORDER BY a.article_publishedat DESC LIMIT ?;`;
-    const results = await this.execute<any[]>(sql, params);
-    return this.mapArticleResults(results);
-  }
-
-  async getRecentArticlesByCategory(excludeArticleIds: string[] = [], articlesPerCategory: number = 3): Promise<{ [categorySlug: string]: Article[] }> {
-    const categories = await this.getAllCategories();
-    const result: { [categorySlug: string]: Article[] } = {};
-
-    for (const category of categories) {
-      let sql = `${this.baseArticleQuery} WHERE a.article_categoryrowguid = ? AND a.article_featured = FALSE`;
-      const params: any[] = [category.category_rowguid];
-
-      if (excludeArticleIds.length > 0) {
-        const placeholders = excludeArticleIds.map(() => '?').join(', ');
-        sql += ` AND a.article_rowguid NOT IN (${placeholders})`;
-        params.push(...excludeArticleIds);
-      }
-      
-      sql += ' ORDER BY a.article_publishedat DESC LIMIT ?;';
-      params.push(articlesPerCategory);
-
-      const articles = await this.execute<any[]>(sql, params);
-      if (articles.length > 0) {
-        result[category.category_slug] = this.mapArticleResults(articles);
-      }
-    }
-    return result;
-  }
-
-  async getMainArticles(limit: number = 10): Promise<Article[]> {
-    const results = await this.execute<any[]>(`${this.baseArticleQuery} WHERE a.article_main = TRUE ORDER BY a.article_publishedat DESC LIMIT ?;`, [limit]);
-    return this.mapArticleResults(results);
-  }
-
-  async getTrendingArticles(limit: number = 5): Promise<Article[]> {
-    const results = await this.execute<any[]>(`${this.baseArticleQuery} WHERE a.article_trending = TRUE ORDER BY a.article_publishedat DESC LIMIT ?;`, [limit]);
-    return this.mapArticleResults(results);
-  }
-
-  async getCategoryBlockArticles(): Promise<{ [categorySlug: string]: Article[] }> {
-    const categories = await this.getAllCategories();
-    const result: { [categorySlug: string]: Article[] } = {};
-    for (const category of categories) {
-      const sql = `${this.baseArticleQuery} WHERE a.article_categoryrowguid = ? AND a.article_categoryblock = TRUE ORDER BY a.article_publishedat DESC;`;
-      const articles = await this.execute<any[]>(sql, [category.category_rowguid]);
-      if (articles.length > 0) {
-        result[category.category_slug] = this.mapArticleResults(articles);
-      }
-    }
-    return result;
-  }
-
-  // ===== Social Users =====
+    // ===== Social Users =====
   async getAllSocialUsers(): Promise<SocialUser[]> {
     return await this.execute('SELECT * FROM socialuser ORDER BY socialuser_displayname ASC;');
   }
@@ -356,7 +170,7 @@ export class DatabaseService {
   // ===== Social Content =====
   async getAllSocialContents(): Promise<SocialContent[]> {
     const sql = `
-      SELECT sc.*, su.socialuser_handle 
+      SELECT sc.*, su.socialuser_handle
       FROM socialcontent sc
       LEFT JOIN socialuser su ON sc.socialcontent_socialuserrowguid = su.socialuser_rowguid
       ORDER BY sc.socialcontent_postedat DESC;

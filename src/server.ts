@@ -3,15 +3,17 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import session from 'express-session';
 import { MikroORM } from '@mikro-orm/core';
-import config from './mikro-orm.config';
+import config from './config/mikro-orm.config';
 import { NewsController } from './controllers/newsController';
 import { AdminController } from './controllers/adminController';
 import { StaticController } from './controllers/staticController';
-import { DatabaseService } from './services/databaseService';
+import { AdminService } from './services/adminService';
+import { NewsService } from './services/newsService';
+import { StaticService } from './services/staticService';
 
-import { setUpStaticRoutes } from './routes/staticRoutes';
-import { setUpNewsRoutes } from './routes/newsRoutes';
-import { setUpAdminRoutes } from './routes/adminRoutes';
+import { setUpStaticRoutes } from './routes/staticRoute';
+import { setUpNewsRoutes } from './routes/newsRoute';
+import { setUpAdminRoutes } from './routes/adminRoute';
 
 const app = express();
 const PORT = process.env['PORT'] || 3000;
@@ -22,7 +24,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 let orm: MikroORM;
 
 // Start the application
-startServer(); 
+startServer();
 
 async function startServer() {
   try {
@@ -47,16 +49,16 @@ async function startServer() {
 
     // Initialize database
     await initializeDatabase();
-    
+
     // Initialize services
     initializeServices();
-    
+
     // Setup view middleware
     setupViewMiddleware();
-    
+
     // Setup routes
-    setupRoutes();   
-    
+    setupRoutes();
+
     // Error handling middleware (should be last)
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
         console.error(err);
@@ -66,7 +68,7 @@ async function startServer() {
             currentSection: 'error'
         });
     });
-    
+
     // Start server
     app.listen(PORT, () => {
       console.log(`🚀 News site server running on http://localhost:${PORT}`);
@@ -80,11 +82,11 @@ async function startServer() {
 async function initializeDatabase() {
   try {
     orm = await MikroORM.init(config);
-    
+
     // Run migrations
     const migrator = orm.getMigrator();
     await migrator.up();
-    
+
     return orm;
   } catch (error) {
     console.error("Failed to initialize database:", error);
@@ -93,27 +95,31 @@ async function initializeDatabase() {
 }
 
 // Initialize database and services
-let dbService: DatabaseService;
+let adminService: AdminService;
+let newsService: NewsService;
+let staticService: StaticService;
 let newsController: NewsController;
 let adminController: AdminController;
 let staticController: StaticController;
 
 function initializeServices() {
   const em = orm.em.fork();
-  dbService = new DatabaseService(em);
-  newsController = new NewsController(dbService);
-  adminController = new AdminController(dbService);
-  staticController = new StaticController(dbService);
+  adminService = new AdminService(em);
+  newsService = new NewsService(em);
+  staticService = new StaticService(em);
+
+  newsController = new NewsController(newsService);
+  adminController = new AdminController(adminService);
+  staticController = new StaticController(staticService);
 }
 
 // Middleware to add categories data to all views
 function setupViewMiddleware() {
   app.use(async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // **FIXED: Use getAllCategories for simple navigation lists**
-      const categories = await dbService.getAllCategories();
+      const categories = await staticService.getAllCategories();
       res.locals.categories = categories;
-      
+
       // Pass the settings to the views
       res.locals.categoryImageVisibility = adminController['categoryImageVisibility'];
       next();
@@ -129,7 +135,7 @@ function setupViewMiddleware() {
 // Dynamic route setup function
 function setupRoutes() {
   setUpStaticRoutes(app, staticController);
-  setUpAdminRoutes(app, adminController) 
+  setUpAdminRoutes(app, adminController)
   // Set up after ALL static routes are handled
   setUpNewsRoutes(app, newsController);
 }

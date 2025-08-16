@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
-import { DatabaseService } from '../services/databaseService';
+import { StaticService } from '../services/staticService';
 import { Category } from '../entities/Category';
+import { Article } from '../entities/Article';
 
 export class StaticController {
-  private dbService: DatabaseService;
+  private staticService: StaticService;
 
-  constructor(dbService: DatabaseService) {
-    this.dbService = dbService;
+  constructor(staticService: StaticService) {
+    this.staticService = staticService;
   }
 
   /**
@@ -14,15 +15,51 @@ export class StaticController {
    */
   public getHome = async (_req: Request, res: Response): Promise<void> => {
     try {
-      const featuredArticles = await this.dbService.getFeaturedArticles();
-      let opinionArticles = await this.dbService.getOpinionArticles();
-      const mainArticles = await this.dbService.getMainArticles();
-      const trendingArticles = await this.dbService.getTrendingArticles();
-      const categoryBlockArticles = await this.dbService.getCategoryBlockArticles();
-      
-      const featuredIdsSet = new Set(featuredArticles.map(a => a.article_rowguid));
-      opinionArticles = opinionArticles.filter(a => !featuredIdsSet.has(a.article_rowguid));
-      
+      const allArticles = await this.staticService.getHomepageArticles();
+
+      const featuredArticles: Article[] = [];
+      const opinionArticles: Article[] = [];
+      const mainArticles: Article[] = [];
+      const trendingArticles: Article[] = [];
+      const categoryBlockArticles: { [key: string]: Article[] } = {};
+
+      const processedIds = new Set<string>();
+
+      // Prioritize featured articles
+      for (const article of allArticles) {
+        if (article.article_featured && featuredArticles.length < 5) {
+          featuredArticles.push(article);
+          processedIds.add(article.article_rowguid);
+        }
+      }
+
+      // Process other categories, ensuring no duplicates
+      for (const article of allArticles) {
+        if (processedIds.has(article.article_rowguid)) {
+          continue;
+        }
+
+        if (article.article_isopinion && opinionArticles.length < 5) {
+          opinionArticles.push(article);
+          processedIds.add(article.article_rowguid);
+        } else if (article.article_main && mainArticles.length < 10) {
+          mainArticles.push(article);
+          processedIds.add(article.article_rowguid);
+        } else if (article.article_trending && trendingArticles.length < 5) {
+          trendingArticles.push(article);
+          processedIds.add(article.article_rowguid);
+        } else if (article.article_categoryblock) {
+            const categorySlug = (article.article_categoryrowguid as Category)?.category_slug;
+            if (categorySlug) {
+                if (!categoryBlockArticles[categorySlug]) {
+                    categoryBlockArticles[categorySlug] = [];
+                }
+                categoryBlockArticles[categorySlug].push(article);
+                processedIds.add(article.article_rowguid);
+            }
+        }
+      }
+
       res.render('home', {
         title: 'The Beltway Times - Breaking News, Latest Headlines',
         featuredArticles,
@@ -45,8 +82,8 @@ export class StaticController {
   public search = async (req: Request, res: Response): Promise<void> => {
     try {
       const query = req.query['q'] as string || '';
-      const results = await this.dbService.searchArticles(query);
-      
+      const results = await this.staticService.searchArticles(query);
+
       res.render('search', {
         title: query ? `Search Results for "${query}" - The Beltway Times` : 'Search Results - The Beltway Times',
         results,
@@ -141,13 +178,13 @@ export class StaticController {
         currentSection: 'error'
       });
     }
-  };  
+  };
 
   public getSitemapXml = async (_req: Request, res: Response): Promise<void> => {
     try {
       const baseUrl = `${_req.protocol}://${_req.get('host')}`;
-      const articles = await this.dbService.getAllArticles();
-      const flatCategoryData = await this.dbService.getCategoriesWithSubcategories();
+      const articles = await this.staticService.getAllArticles();
+      const flatCategoryData = await this.staticService.getCategoriesWithSubcategories();
 
       // **FIXED**: Process the flat data into a structured map
       const categoryMap = new Map<string, any>();
@@ -168,7 +205,7 @@ export class StaticController {
 
       res.header('Content-Type', 'application/xml');
       res.header('Content-Encoding', 'UTF-8');
-      
+
       let xml = '<?xml version="1.0" encoding="UTF-8"?>';
       xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
@@ -194,7 +231,7 @@ export class StaticController {
         // The category object is now correctly nested on the article
         const categorySlug = (article.article_categoryrowguid as Category)?.category_slug || 'uncategorized';
         const articleUrl = `${baseUrl}/${categorySlug}/${urlDate}/${article.article_slug}`;
-        
+
         const lastMod = pubDate.toISOString().split('T')[0];
 
         xml += `<url><loc>${articleUrl}</loc><lastmod>${lastMod}</lastmod><changefreq>never</changefreq><priority>0.7</priority></url>`;

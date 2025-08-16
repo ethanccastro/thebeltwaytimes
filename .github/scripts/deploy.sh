@@ -132,36 +132,43 @@ sleep 5
 # Check if service is running
 if systemctl is-active --quiet "$SERVICE_NAME"; then
     log "✅ Deployment successful! $SERVICE_NAME is running"
-    
-    # Get service status
-    sudo systemctl status "$SERVICE_NAME" --no-pager -l
-    
-    # Show recent logs
-    log "Recent service logs:"
-    sudo journalctl -u "$SERVICE_NAME" --no-pager -n 20
 else
-    error "❌ Deployment failed! $SERVICE_NAME is not running"
-    log "Service status:"
-    sudo systemctl status "$SERVICE_NAME" --no-pager -l
-    log "Recent service logs:"
-    sudo journalctl -u "$SERVICE_NAME" --no-pager -n 30
-    log "Application directory contents:"
-    ls -la "$APP_DIR"
-    log "Checking if .env file exists:"
-    if [ -f "$APP_DIR/.env" ]; then
-        log "✅ .env file exists"
-        log "Database configuration:"
-        grep -E "DB_HOST|DB_USER|DB_NAME" "$APP_DIR/.env" || log "No database config found in .env"
+    error "❌ Deployment failed! $SERVICE_NAME is not running. Initiating rollback..."
+    
+    # ROLLBACK PROCEDURE
+    LATEST_BACKUP=$(ls -t "$BACKUP_DIR"/"$APP_NAME"_*.tar.gz | head -n 1)
+    
+    if [ -f "$LATEST_BACKUP" ]; then
+        log "Restoring from backup: $LATEST_BACKUP"
+        sudo rm -rf "$APP_DIR"/*
+        sudo tar -xzf "$LATEST_BACKUP" -C "$APP_DIR"
+        
+        if [ -f "/tmp/.env.backup" ]; then
+            log "Restoring .env file"
+            sudo cp /tmp/.env.backup "$APP_DIR/.env"
+        fi
+        
+        log "Re-installing dependencies for rolled-back version"
+        cd "$APP_DIR"
+        npm ci --only=production
+        
+        log "Restarting $SERVICE_NAME service with rolled-back version"
+        sudo systemctl start "$SERVICE_NAME"
+        
+        sleep 5
+        
+        if systemctl is-active --quiet "$SERVICE_NAME"; then
+            warn "✅ Rollback successful! The previous version has been restored."
+        else
+            error "❌ Rollback failed! The application is in a failed state."
+        fi
     else
-        log "❌ .env file missing"
+        error "❌ No backup found to restore. The application is in a failed state."
     fi
-    log "Trying to start application manually for debugging:"
-    cd "$APP_DIR"
-    timeout 10s node dist/server.js || log "Manual start failed (expected if no .env)"
     exit 1
 fi
 
 # Clean up deployment file
 rm -f "$DEPLOYMENT_FILE"
 
-log "Deployment completed successfully!" 
+log "Deployment completed successfully!"
