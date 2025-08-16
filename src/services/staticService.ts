@@ -74,7 +74,7 @@ export class StaticService extends BaseService {
     const sql = `
       SELECT c.*, s.subcategory_rowguid as sub_id, s.subcategory_name, s.subcategory_slug
       FROM category c
-      LEFT JOIN subcategory s ON c.category_rowguid = s.category_rowguid
+      LEFT JOIN subcategory s ON c.category_rowguid = s.subcategory_categoryrowguid
       ORDER BY c.category_name ASC;
     `;
     return await this.execute(sql);
