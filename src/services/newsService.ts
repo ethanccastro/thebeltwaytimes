@@ -63,11 +63,12 @@ export class NewsService extends BaseService {
 
   async getAllSocialContents(): Promise<SocialContent[]> {
     const sql = `
-      SELECT sc.*, su.socialuser_handle
+      SELECT sc.*, su.socialuser_displayname, su.socialuser_handle, su.socialuser_profilepictureurl
       FROM socialcontent sc
       LEFT JOIN socialuser su ON sc.socialcontent_socialuserrowguid = su.socialuser_rowguid
       ORDER BY sc.socialcontent_postedat DESC;
     `;
-    return await this.execute(sql);
+    const results = await this.execute<any[]>(sql);
+    return this.mapSocialContentResults(results);
   }
 }

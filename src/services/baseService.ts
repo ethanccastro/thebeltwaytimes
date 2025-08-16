@@ -2,6 +2,8 @@ import { EntityManager } from '@mikro-orm/core';
 import { Article } from '../entities/Article';
 import { Category } from '../entities/Category';
 import { Subcategory } from '../entities/Subcategory';
+import { SocialContent } from '../entities/SocialContent';
+import { SocialUser } from '../entities/SocialUser';
 
 export class BaseService {
   protected em: EntityManager;
@@ -46,6 +48,22 @@ export class BaseService {
             } as Subcategory;
         }
         return article;
+    });
+  }
+
+  protected mapSocialContentResults(rows: any[]): SocialContent[] {
+    return rows.map(row => {
+      const socialContent: SocialContent = { ...row };
+
+      if (row.socialuser_handle) {
+        socialContent.socialuser = {
+          socialuser_rowguid: row.socialcontent_socialuserrowguid,
+          socialuser_displayname: row.socialuser_displayname,
+          socialuser_handle: row.socialuser_handle,
+          socialuser_profilepictureurl: row.socialuser_profilepictureurl,
+        } as SocialUser;
+      }
+      return socialContent;
     });
   }
 

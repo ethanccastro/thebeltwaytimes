@@ -181,7 +181,8 @@ export class AdminService extends BaseService {
       LEFT JOIN socialuser su ON sc.socialcontent_socialuserrowguid = su.socialuser_rowguid
       ORDER BY sc.socialcontent_postedat DESC;
     `;
-    return await this.execute(sql);
+    const results = await this.execute<any[]>(sql);
+    return this.mapSocialContentResults(results);
   }
 
   async getSocialContentById(id: string): Promise<SocialContent | null> {
