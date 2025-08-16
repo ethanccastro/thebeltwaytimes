@@ -108,11 +108,10 @@ npm ci --only=production
 log "Running database migrations"
 npm run db:up:prod || warn "Database migration failed, continuing..."
 
-# Create systemd service file if it doesn't exist
+# Create or update systemd service file
 SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
-if [ ! -f "$SERVICE_FILE" ]; then
-    log "Creating systemd service file"
-    sudo tee "$SERVICE_FILE" > /dev/null <<EOF
+log "Creating/updating systemd service file"
+sudo tee "$SERVICE_FILE" > /dev/null <<EOF
 [Unit]
 Description=The Beltway Times News Application
 After=network.target mysql.service
@@ -131,10 +130,9 @@ Environment=PORT=3000
 WantedBy=multi-user.target
 EOF
 
-    # Reload systemd
-    sudo systemctl daemon-reload
-    sudo systemctl enable "$SERVICE_NAME"
-fi
+# Reload systemd
+sudo systemctl daemon-reload
+sudo systemctl enable "$SERVICE_NAME"
 
 # Start the service
 log "Starting $SERVICE_NAME service"
