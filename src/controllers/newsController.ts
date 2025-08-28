@@ -150,7 +150,7 @@ export class NewsController {
       const categoryInfo = article.article_categoryrowguid;
 
       res.render('article', {
-        title: `${article.article_headline} - ${categoryInfo?.category_name || 'News'} - The Beltway Times`,
+        title: `${article.article_headline} | The Beltway Times`,
         article,
         relatedArticles,
         categoryInfo,

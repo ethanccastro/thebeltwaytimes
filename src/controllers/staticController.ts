@@ -62,7 +62,7 @@ export class StaticController {
       }
 
       res.render('home', {
-        title: 'The Beltway Times - Breaking News, Latest Headlines',
+        title: 'The Beltway Times | The News We Wish Were Fake',
         featuredArticles,
         opinionArticles,
         mainArticles,
