@@ -111,6 +111,46 @@
         </aside>
     </div>
 
+<!-- Category Article Grid Section (LA Times style, compact, CSS only) -->
+<section class="category-article-section">
+    <% Object.keys(categoryBlockArticles).forEach(function(categorySlug) { 
+         var articles = categoryBlockArticles[categorySlug];
+         if (!articles || articles.length === 0) return;
+         var category = categories.find(c => c.category_slug === categorySlug);
+    %>
+      <div class="category-block">
+        <h2 class="category-block-header">
+          <%= category ? category.category_name : categorySlug %>
+        </h2>
+        <div class="category-article-row">
+          <% articles.forEach(function(article) { %>
+            <article class="category-article-card">
+              <div class="category-article-image">
+                <img src="<%= article.article_imageurl %>" alt="<%= article.article_headline %>" class="article-image">
+              </div>
+              <div class="category-article-text">
+                <div class="article-category">
+                  <%= category ? category.category_name : categorySlug %>
+                  <% if (article.article_isopinion) { %>
+                    <span class="article-type">• OPINION</span>
+                  <% } %>
+                </div>
+                <h3 class="article-headline">
+                  <a href="/<%= article.article_categoryrowguid ? article.article_categoryrowguid.category_slug : '' %>/<%= new Date(article.article_publishedat).getFullYear() %>/<%= (new Date(article.article_publishedat).getMonth() + 1).toString().padStart(2, '0') %>/<%= new Date(article.article_publishedat).getDate().toString().padStart(2, '0') %>/<%= article.article_slug %>">
+                    <%= article.article_headline %>
+                  </a>
+                </h3>
+                <div class="category-article-meta">
+                  <span class="article-author">By <%= article.article_author %></span>
+                  <span> | <%= new Date(article.article_publishedat).toLocaleDateString() %></span>
+                </div>
+              </div>
+            </article>
+          <% }); %>
+        </div>
+      </div>
+    <% }); %>
+</section>
 </div>
 
 <script>

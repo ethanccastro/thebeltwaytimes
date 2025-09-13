@@ -14,7 +14,7 @@ export class StaticService extends BaseService {
    */
   async getHomepageArticles(): Promise<Article[]> {
     const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 90);
 
     const sql = `${this.baseArticleQuery}
                  WHERE a.article_publishedat >= ?
