@@ -148,6 +148,7 @@ export class NewsController {
       const relatedArticles =
         await this.newsService.getRelatedArticles(article);
       const categoryInfo = article.article_categoryrowguid;
+      const adsense = this.newsService.getAdsenseCode();
 
       res.render('article', {
         title: `${article.article_headline} | The Beltway Times`,
@@ -156,6 +157,7 @@ export class NewsController {
         categoryInfo,
         socialcontents: await this.newsService.getAllSocialContents(),
         currentSection: categoryInfo?.category_slug,
+        adsense: adsense
       });
     } catch (error) {
       console.error('Error in getArticle:', error);
