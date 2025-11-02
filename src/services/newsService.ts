@@ -25,6 +25,11 @@ export class NewsService extends BaseService {
     return article ? this.mapArticleResults([article])[0] : null;
   }
 
+  async getArticleBySlugShort(slug: string): Promise<Article | null> {
+    const [article] = await this.execute<any[]>(`${this.baseArticleQuery} WHERE a.article_slugshort = ? LIMIT 1;`, [slug]);
+    return article ? this.mapArticleResults([article])[0] : null;
+  }
+
   async getAdsenseCode() {
     const adsense: string = `<script async 
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4083750040120466"

@@ -13,6 +13,9 @@ export class Article {
   @Property({ unique: true, length: 500 })
   article_slug!: string;
 
+  @Property({ unique: true, length: 500 })
+  article_slugshort!: string;
+
   @Property({ type: 'text' })
   article_excerpt!: string;
 
