@@ -4,16 +4,12 @@ import path from 'path';
 import session from 'express-session';
 import { MikroORM } from '@mikro-orm/core';
 import config from './config/mikro-orm.config';
-import {
-  AdminController,
-  NewsController,
-  StaticController,
-  RedirectController,
-} from './controllers';
+import { NewsController } from './controllers/newsController';
+import { AdminController } from './controllers/adminController';
+import { StaticController } from './controllers/staticController';
 import { AdminService } from './services/adminService';
 import { NewsService } from './services/newsService';
 import { StaticService } from './services/staticService';
-import { RedirectService } from './services/redirectService';
 
 import { setUpStaticRoutes } from './routes/staticRoute';
 import { setUpNewsRoutes } from './routes/newsRoute';
@@ -61,9 +57,7 @@ async function startServer() {
     setupViewMiddleware();
 
     // Setup routes
-    setUpNewsRoutes(app, newsController, redirectController);
-    setUpAdminRoutes(app, adminController);
-    setUpStaticRoutes(app, staticController);
+    setupRoutes();
 
     // Error handling middleware (should be last)
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -104,23 +98,19 @@ async function initializeDatabase() {
 let adminService: AdminService;
 let newsService: NewsService;
 let staticService: StaticService;
-let redirectService: RedirectService;
 let newsController: NewsController;
 let adminController: AdminController;
 let staticController: StaticController;
-let redirectController: RedirectController;
 
 function initializeServices() {
   const em = orm.em.fork();
   adminService = new AdminService(em);
   newsService = new NewsService(em);
   staticService = new StaticService(em);
-  redirectService = new RedirectService(em);
 
   newsController = new NewsController(newsService);
   adminController = new AdminController(adminService);
   staticController = new StaticController(staticService);
-  redirectController = new RedirectController(redirectService);
 }
 
 // Middleware to add categories data to all views
@@ -144,5 +134,8 @@ function setupViewMiddleware() {
 
 // Dynamic route setup function
 function setupRoutes() {
-  // This function is no longer needed as redirect handling is moved to startServer
+  setUpStaticRoutes(app, staticController);
+  setUpAdminRoutes(app, adminController)
+  // Set up after ALL static routes are handled
+  setUpNewsRoutes(app, newsController);
 }

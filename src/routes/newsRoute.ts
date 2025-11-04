@@ -1,14 +1,10 @@
 import { Application } from 'express';
 import { NewsController } from '../controllers/newsController';
-import { RedirectController } from '../controllers/redirectController';
 
 export function setUpNewsRoutes(
   app: Application,
-  newsController: NewsController,
-  redirectController: RedirectController
+  newsController: NewsController
 ) {
-  app.get('/:slug([a-zA-Z0-9_-]+)', redirectController.handleRedirect);
-  
   app.get(
     '/:category_slug/:year/:month/:day/:article_slug',
     newsController.getArticle
